@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import BackButton from '../BackButton';
 
 interface Topic {
   id: string;
@@ -169,8 +170,14 @@ const coursePhases: Phase[] = [
 const PythonFundamentals = () => {
   const [phases, setPhases] = useState(coursePhases.map(phase => ({ ...phase, expanded: false })));
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
+  const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
 
   const togglePhase = (phaseId: string) => {
+    if (selectedPhase === phaseId) {
+      setSelectedPhase(null);
+    } else {
+      setSelectedPhase(phaseId);
+    }
     setPhases(prevPhases =>
       prevPhases.map(phase => ({
         ...phase,
@@ -187,7 +194,7 @@ const PythonFundamentals = () => {
 
   const handleNextPhase = () => {
     if (currentPhaseIndex < phases.length - 1) {
-      setCurrentPhaseIndex(prev => prev + 1);
+      setCurrentPhaseIndex(prev => prev - 1);
     }
   };
 
@@ -211,17 +218,20 @@ const PythonFundamentals = () => {
         </div>
 
         {/* Phase Slider */}
-        <div className="relative mb-12">
-          <div className="flex items-center justify-center gap-8 overflow-hidden">
-            <button
+        <div className="relative mb-12 overflow-hidden">
+          <div className="flex items-center justify-center">
+            <motion.button
               onClick={handlePrevPhase}
               disabled={currentPhaseIndex === 0}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="absolute left-4 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="w-6 h-6" />
-            </button>
+            </motion.button>
 
-            <div className="flex gap-6 transition-transform duration-500" style={{ transform: `translateX(-${currentPhaseIndex * 280}px)` }}>
+            <div className="flex gap-6 transition-transform duration-500 ease-out px-16" 
+                 style={{ transform: `translateX(${-currentPhaseIndex * 280}px)` }}>
               {phases.map((phase, index) => (
                 <motion.div
                   key={phase.id}
@@ -230,17 +240,20 @@ const PythonFundamentals = () => {
                     scale: index === currentPhaseIndex ? 1 : 0.8,
                     opacity: index === currentPhaseIndex ? 1 : 0.6,
                   }}
-                  className={`relative w-64 h-96 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer ${
-                    index > currentPhaseIndex ? 'filter grayscale' : ''
-                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  className={`relative w-64 h-96 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer 
+                    ${index > currentPhaseIndex ? 'filter grayscale' : ''}`}
                   onClick={() => setCurrentPhaseIndex(index)}
                 >
+                  {/* Glowing effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 animate-pulse rounded-xl blur-xl transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
+                  
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80" />
                   <div className="absolute inset-0 p-6 flex flex-col justify-end">
                     <h3 className="text-xl font-bold mb-2">{phase.title}</h3>
                     <p className="text-sm text-gray-300">{phase.description}</p>
                     {index > currentPhaseIndex && (
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
                         <Lock className="w-8 h-8" />
                       </div>
                     )}
@@ -249,13 +262,15 @@ const PythonFundamentals = () => {
               ))}
             </div>
 
-            <button
+            <motion.button
               onClick={handleNextPhase}
               disabled={currentPhaseIndex === phases.length - 1}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="absolute right-4 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronRight className="w-6 h-6" />
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -269,76 +284,88 @@ const PythonFundamentals = () => {
             className="space-y-6"
           >
             {phases[currentPhaseIndex].topics.map((topic) => (
-              <div key={topic.id} className="group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
-                  <div className="relative backdrop-blur-xl bg-white/10 rounded-xl border border-white/20 overflow-hidden">
-                    <button
-                      onClick={() => togglePhase(phases[currentPhaseIndex].id)}
-                      className="w-full p-6 text-left hover:bg-white/5 transition-all duration-300"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className={`p-2 rounded-lg ${
-                            topic.locked ? 'bg-gray-700/50' : 'bg-blue-500/20'
-                          }`}>
-                            {topic.locked ? (
-                              <Lock className="w-5 h-5 text-gray-400" />
-                            ) : (
-                              <Code className="w-5 h-5 text-blue-400" />
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="font-semibold mb-1">{topic.title}</h4>
-                            {topic.description && (
-                              <p className="text-sm text-gray-400">{topic.description}</p>
-                            )}
-                          </div>
+              <motion.div
+                key={topic.id}
+                className="group relative"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+                <div className="relative backdrop-blur-xl bg-white/10 rounded-xl border border-white/20 overflow-hidden">
+                  <button
+                    onClick={() => togglePhase(phases[currentPhaseIndex].id)}
+                    className="w-full p-6 text-left hover:bg-white/5 transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className={`p-2 rounded-lg ${
+                          topic.locked ? 'bg-gray-700/50' : 'bg-blue-500/20'
+                        }`}>
+                          {topic.locked ? (
+                            <Lock className="w-5 h-5 text-gray-400" />
+                          ) : (
+                            <Code className="w-5 h-5 text-blue-400" />
+                          )}
                         </div>
-                        {!topic.locked && (
-                          <Link
-                            to="/compiler"
-                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 flex items-center gap-2"
-                          >
-                            <Play className="w-4 h-4" />
-                            <span>Start</span>
-                          </Link>
-                        )}
+                        <div>
+                          <h4 className="font-semibold mb-1">{topic.title}</h4>
+                          {topic.description && (
+                            <p className="text-sm text-gray-400">{topic.description}</p>
+                          )}
+                        </div>
                       </div>
-                    </button>
+                      {!topic.locked && (
+                        <Link
+                          to="/compiler"
+                          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 flex items-center gap-2"
+                        >
+                          <Play className="w-4 h-4" />
+                          <span>Start</span>
+                        </Link>
+                      )}
+                    </div>
+                  </button>
 
-                    {topic.subtopics && phases[currentPhaseIndex].expanded && (
-                      <div className="border-t border-white/10">
-                        <div className="p-4 space-y-3">
-                          {topic.subtopics.map((subtopic) => (
-                            <div
-                              key={subtopic.id}
-                              className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-                            >
-                              <div className="flex items-center gap-3">
-                                {subtopic.completed ? (
-                                  <CheckCircle className="w-4 h-4 text-green-400" />
-                                ) : (
-                                  <div className="w-4 h-4 rounded-full border border-gray-500" />
-                                )}
-                                <span className="text-sm">{subtopic.title}</span>
-                              </div>
-                              {!topic.locked && !subtopic.completed && (
-                                <Link
-                                  to="/compiler"
-                                  className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300"
-                                >
-                                  Start
-                                </Link>
+                  {/* Subtopics - Only show when phase is selected and expanded */}
+                  {topic.subtopics && selectedPhase === phases[currentPhaseIndex].id && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-t border-white/10"
+                    >
+                      <div className="p-4 space-y-3">
+                        {topic.subtopics.map((subtopic) => (
+                          <motion.div
+                            key={subtopic.id}
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                          >
+                            <div className="flex items-center gap-3">
+                              {subtopic.completed ? (
+                                <CheckCircle className="w-4 h-4 text-green-400" />
+                              ) : (
+                                <div className="w-4 h-4 rounded-full border border-gray-500" />
                               )}
+                              <span className="text-sm">{subtopic.title}</span>
                             </div>
-                          ))}
-                        </div>
+                            {!topic.locked && !subtopic.completed && (
+                              <Link
+                                to="/compiler"
+                                className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300"
+                              >
+                                Start
+                              </Link>
+                            )}
+                          </motion.div>
+                        ))}
                       </div>
-                    )}
-                  </div>
+                    </motion.div>
+                  )}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </AnimatePresence>
