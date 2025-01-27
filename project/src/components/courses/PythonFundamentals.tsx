@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Topic {
   id: string;
@@ -26,324 +27,139 @@ interface Phase {
 const coursePhases: Phase[] = [
   {
     id: 'phase-1',
-    title: 'Phase 1: Python Basics and Core Concepts',
-    description: 'Understanding Python syntax, basic operations, and foundational topics that are critical for proficiency in Python.',
+    title: 'Phase 1: Python Basics',
+    description: 'Master the fundamentals of Python programming',
     topics: [
       {
         id: 'intro',
-        title: '1. Introduction to Python Programming',
-        description: 'Learn about Python installation, IDE setup, and write your first program.',
+        title: '1. Introduction to Python',
+        description: 'Learn Python installation, IDE setup, and write your first program.',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'setup', title: 'Installing Python (Anaconda, PyCharm, or basic Python)', completed: false },
-          { id: 'ide', title: 'Setting up the IDE', completed: false },
-          { id: 'first-program', title: 'Writing your first Python program: print("Hello, World!")', completed: false },
-          { id: 'syntax', title: 'Python syntax, keywords, and comments', completed: false },
-          { id: 'interpreter', title: 'Python\'s interpreter vs. compiled languages', completed: false }
+          { id: 'setup', title: 'Installing Python and setting up the environment', completed: false },
+          { id: 'first-program', title: 'Writing your first Python program', completed: false },
+          { id: 'syntax', title: 'Python syntax basics', completed: false }
         ]
       },
       {
         id: 'data-types',
-        title: '2. Basic Data Types and Variables',
-        description: 'Master Python\'s fundamental data types and variable system.',
+        title: '2. Data Types and Variables',
+        description: 'Understanding Python data types and variables',
         completed: false,
         locked: true,
         subtopics: [
-          { id: 'numbers', title: 'Numbers (integers, floats, complex)', completed: false },
-          { id: 'strings', title: 'Strings', completed: false },
-          { id: 'booleans', title: 'Booleans', completed: false },
-          { id: 'type-conversion', title: 'Type conversion (int to float, string to int)', completed: false },
-          { id: 'variables', title: 'Variable naming conventions and dynamic typing', completed: false }
-        ]
-      },
-      {
-        id: 'operators',
-        title: '3. Operators and Expressions',
-        description: 'Learn about different types of operators in Python.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'arithmetic', title: 'Arithmetic operators: +, -, *, /, //, %, **', completed: false },
-          { id: 'comparison', title: 'Comparison operators: ==, !=, >, <, >=, <=', completed: false },
-          { id: 'logical', title: 'Logical operators: and, or, not', completed: false },
-          { id: 'assignment', title: 'Assignment operators: =, +=, -=', completed: false },
-          { id: 'bitwise', title: 'Bitwise operators (optional for beginners)', completed: false }
-        ]
-      },
-      {
-        id: 'control-flow',
-        title: '4. Control Flow: Conditionals and Loops',
-        description: 'Master program flow control using conditions and loops.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'if-else', title: 'Conditionals: if, elif, else', completed: false },
-          { id: 'loops', title: 'Loops: for and while loops', completed: false },
-          { id: 'loop-control', title: 'Loop control: break, continue, pass', completed: false },
-          { id: 'nested', title: 'Nested loops and conditionals', completed: false }
-        ]
-      },
-      {
-        id: 'functions',
-        title: '5. Functions and Modular Code',
-        description: 'Learn about function definition and usage.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'def', title: 'Defining functions using def', completed: false },
-          { id: 'params', title: 'Function parameters and return values', completed: false },
-          { id: 'scope', title: 'Function scope: local vs global variables', completed: false },
-          { id: 'lambda', title: 'Lambda functions', completed: false },
-          { id: 'recursion', title: 'Understanding recursion (optional)', completed: false }
-        ]
-      },
-      {
-        id: 'io',
-        title: '6. Basic Input and Output',
-        description: 'Learn to handle input and output operations.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'input', title: 'User input using input()', completed: false },
-          { id: 'print', title: 'Output formatting using print()', completed: false },
-          { id: 'format', title: 'String interpolation (f-strings, % formatting)', completed: false }
+          { id: 'numbers', title: 'Numbers (integers, floats)', completed: false },
+          { id: 'strings', title: 'Strings and string operations', completed: false },
+          { id: 'variables', title: 'Variables and assignments', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-2',
-    title: 'Phase 2: Data Structures and Collections',
-    description: 'Learn how to store, manipulate, and process collections of data in Python.',
+    title: 'Phase 2: Control Flow',
+    description: 'Learn how to control program flow with conditions and loops',
     topics: [
       {
-        id: 'lists',
-        title: '7. Lists',
-        description: 'Master Python lists and their operations.',
+        id: 'conditions',
+        title: '3. Conditional Statements',
+        description: 'Master if-else statements and logical operations',
         completed: false,
         locked: true,
         subtopics: [
-          { id: 'list-basics', title: 'Creating and modifying lists', completed: false },
-          { id: 'list-ops', title: 'List indexing, slicing, and iteration', completed: false },
-          { id: 'list-methods', title: 'List methods: append(), extend(), insert(), remove()', completed: false },
-          { id: 'comprehensions', title: 'List comprehensions', completed: false }
-        ]
-      },
-      {
-        id: 'tuples',
-        title: '8. Tuples',
-        description: 'Understanding immutable sequences.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'tuple-basics', title: 'Creating tuples and understanding immutability', completed: false },
-          { id: 'packing', title: 'Tuple packing and unpacking', completed: false },
-          { id: 'dict-keys', title: 'Using tuples as dictionary keys', completed: false }
-        ]
-      },
-      {
-        id: 'dictionaries',
-        title: '9. Dictionaries',
-        description: 'Working with key-value pairs.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'dict-basics', title: 'Creating and modifying dictionaries', completed: false },
-          { id: 'dict-ops', title: 'Dictionary methods and operations', completed: false },
-          { id: 'dict-comp', title: 'Dictionary comprehensions', completed: false }
-        ]
-      },
-      {
-        id: 'sets',
-        title: '10. Sets',
-        description: 'Understanding set operations.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'set-basics', title: 'Creating and using sets', completed: false },
-          { id: 'set-ops', title: 'Set operations: union, intersection, difference', completed: false },
-          { id: 'set-methods', title: 'Set methods: add(), remove(), discard()', completed: false }
+          { id: 'if-else', title: 'If-else statements', completed: false },
+          { id: 'logical-ops', title: 'Logical operators', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-3',
-    title: 'Phase 3: Intermediate Topics',
-    description: 'Explore deeper Python features for writing cleaner, more efficient code.',
+    title: 'Phase 3: Functions',
+    description: 'Learn to write reusable code with functions',
     topics: [
       {
-        id: 'file-handling',
-        title: '11. File Handling',
-        description: 'Learn to work with files in Python.',
+        id: 'functions',
+        title: '4. Functions Basics',
+        description: 'Understanding function definition and parameters',
         completed: false,
         locked: true,
         subtopics: [
-          { id: 'file-ops', title: 'Reading from and writing to text files', completed: false },
-          { id: 'file-modes', title: 'File modes: r, w, a, x', completed: false },
-          { id: 'context', title: 'Context managers with with open()', completed: false },
-          { id: 'csv', title: 'Handling CSV files (optional)', completed: false }
-        ]
-      },
-      {
-        id: 'exceptions',
-        title: '12. Error and Exception Handling',
-        description: 'Understanding and handling exceptions.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'try-except', title: 'Try-except blocks for catching exceptions', completed: false },
-          { id: 'raise', title: 'Raising exceptions with raise', completed: false },
-          { id: 'finally', title: 'Using finally for clean-up actions', completed: false },
-          { id: 'custom', title: 'Custom exceptions (optional)', completed: false }
-        ]
-      },
-      {
-        id: 'oop',
-        title: '13. Object-Oriented Programming',
-        description: 'Learn OOP concepts in Python.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'classes', title: 'Defining and using classes', completed: false },
-          { id: 'inheritance', title: 'Inheritance and method overriding', completed: false },
-          { id: 'encapsulation', title: 'Encapsulation and private members', completed: false },
-          { id: 'polymorphism', title: 'Polymorphism and abstract classes', completed: false }
+          { id: 'def-func', title: 'Defining functions', completed: false },
+          { id: 'params', title: 'Parameters and return values', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-4',
-    title: 'Phase 4: Working with Data and Basic Algorithms',
-    description: 'Learn to work with data and implement basic algorithms.',
+    title: 'Phase 4: Data Structures',
+    description: 'Master Python data structures',
     topics: [
       {
-        id: 'data-structures',
-        title: '14. Advanced Data Structures',
-        description: 'Implement complex data structures.',
+        id: 'lists',
+        title: '5. Lists and Tuples',
+        description: 'Working with sequences in Python',
         completed: false,
         locked: true,
         subtopics: [
-          { id: 'stacks', title: 'Implementing stacks using lists', completed: false },
-          { id: 'queues', title: 'Working with queues and deques', completed: false },
-          { id: 'linked-lists', title: 'Understanding linked lists', completed: false }
-        ]
-      },
-      {
-        id: 'algorithms',
-        title: '15. Basic Algorithms',
-        description: 'Learn fundamental algorithms.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'sorting', title: 'Sorting algorithms', completed: false },
-          { id: 'searching', title: 'Searching algorithms', completed: false },
-          { id: 'built-in', title: 'Built-in functions and algorithms', completed: false }
+          { id: 'lists-intro', title: 'Introduction to lists', completed: false },
+          { id: 'tuples', title: 'Working with tuples', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-5',
-    title: 'Phase 5: Advanced Beginner Topics',
-    description: 'Bridge the gap between beginner and intermediate levels.',
+    title: 'Phase 5: Object-Oriented Programming',
+    description: 'Learn object-oriented programming in Python',
     topics: [
       {
-        id: 'regex',
-        title: '16. Regular Expressions',
-        description: 'Master pattern matching with regex.',
+        id: 'classes',
+        title: '6. Classes and Objects',
+        description: 'Understanding OOP concepts',
         completed: false,
         locked: true,
         subtopics: [
-          { id: 're-basics', title: 'Using the re module', completed: false },
-          { id: 'patterns', title: 'Common regex patterns', completed: false },
-          { id: 'text-processing', title: 'Text processing with regex', completed: false }
-        ]
-      },
-      {
-        id: 'testing',
-        title: '17. Debugging and Testing',
-        description: 'Learn testing and debugging techniques.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'print-debug', title: 'Print debugging', completed: false },
-          { id: 'logging', title: 'Using the logging module', completed: false },
-          { id: 'unittest', title: 'Unit testing with unittest', completed: false }
-        ]
-      },
-      {
-        id: 'databases',
-        title: '18. Basic Database Operations',
-        description: 'Introduction to databases with Python.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'sqlite', title: 'Working with SQLite', completed: false },
-          { id: 'crud', title: 'Basic CRUD operations', completed: false }
+          { id: 'class-def', title: 'Defining classes', completed: false },
+          { id: 'objects', title: 'Creating and using objects', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-6',
-    title: 'Phase 6: Project Development and Version Control',
-    description: 'Apply your knowledge in real-world projects.',
+    title: 'Phase 6: File Handling',
+    description: 'Learn to work with files in Python',
     topics: [
       {
-        id: 'git',
-        title: '19. Version Control with Git',
-        description: 'Learn Git basics for project management.',
+        id: 'files',
+        title: '7. File Operations',
+        description: 'Reading and writing files',
         completed: false,
         locked: true,
         subtopics: [
-          { id: 'git-basics', title: 'Basic Git commands', completed: false },
-          { id: 'branching', title: 'Working with branches', completed: false },
-          { id: 'github', title: 'Collaborating with GitHub', completed: false }
-        ]
-      },
-      {
-        id: 'projects',
-        title: '20. Building Projects',
-        description: 'Create real-world Python applications.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'calculator', title: 'Simple calculator app', completed: false },
-          { id: 'todo', title: 'To-do list manager', completed: false },
-          { id: 'scraper', title: 'Basic web scraper', completed: false }
+          { id: 'file-read', title: 'Reading files', completed: false },
+          { id: 'file-write', title: 'Writing to files', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-7',
-    title: 'Phase 7: Continuous Learning and Practice',
-    description: 'Continue your learning journey with advanced topics.',
+    title: 'Phase 7: Advanced Topics',
+    description: 'Explore advanced Python concepts',
     topics: [
       {
-        id: 'challenges',
-        title: '21. Coding Challenges',
-        description: 'Practice with coding challenges.',
+        id: 'advanced',
+        title: '8. Advanced Python',
+        description: 'Advanced programming concepts',
         completed: false,
         locked: true,
         subtopics: [
-          { id: 'hackerrank', title: 'HackerRank challenges', completed: false },
-          { id: 'leetcode', title: 'LeetCode problems', completed: false }
-        ]
-      },
-      {
-        id: 'specialization',
-        title: '22. Specialized Areas',
-        description: 'Explore Python specializations.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'web-dev', title: 'Web Development (Flask/Django)', completed: false },
-          { id: 'data-science', title: 'Data Science (NumPy/Pandas)', completed: false },
-          { id: 'automation', title: 'Automation (Selenium/PyAutoGUI)', completed: false }
+          { id: 'decorators', title: 'Decorators', completed: false },
+          { id: 'generators', title: 'Generators', completed: false }
         ]
       }
     ]
@@ -352,6 +168,7 @@ const coursePhases: Phase[] = [
 
 const PythonFundamentals = () => {
   const [phases, setPhases] = useState(coursePhases.map(phase => ({ ...phase, expanded: false })));
+  const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
 
   const togglePhase = (phaseId: string) => {
     setPhases(prevPhases =>
@@ -360,6 +177,18 @@ const PythonFundamentals = () => {
         expanded: phase.id === phaseId ? !phase.expanded : phase.expanded
       }))
     );
+  };
+
+  const handlePrevPhase = () => {
+    if (currentPhaseIndex > 0) {
+      setCurrentPhaseIndex(prev => prev - 1);
+    }
+  };
+
+  const handleNextPhase = () => {
+    if (currentPhaseIndex < phases.length - 1) {
+      setCurrentPhaseIndex(prev => prev + 1);
+    }
   };
 
   return (
@@ -381,130 +210,138 @@ const PythonFundamentals = () => {
           </div>
         </div>
 
-        {/* Course Progress */}
-        <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 border border-white/20 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Course Progress</h2>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">5% Complete</span>
-              <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full w-[5%] bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
-              </div>
+        {/* Phase Slider */}
+        <div className="relative mb-12">
+          <div className="flex items-center justify-center gap-8 overflow-hidden">
+            <button
+              onClick={handlePrevPhase}
+              disabled={currentPhaseIndex === 0}
+              className="absolute left-4 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+
+            <div className="flex gap-6 transition-transform duration-500" style={{ transform: `translateX(-${currentPhaseIndex * 280}px)` }}>
+              {phases.map((phase, index) => (
+                <motion.div
+                  key={phase.id}
+                  initial={{ scale: 0.8, opacity: 0.6 }}
+                  animate={{
+                    scale: index === currentPhaseIndex ? 1 : 0.8,
+                    opacity: index === currentPhaseIndex ? 1 : 0.6,
+                  }}
+                  className={`relative w-64 h-96 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer ${
+                    index > currentPhaseIndex ? 'filter grayscale' : ''
+                  }`}
+                  onClick={() => setCurrentPhaseIndex(index)}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80" />
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                    <h3 className="text-xl font-bold mb-2">{phase.title}</h3>
+                    <p className="text-sm text-gray-300">{phase.description}</p>
+                    {index > currentPhaseIndex && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <Lock className="w-8 h-8" />
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
             </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-sm text-gray-400">1 Topic Completed</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-400">24 Topics Remaining</span>
-            </div>
+
+            <button
+              onClick={handleNextPhase}
+              disabled={currentPhaseIndex === phases.length - 1}
+              className="absolute right-4 z-10 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
           </div>
         </div>
 
-        {/* Course Content */}
-        <div className="space-y-6">
-          {phases.map((phase) => (
-            <div key={phase.id} className="group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
-                <div className="relative backdrop-blur-xl bg-white/10 rounded-xl border border-white/20 overflow-hidden">
-                  {/* Phase Header */}
-                  <button
-                    onClick={() => togglePhase(phase.id)}
-                    className="w-full p-6 text-left hover:bg-white/5 transition-all duration-300"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-500/20 rounded-lg">
-                          <Book className="w-6 h-6 text-blue-400" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-semibold mb-1">{phase.title}</h3>
-                          <p className="text-gray-400 text-sm">{phase.description}</p>
-                        </div>
-                      </div>
-                      {phase.expanded ? (
-                        <ChevronUp className="w-6 h-6 text-gray-400" />
-                      ) : (
-                        <ChevronDown className="w-6 h-6 text-gray-400" />
-                      )}
-                    </div>
-                  </button>
-
-                  {/* Phase Content */}
-                  {phase.expanded && (
-                    <div className="border-t border-white/10">
-                      {phase.topics.map((topic) => (
-                        <div key={topic.id} className="p-6 border-b border-white/10 last:border-b-0">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-4">
-                              <div className={`p-2 rounded-lg ${
-                                topic.locked ? 'bg-gray-700/50' : 'bg-blue-500/20'
-                              }`}>
-                                {topic.locked ? (
-                                  <Lock className="w-5 h-5 text-gray-400" />
-                                ) : (
-                                  <Code className="w-5 h-5 text-blue-400" />
-                                )}
-                              </div>
-                              <div>
-                                <h4 className="font-semibold mb-1">{topic.title}</h4>
-                                {topic.description && (
-                                  <p className="text-sm text-gray-400">{topic.description}</p>
-                                )}
-                              </div>
-                            </div>
-                            {!topic.locked && (
-                              <Link
-                                to={`/compiler`}
-                                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 flex items-center gap-2"
-                              >
-                                <Play className="w-4 h-4" />
-                                <span>Start</span>
-                              </Link>
+        {/* Current Phase Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPhaseIndex}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="space-y-6"
+          >
+            {phases[currentPhaseIndex].topics.map((topic) => (
+              <div key={topic.id} className="group">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+                  <div className="relative backdrop-blur-xl bg-white/10 rounded-xl border border-white/20 overflow-hidden">
+                    <button
+                      onClick={() => togglePhase(phases[currentPhaseIndex].id)}
+                      className="w-full p-6 text-left hover:bg-white/5 transition-all duration-300"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-2 rounded-lg ${
+                            topic.locked ? 'bg-gray-700/50' : 'bg-blue-500/20'
+                          }`}>
+                            {topic.locked ? (
+                              <Lock className="w-5 h-5 text-gray-400" />
+                            ) : (
+                              <Code className="w-5 h-5 text-blue-400" />
                             )}
                           </div>
-
-                          {/* Subtopics */}
-                          {topic.subtopics && (
-                            <div className="ml-12 space-y-3">
-                              {topic.subtopics.map((subtopic) => (
-                                <div
-                                  key={subtopic.id}
-                                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    {subtopic.completed ? (
-                                      <CheckCircle className="w-4 h-4 text-green-400" />
-                                    ) : (
-                                      <div className="w-4 h-4 rounded-full border border-gray-500" />
-                                    )}
-                                    <span className="text-sm">{subtopic.title}</span>
-                                  </div>
-                                  {!topic.locked && !subtopic.completed && (
-                                    <Link
-                                      to={`/compiler`}
-                                      className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300"
-                                    >
-                                      Start
-                                    </Link>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          <div>
+                            <h4 className="font-semibold mb-1">{topic.title}</h4>
+                            {topic.description && (
+                              <p className="text-sm text-gray-400">{topic.description}</p>
+                            )}
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        {!topic.locked && (
+                          <Link
+                            to="/compiler"
+                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 flex items-center gap-2"
+                          >
+                            <Play className="w-4 h-4" />
+                            <span>Start</span>
+                          </Link>
+                        )}
+                      </div>
+                    </button>
+
+                    {topic.subtopics && phases[currentPhaseIndex].expanded && (
+                      <div className="border-t border-white/10">
+                        <div className="p-4 space-y-3">
+                          {topic.subtopics.map((subtopic) => (
+                            <div
+                              key={subtopic.id}
+                              className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                            >
+                              <div className="flex items-center gap-3">
+                                {subtopic.completed ? (
+                                  <CheckCircle className="w-4 h-4 text-green-400" />
+                                ) : (
+                                  <div className="w-4 h-4 rounded-full border border-gray-500" />
+                                )}
+                                <span className="text-sm">{subtopic.title}</span>
+                              </div>
+                              {!topic.locked && !subtopic.completed && (
+                                <Link
+                                  to="/compiler"
+                                  className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300"
+                                >
+                                  Start
+                                </Link>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
