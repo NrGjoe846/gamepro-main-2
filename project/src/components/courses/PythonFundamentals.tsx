@@ -55,6 +55,18 @@ const coursePhases: Phase[] = [
     title: 'Phase 5: Object-Oriented Programming',
     description: 'Learn object-oriented programming in Python',
     topics: []
+  },
+  {
+    id: 'phase-6',
+    title: 'Phase 6: File Handling and Exceptions',
+    description: 'Master file operations and error handling in Python',
+    topics: []
+  },
+  {
+    id: 'phase-7',
+    title: 'Phase 7: Advanced Python Concepts',
+    description: 'Explore advanced Python features and best practices',
+    topics: []
   }
 ];
 
