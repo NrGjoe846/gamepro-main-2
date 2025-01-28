@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Moon, Sun, Volume2, Bell, Shield, Palette, X, Eye, Sparkles } from 'lucide-react';
+import { Settings, Moon, Sun, Volume2, Bell, Shield, Palette, X, Eye, Sparkles, Type } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SettingsPanelProps {
@@ -7,23 +7,25 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [volume, setVolume] = useState(80);
   const [notifications, setNotifications] = useState(true);
   const [privacy, setPrivacy] = useState('friends');
   const [panelColor, setPanelColor] = useState('bg-black/90');
   const [isChanging, setIsChanging] = useState(false);
   const [instructionText, setInstructionText] = useState('Click anywhere to customize the dashboard');
-  const [accessibility, setAccessibility] = useState({
-    highContrast: false,
-    reducedMotion: false,
-    fontSize: 'medium'
-  });
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || 'medium');
 
   const themes = [
-    { id: 'dark', name: 'Dark', icon: <Moon className="w-5 h-5" /> },
-    { id: 'light', name: 'Light', icon: <Sun className="w-5 h-5" /> },
-    { id: 'system', name: 'System', icon: <Palette className="w-5 h-5" /> }
+    { id: 'dark', name: 'Dark', icon: <Moon className="w-5 h-5" />, color: 'from-gray-900 to-gray-800' },
+    { id: 'light', name: 'Light', icon: <Sun className="w-5 h-5" />, color: 'from-white to-gray-100' },
+    { id: 'system', name: 'System', icon: <Palette className="w-5 h-5" />, color: 'from-blue-600 to-purple-600' }
+  ];
+
+  const fontSizes = [
+    { id: 'small', name: 'Small', scale: '0.875' },
+    { id: 'medium', name: 'Medium', scale: '1' },
+    { id: 'large', name: 'Large', scale: '1.125' }
   ];
 
   const colors = [
@@ -40,33 +42,55 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
     }
   }, [isChanging]);
 
+  useEffect(() => {
+    // Apply initial theme and font size
+    applyTheme(theme);
+    applyFontSize(fontSize);
+  }, []);
+
   const handlePanelClick = () => {
     setIsChanging(true);
-
-    // Cycle through panel colors
     setPanelColor(prev => {
       const currentIndex = colors.indexOf(prev);
       return colors[(currentIndex + 1) % colors.length];
     });
-
-    // Update instruction text
     setInstructionText(prev => 
       prev === 'Click anywhere to customize the dashboard'
         ? 'Dashboard customization mode activated!'
         : 'Click anywhere to customize the dashboard'
     );
+  };
 
-    // Update dashboard instructions through localStorage
-    localStorage.setItem('dashboardInstructions', instructionText);
+  const applyTheme = (selectedTheme: string) => {
+    setTheme(selectedTheme);
     
-    // Dispatch custom event to notify dashboard of changes
-    window.dispatchEvent(new CustomEvent('settingsUpdate', {
-      detail: {
-        instructions: instructionText,
-        theme,
-        accessibility
-      }
-    }));
+    // Apply theme classes to root element
+    const root = document.documentElement;
+    root.classList.remove('theme-dark', 'theme-light', 'theme-system');
+    root.classList.add(`theme-${selectedTheme}`);
+    
+    localStorage.setItem('theme', selectedTheme);
+
+    // Apply theme-specific styles
+    if (selectedTheme === 'dark') {
+      root.style.setProperty('--bg-primary', '#1a1a2e');
+      root.style.setProperty('--text-primary', '#ffffff');
+    } else if (selectedTheme === 'light') {
+      root.style.setProperty('--bg-primary', '#ffffff');
+      root.style.setProperty('--text-primary', '#1a1a2e');
+    } else {
+      // System theme - detect user preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.style.setProperty('--bg-primary', prefersDark ? '#1a1a2e' : '#ffffff');
+      root.style.setProperty('--text-primary', prefersDark ? '#ffffff' : '#1a1a2e');
+    }
+  };
+
+  const applyFontSize = (size: string) => {
+    setFontSize(size);
+    const scale = fontSizes.find(fs => fs.id === size)?.scale || '1';
+    document.documentElement.style.fontSize = `${parseFloat(scale) * 16}px`;
+    localStorage.setItem('fontSize', size);
   };
 
   return (
@@ -93,19 +117,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <X className="w-5 h-5" />
           </button>
         </div>
-        
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={instructionText}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-2 text-sm text-gray-400"
-          >
-            <Sparkles className={`w-4 h-4 ${isChanging ? 'text-yellow-400' : 'text-gray-400'}`} />
-            {instructionText}
-          </motion.div>
-        </AnimatePresence>
       </div>
 
       <div className="p-4 space-y-6">
@@ -122,22 +133,67 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                 key={t.id}
                 onClick={(e) => {
                   e.stopPropagation();
-                  setTheme(t.id);
+                  applyTheme(t.id);
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`p-3 rounded-lg flex flex-col items-center gap-2 ${
-                  theme === t.id ? 'bg-blue-500/20 border-blue-500/50' : 'bg-white/5 border-white/10'
-                } border hover:bg-white/10 transition-all duration-300`}
+                className={`relative p-3 rounded-lg flex flex-col items-center gap-2 ${
+                  theme === t.id 
+                    ? 'bg-gradient-to-b ' + t.color + ' border-blue-500/50' 
+                    : 'bg-white/5 border-white/10'
+                } border hover:bg-white/10 transition-all duration-300 overflow-hidden`}
               >
-                {t.icon}
-                <span className="text-sm">{t.name}</span>
+                {theme === t.id && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  />
+                )}
+                <div className={`relative z-10 ${theme === t.id ? 'text-white' : ''}`}>
+                  {t.icon}
+                  <span className="text-sm block mt-1">{t.name}</span>
+                </div>
               </motion.button>
             ))}
           </div>
         </motion.div>
 
-        {/* Sound */}
+        {/* Font Size */}
+        <motion.div 
+          className="space-y-3"
+          whileHover={{ scale: 1.02 }}
+        >
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium text-gray-400">Font Size</h4>
+            <Type className="w-5 h-5 text-gray-400" />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {fontSizes.map((size) => (
+              <motion.button
+                key={size.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  applyFontSize(size.id);
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`p-3 rounded-lg flex items-center justify-center ${
+                  fontSize === size.id 
+                    ? 'bg-gradient-to-b from-blue-500/20 to-purple-500/20 border-blue-500/50' 
+                    : 'bg-white/5 border-white/10'
+                } border hover:bg-white/10 transition-all duration-300`}
+              >
+                <span className="text-sm" style={{ fontSize: `${parseFloat(size.scale) * 1}em` }}>
+                  {size.name}
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Volume Control */}
         <motion.div 
           className="space-y-3"
           whileHover={{ scale: 1.02 }}
@@ -152,7 +208,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             max="100"
             value={volume}
             onChange={(e) => setVolume(parseInt(e.target.value))}
-            className="w-full"
+            className="w-full accent-blue-500"
             onClick={(e) => e.stopPropagation()}
           />
         </motion.div>
@@ -197,52 +253,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <option value="private">Private</option>
           </select>
         </motion.div>
-
-        {/* Accessibility */}
-        <motion.div 
-          className="space-y-3"
-          whileHover={{ scale: 1.02 }}
-        >
-          <div className="flex items-center gap-2">
-            <Eye className="w-5 h-5 text-gray-400" />
-            <h4 className="text-sm font-medium">Accessibility</h4>
-          </div>
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="text-sm">High Contrast</span>
-              <input
-                type="checkbox"
-                checked={accessibility.highContrast}
-                onChange={(e) => setAccessibility({ ...accessibility, highContrast: e.target.checked })}
-                onClick={(e) => e.stopPropagation()}
-                className="rounded border-gray-400 text-blue-500 focus:ring-blue-500"
-              />
-            </label>
-            <label className="flex items-center justify-between">
-              <span className="text-sm">Reduced Motion</span>
-              <input
-                type="checkbox"
-                checked={accessibility.reducedMotion}
-                onChange={(e) => setAccessibility({ ...accessibility, reducedMotion: e.target.checked })}
-                onClick={(e) => e.stopPropagation()}
-                className="rounded border-gray-400 text-blue-500 focus:ring-blue-500"
-              />
-            </label>
-            <div>
-              <span className="text-sm block mb-1">Font Size</span>
-              <select
-                value={accessibility.fontSize}
-                onChange={(e) => setAccessibility({ ...accessibility, fontSize: e.target.value })}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full bg-white/5 border border-white/10 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-              >
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-              </select>
-            </div>
-          </div>
-        </motion.div>
       </div>
 
       <motion.div 
@@ -256,7 +266,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="w-full py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300"
+          className="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-lg transition-all duration-300"
         >
           Save Changes
         </motion.button>
