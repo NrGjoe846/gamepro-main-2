@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Book, Code, Play, ChevronLeft, ChevronRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { Book, Code, Play, ArrowLeft, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
+import { useSpring, animated } from 'react-spring';
 
 interface Topic {
   id: string;
@@ -166,20 +167,9 @@ const PythonFundamentals = () => {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
   const [sparklePhase, setSparklePhase] = useState<string | null>(null);
-
-  const handlePrevPhase = () => {
-    if (currentPhaseIndex > 0) {
-      setCurrentPhaseIndex(prev => prev - 1);
-      setExpandedPhase(null);
-    }
-  };
-
-  const handleNextPhase = () => {
-    if (currentPhaseIndex < coursePhases.length - 1) {
-      setCurrentPhaseIndex(prev => prev + 1);
-      setExpandedPhase(null);
-    }
-  };
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const handlePhaseStart = (phaseId: string) => {
     setSparklePhase(phaseId);
@@ -187,9 +177,27 @@ const PythonFundamentals = () => {
     setExpandedPhase(expandedPhase === phaseId ? null : phaseId);
   };
 
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    setStartX(e.pageX - e.currentTarget.offsetLeft);
+    setScrollLeft(e.currentTarget.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - e.currentTarget.offsetLeft;
+    const walk = (x - startX) * 2;
+    e.currentTarget.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="min-h-screen bg-[#0A1628] bg-gradient-to-b from-[#0A1628] to-[#1A2B44] text-white p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#0A1628] bg-gradient-to-b from-[#0A1628] to-[#1A2B44] text-white p-4 md:p-8">
+      <div className="max-w-full mx-auto">
         <div className="mb-8">
           <BackButton />
         </div>
@@ -199,81 +207,64 @@ const PythonFundamentals = () => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="relative w-32 h-32"
+            className="relative w-24 h-24 md:w-32 md:h-32"
           >
             <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
             <div className="relative w-full h-full rounded-full border-2 border-blue-400/50 flex items-center justify-center bg-gradient-to-b from-blue-500/10 to-blue-500/30">
-              <span className="text-5xl">{coursePhases[currentPhaseIndex].icon}</span>
+              <span className="text-4xl md:text-5xl">{coursePhases[currentPhaseIndex].icon}</span>
             </div>
           </motion.div>
         </div>
 
-        {/* Phase Navigation */}
-        <div className="relative mb-12">
-          <div className="flex items-center justify-center">
-            <motion.button
-              onClick={handlePrevPhase}
-              disabled={currentPhaseIndex === 0}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="absolute left-4 z-10 p-3 bg-blue-500/20 hover:bg-blue-500/30 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </motion.button>
-
-            <div className="flex gap-6 transition-transform duration-500 ease-out px-16">
-              {coursePhases.map((phase, index) => (
-                <motion.div
-                  key={phase.id}
-                  initial={{ scale: 0.8, opacity: 0.6 }}
-                  animate={{
-                    scale: index === currentPhaseIndex ? 1 : 0.8,
-                    opacity: index === currentPhaseIndex ? 1 : 0.6,
-                  }}
-                  whileHover={{ scale: index === currentPhaseIndex ? 1.05 : 0.85 }}
-                  drag={index === currentPhaseIndex ? true : false}
-                  dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                  dragElastic={0.1}
-                  className={`relative w-64 h-96 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer 
-                    ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
-                  <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+        {/* Phase Cards */}
+        <div className="relative mb-12 overflow-hidden">
+          <div 
+            className="flex gap-6 overflow-x-auto px-4 py-2 cursor-grab scrollbar-hide"
+            style={{ scrollBehavior: 'smooth' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            {coursePhases.map((phase, index) => (
+              <motion.div
+                key={phase.id}
+                initial={{ scale: 0.8, opacity: 0.6 }}
+                animate={{
+                  scale: index === currentPhaseIndex ? 1 : 0.8,
+                  opacity: index === currentPhaseIndex ? 1 : 0.6,
+                }}
+                whileHover={{ scale: index === currentPhaseIndex ? 1.05 : 0.85 }}
+                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer 
+                  ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
+                onClick={() => setCurrentPhaseIndex(index)}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                
+                <div className="relative h-full p-6 flex flex-col">
+                  <div className="text-4xl mb-4">{phase.icon}</div>
+                  <h3 className="text-xl font-bold mb-2">{phase.title}</h3>
+                  <p className="text-sm text-gray-400 mb-4">{phase.description}</p>
                   
-                  <div className="relative h-full p-6 flex flex-col">
-                    <div className="text-4xl mb-4">{phase.icon}</div>
-                    <h3 className="text-xl font-bold mb-2">{phase.title}</h3>
-                    <p className="text-sm text-gray-400 mb-4">{phase.description}</p>
-                    
-                    {index === currentPhaseIndex && (
-                      <motion.button
-                        onClick={() => handlePhaseStart(phase.id)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group"
-                      >
-                        {sparklePhase === phase.id ? (
-                          <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" />
-                        ) : (
-                          <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
-                        )}
-                        Start Phase
-                      </motion.button>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.button
-              onClick={handleNextPhase}
-              disabled={currentPhaseIndex === coursePhases.length - 1}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="absolute right-4 z-10 p-3 bg-blue-500/20 hover:bg-blue-500/30 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </motion.button>
+                  {index === currentPhaseIndex && (
+                    <motion.button
+                      onClick={() => handlePhaseStart(phase.id)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group"
+                    >
+                      {sparklePhase === phase.id ? (
+                        <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" />
+                      ) : (
+                        <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
+                      )}
+                      Start Phase
+                    </motion.button>
+                  )}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
 
@@ -284,7 +275,7 @@ const PythonFundamentals = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="space-y-4"
+              className="space-y-4 px-4"
             >
               {coursePhases[currentPhaseIndex].topics.map((topic, index) => (
                 <motion.div
@@ -294,7 +285,7 @@ const PythonFundamentals = () => {
                   transition={{ delay: index * 0.1 }}
                   className="backdrop-blur-xl bg-blue-500/10 rounded-xl p-6 border border-blue-500/20"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
                       <h4 className="text-lg font-bold mb-2">{topic.title}</h4>
                       <p className="text-sm text-gray-400">{topic.description}</p>
