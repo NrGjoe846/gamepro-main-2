@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Book, Code, Play, ArrowLeft, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -167,9 +167,7 @@ const PythonFundamentals = () => {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
   const [sparklePhase, setSparklePhase] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const phasesContainerRef = useRef<HTMLDivElement>(null);
 
   const handlePhaseStart = (phaseId: string) => {
     setSparklePhase(phaseId);
@@ -177,22 +175,22 @@ const PythonFundamentals = () => {
     setExpandedPhase(expandedPhase === phaseId ? null : phaseId);
   };
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true);
-    setStartX(e.pageX - e.currentTarget.offsetLeft);
-    setScrollLeft(e.currentTarget.scrollLeft);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - e.currentTarget.offsetLeft;
-    const walk = (x - startX) * 2;
-    e.currentTarget.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
+  const handlePhaseClick = (index: number) => {
+    setCurrentPhaseIndex(index);
+    
+    // Scroll the clicked phase to the center
+    if (phasesContainerRef.current) {
+      const container = phasesContainerRef.current;
+      const phaseElement = container.children[index] as HTMLElement;
+      const containerWidth = container.offsetWidth;
+      const phaseWidth = phaseElement.offsetWidth;
+      const scrollLeft = phaseElement.offsetLeft - (containerWidth / 2) + (phaseWidth / 2);
+      
+      container.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -211,7 +209,7 @@ const PythonFundamentals = () => {
           >
             <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
             <div className="relative w-full h-full rounded-full border-2 border-blue-400/50 flex items-center justify-center bg-gradient-to-b from-blue-500/10 to-blue-500/30">
-              <span className="text-4xl md:text-5xl">{coursePhases[currentPhaseIndex].icon}</span>
+              <span className="text-4xl md:text-5xl select-none">{coursePhases[currentPhaseIndex].icon}</span>
             </div>
           </motion.div>
         </div>
@@ -219,12 +217,9 @@ const PythonFundamentals = () => {
         {/* Phase Cards */}
         <div className="relative mb-12 overflow-hidden">
           <div 
-            className="flex gap-6 overflow-x-auto px-4 py-2 cursor-grab scrollbar-hide"
-            style={{ scrollBehavior: 'smooth' }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
+            ref={phasesContainerRef}
+            className="flex gap-6 overflow-x-auto px-4 py-2 no-scrollbar touch-pan-x"
+            style={{ scrollSnapType: 'x mandatory' }}
           >
             {coursePhases.map((phase, index) => (
               <motion.div
@@ -235,24 +230,29 @@ const PythonFundamentals = () => {
                   opacity: index === currentPhaseIndex ? 1 : 0.6,
                 }}
                 whileHover={{ scale: index === currentPhaseIndex ? 1.05 : 0.85 }}
-                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer 
+                whileTap={{ scale: index === currentPhaseIndex ? 0.95 : 0.8 }}
+                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none
                   ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
-                onClick={() => setCurrentPhaseIndex(index)}
+                onClick={() => handlePhaseClick(index)}
+                style={{ scrollSnapAlign: 'center' }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
                 <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
                 
                 <div className="relative h-full p-6 flex flex-col">
-                  <div className="text-4xl mb-4">{phase.icon}</div>
-                  <h3 className="text-xl font-bold mb-2">{phase.title}</h3>
-                  <p className="text-sm text-gray-400 mb-4">{phase.description}</p>
+                  <div className="text-4xl mb-4 select-none">{phase.icon}</div>
+                  <h3 className="text-xl font-bold mb-2 select-none">{phase.title}</h3>
+                  <p className="text-sm text-gray-400 mb-4 select-none">{phase.description}</p>
                   
                   {index === currentPhaseIndex && (
                     <motion.button
-                      onClick={() => handlePhaseStart(phase.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePhaseStart(phase.id);
+                      }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group"
+                      className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none"
                     >
                       {sparklePhase === phase.id ? (
                         <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" />
