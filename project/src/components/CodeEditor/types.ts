@@ -14,3 +14,14 @@ export interface ExecutionError {
   column?: number;
   message: string;
 }
+
+export interface EditorTheme {
+  name: string;
+  theme: any;
+}
+
+export interface AutoCompleteItem {
+  label: string;
+  type: 'keyword' | 'function' | 'variable' | 'class' | 'property';
+  info?: string;
+}
