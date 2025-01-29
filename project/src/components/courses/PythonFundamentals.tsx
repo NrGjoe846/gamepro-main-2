@@ -295,16 +295,45 @@ const PythonFundamentals = () => {
                   scale: index === currentPhaseIndex ? 1 : 0.8,
                   opacity: index === currentPhaseIndex ? 1 : 0.6,
                 }}
-                whileHover={{ scale: index === currentPhaseIndex ? 1.05 : 0.85 }}
-                whileTap={{ scale: index === currentPhaseIndex ? 0.95 : 0.8 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                  mass: 0.8
+                }}
+                whileHover={{ 
+                  scale: index === currentPhaseIndex ? 1.02 : 0.85,
+                  transition: {
+                    duration: 0.2,
+                    ease: "easeOut"
+                  }
+                }}
+                whileTap={{ 
+                  scale: index === currentPhaseIndex ? 0.98 : 0.8,
+                  transition: {
+                    duration: 0.1,
+                    ease: "easeOut"
+                  }
+                }}
                 className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none perspective-1000
                   ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
                 onClick={() => handlePhaseClick(index)}
                 style={{ scrollSnapAlign: 'center' }}
               >
                 <motion.div
-                  className="relative w-full h-full transition-all duration-500 preserve-3d"
-                  animate={{ rotateY: flippedPhase === phase.id ? 180 : 0 }}
+                  className="relative w-full h-full transition-transform will-change-transform"
+                  animate={{ 
+                    rotateY: flippedPhase === phase.id ? 180 : 0 
+                  }}
+                  transition={{
+                    duration: 0.4,
+                    type: "tween",
+                    ease: "easeInOut"
+                  }}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    backfaceVisibility: "hidden"
+                  }}
                 >
                   {/* Front of Card */}
                   <div className="absolute inset-0 backface-hidden">
@@ -334,8 +363,11 @@ const PythonFundamentals = () => {
                     </div>
                   </div>
 
-                  {/* Back of Card (Topics) */}
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl overflow-y-auto">
+                  {/* Back of Card */}
+                  <div 
+                    className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl overflow-y-auto"
+                    style={{ transform: "rotateY(180deg)" }}
+                  >
                     <div className="p-6 space-y-4">
                       <h3 className="text-xl font-bold mb-4">{phase.title} Topics</h3>
                       {phase.topics.map((topic, topicIndex) => (
