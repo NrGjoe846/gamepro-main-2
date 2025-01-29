@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, ChevronDown, ChevronUp, Sparkles, CheckCircle } from 'lucide-react';
+import { Play, ChevronDown, ChevronUp, Target, AlertCircle, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
-
-interface Subtopic {
-  id: string;
-  title: string;
-  completed: boolean;
-}
 
 interface Topic {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   completed: boolean;
-  subtopics: Subtopic[];
+  locked: boolean;
+  subtopics?: {
+    id: string;
+    title: string;
+    completed: boolean;
+  }[];
 }
 
 interface Phase {
@@ -22,6 +21,7 @@ interface Phase {
   title: string;
   description: string;
   topics: Topic[];
+  expanded?: boolean;
   icon: string;
 }
 
@@ -81,6 +81,7 @@ const coursePhases: Phase[] = [
         title: '1. Introduction to Python Programming',
         description: 'Get started with Python programming language basics',
         completed: false,
+        locked: false,
         subtopics: pythonSubtopics.intro
       },
       {
@@ -88,6 +89,7 @@ const coursePhases: Phase[] = [
         title: '2. Basic Data Types and Variables',
         description: 'Learn about Python data types and variable declarations',
         completed: false,
+        locked: false,
         subtopics: pythonSubtopics['data-types']
       },
       {
@@ -95,6 +97,7 @@ const coursePhases: Phase[] = [
         title: '3. Operators and Expressions',
         description: 'Master Python operators and expressions',
         completed: false,
+        locked: false,
         subtopics: pythonSubtopics.operators
       },
       {
@@ -102,6 +105,7 @@ const coursePhases: Phase[] = [
         title: '4. Control Flow: Conditionals and Loops',
         description: 'Understanding if statements, loops, and control structures',
         completed: false,
+        locked: false,
         subtopics: pythonSubtopics['control-flow']
       },
       {
@@ -109,6 +113,7 @@ const coursePhases: Phase[] = [
         title: '5. Functions and Modular Code',
         description: 'Creating and using functions for modular programming',
         completed: false,
+        locked: false,
         subtopics: pythonSubtopics.functions
       },
       {
@@ -116,6 +121,7 @@ const coursePhases: Phase[] = [
         title: '6. Basic Input and Output',
         description: 'Working with input and output operations in Python',
         completed: false,
+        locked: false,
         subtopics: pythonSubtopics.io
       }
     ]
@@ -131,6 +137,7 @@ const coursePhases: Phase[] = [
         title: '7. Lists',
         description: 'Working with Python lists and array operations',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -138,6 +145,7 @@ const coursePhases: Phase[] = [
         title: '8. Tuples',
         description: 'Understanding immutable sequences in Python',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -145,6 +153,7 @@ const coursePhases: Phase[] = [
         title: '9. Dictionaries',
         description: 'Using key-value pair data structures',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -152,6 +161,7 @@ const coursePhases: Phase[] = [
         title: '10. Sets',
         description: 'Working with unique collections',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -159,6 +169,7 @@ const coursePhases: Phase[] = [
         title: '11. String Manipulation',
         description: 'Advanced string operations and manipulation',
         completed: false,
+        locked: false,
         subtopics: []
       }
     ]
@@ -174,6 +185,7 @@ const coursePhases: Phase[] = [
         title: '12. File Handling',
         description: 'Reading and writing files in Python',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -181,6 +193,7 @@ const coursePhases: Phase[] = [
         title: '13. Error and Exception Handling',
         description: 'Managing errors and exceptions in Python',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -188,6 +201,7 @@ const coursePhases: Phase[] = [
         title: '14. Object-Oriented Programming (OOP) Basics',
         description: 'Introduction to classes and objects',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -195,6 +209,7 @@ const coursePhases: Phase[] = [
         title: '15. Modules and Packages',
         description: 'Creating and using Python modules and packages',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -202,6 +217,7 @@ const coursePhases: Phase[] = [
         title: '16. Working with Libraries',
         description: 'Using Python standard library and external packages',
         completed: false,
+        locked: false,
         subtopics: []
       }
     ]
@@ -217,6 +233,7 @@ const coursePhases: Phase[] = [
         title: '17. Data Structures: Stacks, Queues, and Linked Lists',
         description: 'Implementation of basic data structures',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -224,6 +241,7 @@ const coursePhases: Phase[] = [
         title: '18. Sorting and Searching Algorithms',
         description: 'Basic algorithm implementation and analysis',
         completed: false,
+        locked: false,
         subtopics: []
       }
     ]
@@ -239,6 +257,7 @@ const coursePhases: Phase[] = [
         title: '19. Basic Regular Expressions',
         description: 'Pattern matching and text processing',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -246,6 +265,7 @@ const coursePhases: Phase[] = [
         title: '20. Debugging and Testing',
         description: 'Writing tests and debugging Python code',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -253,6 +273,7 @@ const coursePhases: Phase[] = [
         title: '21. Introduction to Databases (Optional)',
         description: 'Basic database operations with Python',
         completed: false,
+        locked: false,
         subtopics: []
       }
     ]
@@ -268,6 +289,7 @@ const coursePhases: Phase[] = [
         title: '22. Version Control with Git and GitHub',
         description: 'Basic Git operations and GitHub workflow',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -275,6 +297,7 @@ const coursePhases: Phase[] = [
         title: '23. Building Small Projects',
         description: 'Applying Python concepts to real projects',
         completed: false,
+        locked: false,
         subtopics: []
       }
     ]
@@ -290,6 +313,7 @@ const coursePhases: Phase[] = [
         title: '24. Project-Based Learning',
         description: 'Building comprehensive projects and solving real-world challenges',
         completed: false,
+        locked: false,
         subtopics: []
       },
       {
@@ -297,6 +321,7 @@ const coursePhases: Phase[] = [
         title: '25. Explore Specialized Libraries and Fields',
         description: 'Introduction to data science (NumPy, Pandas), web development (Django, Flask), automation (Selenium, PyAutoGUI), and functional programming (lambda, map, filter, reduce)',
         completed: false,
+        locked: false,
         subtopics: []
       }
     ]
@@ -316,15 +341,23 @@ const PythonFundamentals = () => {
     setSparklePhase(phaseId);
     setTimeout(() => setSparklePhase(null), 500);
     setFlippedPhase(flippedPhase === phaseId ? null : phaseId);
+    // Reset selected topic when changing phases
+    setSelectedTopic(null);
+    setExpandedTopic(null);
   };
 
-  const handleTopicClick = (phaseId: string, topicId: string) => {
+  // Modified to only handle start button click
+  const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setExpandedTopic(expandedTopic === topicId ? null : topicId);
     setSelectedTopic({ phaseId, topicId });
   };
 
   const handlePhaseClick = (index: number) => {
     setCurrentPhaseIndex(index);
+    // Reset selected topic when changing phases
+    setSelectedTopic(null);
+    setExpandedTopic(null);
     
     if (phasesContainerRef.current) {
       const container = phasesContainerRef.current;
@@ -422,7 +455,7 @@ const PythonFundamentals = () => {
                           className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none"
                         >
                           {sparklePhase === phase.id ? (
-                            <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '0.5s' }} />
+                            <Target className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '0.5s' }} />
                           ) : (
                             <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors duration-150" />
                           )}
@@ -442,24 +475,20 @@ const PythonFundamentals = () => {
                           animate={{ opacity: 1, x: 0 }}
                           className="backdrop-blur-xl bg-white/10 rounded-xl p-4 border border-white/20"
                         >
-                          <div 
-                            className="flex items-center justify-between cursor-pointer"
-                            onClick={() => handleTopicClick(phase.id, topic.id)}
-                          >
+                          <div className="flex items-center justify-between">
                             <div>
                               <h4 className="font-bold mb-1">{topic.title}</h4>
                               <p className="text-sm text-gray-400">{topic.description}</p>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center gap-2 text-sm"
-                              >
-                                <Play className="w-4 h-4" />
-                                Start
-                              </motion.button>
-                            </div>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={(e) => handleTopicStart(phase.id, topic.id, e)}
+                              className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
+                            >
+                              <Play className="w-4 h-4" />
+                              <span>Start</span>
+                            </motion.button>
                           </div>
                         </motion.div>
                       ))}
@@ -509,7 +538,7 @@ const PythonFundamentals = () => {
                     exit={{ height: 0, opacity: 0 }}
                     className="space-y-2"
                   >
-                    {selectedPhaseAndTopic.topic.subtopics.map((subtopic) => (
+                    {selectedPhaseAndTopic.topic.subtopics?.map((subtopic) => (
                       <motion.div
                         key={subtopic.id}
                         initial={{ x: -20, opacity: 0 }}
