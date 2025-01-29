@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Play, ChevronDown, ChevronUp, Sparkles, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
 
@@ -459,11 +459,6 @@ const PythonFundamentals = () => {
                                 <Play className="w-4 h-4" />
                                 Start
                               </motion.button>
-                              {expandedTopic === topic.id ? (
-                                <ChevronUp className="w-5 h-5" />
-                              ) : (
-                                <ChevronDown className="w-5 h-5" />
-                              )}
                             </div>
                           </div>
                         </motion.div>
@@ -492,27 +487,56 @@ const PythonFundamentals = () => {
               exit={{ opacity: 0, y: 20 }}
               className="space-y-4 mt-8"
             >
-              <h3 className="text-xl font-bold mb-4">{selectedPhaseAndTopic.topic.title} Subtopics</h3>
-              <div className="space-y-2">
-                {selectedPhaseAndTopic.topic.subtopics.map((subtopic) => (
-                  <motion.div
-                    key={subtopic.id}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg backdrop-blur-xl border border-white/10"
-                  >
-                    <span className="text-sm">{subtopic.title}</span>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
-                    >
-                      <Play className="w-3 h-3" />
-                      Start
-                    </motion.button>
-                  </motion.div>
-                ))}
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold">{selectedPhaseAndTopic.topic.title} Subtopics</h3>
+                <button 
+                  onClick={() => setSelectedTopic(null)}
+                  className="flex items-center gap-2"
+                >
+                  {expandedTopic === selectedPhaseAndTopic.topic.id ? (
+                    <ChevronUp className="w-5 h-5" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5" />
+                  )}
+                </button>
               </div>
+
+              <AnimatePresence>
+                {expandedTopic === selectedPhaseAndTopic.topic.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="space-y-2"
+                  >
+                    {selectedPhaseAndTopic.topic.subtopics.map((subtopic) => (
+                      <motion.div
+                        key={subtopic.id}
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="flex items-center justify-between p-3 bg-white/5 rounded-lg backdrop-blur-xl border border-white/10"
+                      >
+                        <div className="flex items-center gap-3">
+                          {subtopic.completed ? (
+                            <CheckCircle className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <div className="w-4 h-4 rounded-full border border-gray-500" />
+                          )}
+                          <span className="text-sm">{subtopic.title}</span>
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
+                        >
+                          <Play className="w-3 h-3" />
+                          Start
+                        </motion.button>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>
