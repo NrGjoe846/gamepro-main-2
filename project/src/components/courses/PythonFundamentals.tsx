@@ -250,7 +250,6 @@ const PythonFundamentals = () => {
   const handlePhaseClick = (index: number) => {
     setCurrentPhaseIndex(index);
     
-    // Scroll the clicked phase to the center
     if (phasesContainerRef.current) {
       const container = phasesContainerRef.current;
       const phaseElement = container.children[index] as HTMLElement;
@@ -382,5 +381,3 @@ const PythonFundamentals = () => {
 };
 
 export default PythonFundamentals;
-
-export default PythonFundamentals
