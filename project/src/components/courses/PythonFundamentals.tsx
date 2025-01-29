@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
+import GlowingButton from '../ui/GlowingButton';
 
 interface Topic {
   id: string;
@@ -414,12 +415,13 @@ const PythonFundamentals = () => {
     e.stopPropagation();
     setSparklePhase(phaseId);
     
-    const sparkles = Array.from({ length: 5 }).map((_, i) => {
+    const sparkles = Array.from({ length: 8 }).map((_, i) => {
       const sparkle = document.createElement('div');
       sparkle.className = 'absolute w-2 h-2 bg-blue-400 rounded-full';
       sparkle.style.left = `${Math.random() * 100}%`;
       sparkle.style.top = `${Math.random() * 100}%`;
-      sparkle.style.animation = `sparkle 1s ease-in-out ${i * 0.1}s`;
+      sparkle.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
+      sparkle.style.animation = `sparkle ${Math.random() * 0.5 + 0.5}s ease-in-out ${i * 0.1}s`;
       return sparkle;
     });
 
@@ -435,6 +437,11 @@ const PythonFundamentals = () => {
     if (flippedPhase !== phaseId) {
       setFlippedPhase(phaseId);
     }
+  };
+
+  const handleFlipBack = (phaseId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFlippedPhase(null);
   };
 
   const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
@@ -469,8 +476,12 @@ const PythonFundamentals = () => {
               transform: scale(0) rotate(0deg);
               opacity: 1;
             }
+            50% {
+              transform: scale(1.5) rotate(180deg);
+              opacity: 0.8;
+            }
             100% {
-              transform: scale(1) rotate(180deg);
+              transform: scale(0) rotate(360deg);
               opacity: 0;
             }
           }
@@ -602,25 +613,24 @@ const PythonFundamentals = () => {
                               <h4 className="font-bold mb-1">{topic.title}</h4>
                               <p className="text-sm text-gray-400">{topic.description}</p>
                             </div>
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
+                            <GlowingButton
                               onClick={(e) => handleTopicStart(phase.id, topic.id, e)}
-                              className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
+                              className="text-sm font-medium"
                             >
                               <Play className="w-4 h-4" />
                               <span>Start</span>
-                            </motion.button>
+                            </GlowingButton>
                           </div>
                         </motion.div>
                       ))}
                       <motion.button
+                        onClick={(e) => handleFlipBack(phase.id, e)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={(e) => handlePhaseStart(phase.id, e)}
-                        className="w-full mt-4 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2"
+                        className="w-full mt-4 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 relative overflow-hidden group"
                       >
-                        Flip back
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <span className="relative z-10">Flip back</span>
                       </motion.button>
                     </div>
                   </div>
