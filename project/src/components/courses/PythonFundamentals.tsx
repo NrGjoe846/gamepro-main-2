@@ -38,19 +38,17 @@ const coursePhases: Phase[] = [
         title: 'Operators and Expressions',
         description: 'Understanding Python operators and expressions',
         completed: false
-      }
-    ]
-  },
-  {
-    id: 'phase-2',
-    title: 'Control Flow',
-    description: 'Learn how to control program flow with conditions and loops',
-    icon: '🔄',
-    topics: [
+      },
       {
-        id: 'conditionals',
-        title: 'Conditional Statements',
-        description: 'Master if, elif, and else statements',
+        id: 'input-output',
+        title: 'Input and Output',
+        description: 'Working with user input and output in Python',
+        completed: false
+      },
+      {
+        id: 'control-flow',
+        title: 'Control Flow Statements',
+        description: 'Master if statements and conditional logic',
         completed: false
       },
       {
@@ -58,105 +56,179 @@ const coursePhases: Phase[] = [
         title: 'Loops and Iterations',
         description: 'Understanding for and while loops',
         completed: false
+      },
+      {
+        id: 'basic-functions',
+        title: 'Basic Functions',
+        description: 'Introduction to functions and parameters',
+        completed: false
+      }
+    ]
+  },
+  {
+    id: 'phase-2',
+    title: 'Data Collections',
+    description: 'Learn how to work with Python data collections',
+    icon: '📚',
+    topics: [
+      {
+        id: 'lists',
+        title: 'Lists and Arrays',
+        description: 'Working with lists and array operations',
+        completed: false
+      },
+      {
+        id: 'tuples',
+        title: 'Tuples',
+        description: 'Understanding immutable sequences',
+        completed: false
+      },
+      {
+        id: 'dictionaries',
+        title: 'Dictionaries',
+        description: 'Key-value pair data structures',
+        completed: false
+      },
+      {
+        id: 'sets',
+        title: 'Sets',
+        description: 'Working with unique collections',
+        completed: false
+      },
+      {
+        id: 'comprehensions',
+        title: 'List Comprehensions',
+        description: 'Advanced list creation techniques',
+        completed: false
       }
     ]
   },
   {
     id: 'phase-3',
-    title: 'Functions',
-    description: 'Learn to write reusable code with functions',
+    title: 'Functions and Modules',
+    description: 'Master functions and modular programming',
     icon: '⚡',
     topics: [
       {
-        id: 'functions-basics',
-        title: 'Function Basics',
-        description: 'Creating and calling functions',
+        id: 'advanced-functions',
+        title: 'Advanced Functions',
+        description: 'Lambda functions and closures',
         completed: false
       },
       {
-        id: 'advanced-functions',
-        title: 'Advanced Functions',
-        description: 'Lambda functions and decorators',
+        id: 'recursion',
+        title: 'Recursion',
+        description: 'Understanding recursive functions',
+        completed: false
+      },
+      {
+        id: 'modules',
+        title: 'Python Modules',
+        description: 'Creating and using modules',
+        completed: false
+      },
+      {
+        id: 'packages',
+        title: 'Packages',
+        description: 'Working with Python packages',
+        completed: false
+      },
+      {
+        id: 'decorators',
+        title: 'Decorators',
+        description: 'Function and class decorators',
         completed: false
       }
     ]
   },
   {
     id: 'phase-4',
-    title: 'Data Structures',
-    description: 'Master Python data structures',
-    icon: '📊',
+    title: 'File Handling and Exceptions',
+    description: 'Learn file operations and error handling',
+    icon: '📁',
     topics: [
       {
-        id: 'lists',
-        title: 'Lists and Tuples',
-        description: 'Working with sequences in Python',
+        id: 'file-operations',
+        title: 'File Operations',
+        description: 'Reading and writing files',
         completed: false
       },
       {
-        id: 'dictionaries',
-        title: 'Dictionaries and Sets',
-        description: 'Hash-based collections in Python',
+        id: 'exception-handling',
+        title: 'Exception Handling',
+        description: 'Try-except blocks and error handling',
         completed: false
       }
     ]
   },
   {
     id: 'phase-5',
-    title: 'OOP Concepts',
-    description: 'Learn object-oriented programming in Python',
+    title: 'Object-Oriented Programming',
+    description: 'Master object-oriented programming in Python',
     icon: '🎯',
     topics: [
       {
-        id: 'classes',
+        id: 'classes-objects',
         title: 'Classes and Objects',
         description: 'Creating classes and objects',
         completed: false
       },
       {
         id: 'inheritance',
-        title: 'Inheritance and Polymorphism',
-        description: 'OOP inheritance concepts',
+        title: 'Inheritance',
+        description: 'Class inheritance and polymorphism',
+        completed: false
+      },
+      {
+        id: 'encapsulation',
+        title: 'Encapsulation',
+        description: 'Data hiding and access control',
+        completed: false
+      },
+      {
+        id: 'polymorphism',
+        title: 'Polymorphism',
+        description: 'Method overriding and duck typing',
         completed: false
       }
     ]
   },
   {
     id: 'phase-6',
-    title: 'File Handling',
-    description: 'Master file operations and error handling',
-    icon: '📁',
-    topics: [
-      {
-        id: 'file-ops',
-        title: 'File Operations',
-        description: 'Reading and writing files',
-        completed: false
-      },
-      {
-        id: 'error-handling',
-        title: 'Error Handling',
-        description: 'Try-except blocks and exceptions',
-        completed: false
-      }
-    ]
-  },
-  {
-    id: 'phase-7',
-    title: 'Advanced Python',
+    title: 'Advanced Python Concepts',
     description: 'Explore advanced Python features',
     icon: '🎓',
     topics: [
       {
         id: 'generators',
         title: 'Generators and Iterators',
-        description: 'Advanced iteration concepts',
+        description: 'Creating custom iterators and generators',
         completed: false
       },
       {
-        id: 'async',
-        title: 'Asynchronous Programming',
-        description: 'Async/await and coroutines',
+        id: 'context-managers',
+        title: 'Context Managers',
+        description: 'Using with statements and creating context managers',
+        completed: false
+      }
+    ]
+  },
+  {
+    id: 'phase-7',
+    title: 'Python Libraries and Tools',
+    description: 'Learn essential Python libraries and development tools',
+    icon: '🛠️',
+    topics: [
+      {
+        id: 'standard-library',
+        title: 'Standard Library',
+        description: 'Essential built-in Python modules',
+        completed: false
+      },
+      {
+        id: 'virtual-environments',
+        title: 'Virtual Environments',
+        description: 'Managing project dependencies',
         completed: false
       }
     ]
@@ -310,3 +382,5 @@ const PythonFundamentals = () => {
 };
 
 export default PythonFundamentals;
+
+export default PythonFundamentals
