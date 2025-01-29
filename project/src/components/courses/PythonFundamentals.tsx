@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, ChevronDown, ChevronUp, Target, AlertCircle, CheckCircle } from 'lucide-react';
+import { 
+  Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, 
+  AlertCircle, ChevronLeft, ChevronRight 
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
 
@@ -335,26 +338,67 @@ const PythonFundamentals = () => {
   const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<{ phaseId: string; topicId: string } | null>(null);
   const phasesContainerRef = useRef<HTMLDivElement>(null);
+  const subtopicsRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
-  const handlePhaseClick = (index: number) => {
-    // Reset any flipped card when changing phases
-    setFlippedPhase(null);
-    setCurrentPhaseIndex(index);
-    setSelectedTopic(null);
-    setExpandedTopic(null);
-    
+  useEffect(() => {
+    scrollToCurrentPhase();
+  }, [currentPhaseIndex]);
+
+  const scrollToCurrentPhase = () => {
     if (phasesContainerRef.current) {
       const container = phasesContainerRef.current;
-      const phaseElement = container.children[index] as HTMLElement;
+      const phaseElement = container.children[currentPhaseIndex] as HTMLElement;
       const containerWidth = container.offsetWidth;
       const phaseWidth = phaseElement.offsetWidth;
-      const scrollLeft = phaseElement.offsetLeft - (containerWidth / 2) + (phaseWidth / 2);
+      const newScrollLeft = phaseElement.offsetLeft - (containerWidth / 2) + (phaseWidth / 2);
       
       container.scrollTo({
-        left: scrollLeft,
+        left: newScrollLeft,
         behavior: 'smooth'
       });
     }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.pageX - phasesContainerRef.current!.offsetLeft);
+    setScrollLeft(phasesContainerRef.current!.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - phasesContainerRef.current!.offsetLeft;
+    const walk = (x - startX) * 2;
+    phasesContainerRef.current!.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    if (phasesContainerRef.current) {
+      const container = phasesContainerRef.current;
+      const phaseWidth = container.children[0].clientWidth;
+      const scrollPosition = container.scrollLeft;
+      const newIndex = Math.round(scrollPosition / phaseWidth);
+      setCurrentPhaseIndex(Math.max(0, Math.min(newIndex, coursePhases.length - 1)));
+    }
+  };
+
+  const handlePrevPhase = () => {
+    setCurrentPhaseIndex(prev => Math.max(0, prev - 1));
+  };
+
+  const handleNextPhase = () => {
+    setCurrentPhaseIndex(prev => Math.min(coursePhases.length - 1, prev + 1));
+  };
+
+  const handlePhaseClick = (index: number) => {
+    setCurrentPhaseIndex(index);
+    setSelectedTopic(null);
+    setExpandedTopic(null);
   };
 
   const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
@@ -362,28 +406,24 @@ const PythonFundamentals = () => {
     setSparklePhase(phaseId);
     setTimeout(() => setSparklePhase(null), 500);
     
-    // Reset any previously flipped card before flipping the new one
-    if (flippedPhase && flippedPhase !== phaseId) {
-      setFlippedPhase(null);
-      // Add a small delay before flipping the new card
-      setTimeout(() => {
-        setFlippedPhase(phaseId);
-      }, 150);
-    } else {
-      setFlippedPhase(flippedPhase === phaseId ? null : phaseId);
+    if (flippedPhase !== phaseId) {
+      setFlippedPhase(phaseId);
     }
   };
 
   const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Only update the topic state without affecting the phase card flip
     if (selectedTopic?.topicId === topicId) {
       setExpandedTopic(null);
       setSelectedTopic(null);
     } else {
       setExpandedTopic(topicId);
       setSelectedTopic({ phaseId, topicId });
+
+      setTimeout(() => {
+        subtopicsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }
   };
 
@@ -395,7 +435,7 @@ const PythonFundamentals = () => {
   } : null;
 
   return (
-    <div className="min-h-screen bg-[#0A1628] bg-gradient-to-b from-[#0A1628] to-[#1A2B44] text-white p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
       <div className="max-w-full mx-auto">
         <div className="mb-8">
           <BackButton />
@@ -414,11 +454,35 @@ const PythonFundamentals = () => {
           </motion.div>
         </div>
 
-        <div className="relative mb-12 overflow-hidden">
+        <div className="relative mb-12">
+          <button
+            onClick={handlePrevPhase}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full backdrop-blur-sm transition-opacity duration-300 ${
+              currentPhaseIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'opacity-100 hover:bg-black/70'
+            }`}
+            disabled={currentPhaseIndex === 0}
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          <button
+            onClick={handleNextPhase}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full backdrop-blur-sm transition-opacity duration-300 ${
+              currentPhaseIndex === coursePhases.length - 1 ? 'opacity-50 cursor-not-allowed' : 'opacity-100 hover:bg-black/70'
+            }`}
+            disabled={currentPhaseIndex === coursePhases.length - 1}
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
           <div 
             ref={phasesContainerRef}
             className="flex gap-6 overflow-x-auto px-4 py-2 no-scrollbar touch-pan-x"
             style={{ scrollSnapType: 'x mandatory' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
           >
             {coursePhases.map((phase, index) => (
               <motion.div
@@ -428,7 +492,7 @@ const PythonFundamentals = () => {
                   scale: index === currentPhaseIndex ? 1 : 0.8,
                   opacity: index === currentPhaseIndex ? 1 : 0.6,
                 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
                 whileHover={{ 
                   scale: index === currentPhaseIndex ? 1.02 : 0.85,
                   transition: { duration: 0.15 }
@@ -469,7 +533,7 @@ const PythonFundamentals = () => {
                           className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none"
                         >
                           {sparklePhase === phase.id ? (
-                            <Target className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '0.5s' }} />
+                            <AlertCircle className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '0.5s' }} />
                           ) : (
                             <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors duration-150" />
                           )}
@@ -520,11 +584,26 @@ const PythonFundamentals = () => {
               </motion.div>
             ))}
           </div>
+
+          <div className="flex justify-center gap-2 mt-4">
+            {coursePhases.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPhaseIndex(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index === currentPhaseIndex 
+                    ? 'w-8 bg-blue-500' 
+                    : 'bg-white/20 hover:bg-white/40'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         <AnimatePresence>
           {selectedPhaseAndTopic && selectedPhaseAndTopic.topic && (
             <motion.div
+              ref={subtopicsRef}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
