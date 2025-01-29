@@ -342,6 +342,8 @@ const PythonFundamentals = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const dragThreshold = 5;
+  const [dragDistance, setDragDistance] = useState(0);
 
   useEffect(() => {
     scrollToCurrentPhase();
@@ -363,22 +365,27 @@ const PythonFundamentals = () => {
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (!phasesContainerRef.current) return;
     setIsDragging(true);
-    setStartX(e.pageX - phasesContainerRef.current!.offsetLeft);
-    setScrollLeft(phasesContainerRef.current!.scrollLeft);
+    setStartX(e.pageX - phasesContainerRef.current.offsetLeft);
+    setScrollLeft(phasesContainerRef.current.scrollLeft);
+    setDragDistance(0);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || !phasesContainerRef.current) return;
     e.preventDefault();
-    const x = e.pageX - phasesContainerRef.current!.offsetLeft;
+    const x = e.pageX - phasesContainerRef.current.offsetLeft;
     const walk = (x - startX) * 2;
-    phasesContainerRef.current!.scrollLeft = scrollLeft - walk;
+    phasesContainerRef.current.scrollLeft = scrollLeft - walk;
+    setDragDistance(Math.abs(walk));
   };
 
   const handleMouseUp = () => {
+    if (!isDragging || !phasesContainerRef.current) return;
     setIsDragging(false);
-    if (phasesContainerRef.current) {
+    
+    if (dragDistance > dragThreshold) {
       const container = phasesContainerRef.current;
       const phaseWidth = container.children[0].clientWidth;
       const scrollPosition = container.scrollLeft;
@@ -396,14 +403,33 @@ const PythonFundamentals = () => {
   };
 
   const handlePhaseClick = (index: number) => {
-    setCurrentPhaseIndex(index);
-    setSelectedTopic(null);
-    setExpandedTopic(null);
+    if (dragDistance <= dragThreshold) {
+      setCurrentPhaseIndex(index);
+      setSelectedTopic(null);
+      setExpandedTopic(null);
+    }
   };
 
   const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setSparklePhase(phaseId);
+    
+    const sparkles = Array.from({ length: 5 }).map((_, i) => {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'absolute w-2 h-2 bg-blue-400 rounded-full';
+      sparkle.style.left = `${Math.random() * 100}%`;
+      sparkle.style.top = `${Math.random() * 100}%`;
+      sparkle.style.animation = `sparkle 1s ease-in-out ${i * 0.1}s`;
+      return sparkle;
+    });
+
+    const target = e.currentTarget as HTMLElement;
+    sparkles.forEach(sparkle => target.appendChild(sparkle));
+
+    setTimeout(() => {
+      sparkles.forEach(sparkle => sparkle.remove());
+    }, 1000);
+
     setTimeout(() => setSparklePhase(null), 500);
     
     if (flippedPhase !== phaseId) {
@@ -436,6 +462,21 @@ const PythonFundamentals = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
+      <style>
+        {`
+          @keyframes sparkle {
+            0% {
+              transform: scale(0) rotate(0deg);
+              opacity: 1;
+            }
+            100% {
+              transform: scale(1) rotate(180deg);
+              opacity: 0;
+            }
+          }
+        `}
+      </style>
+      
       <div className="max-w-full mx-auto">
         <div className="mb-8">
           <BackButton />
@@ -530,12 +571,15 @@ const PythonFundamentals = () => {
                           onClick={(e) => handlePhaseStart(phase.id, e)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none"
+                          className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none relative overflow-hidden"
                         >
                           {sparklePhase === phase.id ? (
                             <AlertCircle className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '0.5s' }} />
                           ) : (
-                            <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors duration-150" />
+                            <div className="relative">
+                              <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors duration-150" />
+                              <div className="absolute inset-0 bg-blue-400/20 rounded-full filter blur-sm transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </div>
                           )}
                           Flip to see topics
                         </motion.button>
