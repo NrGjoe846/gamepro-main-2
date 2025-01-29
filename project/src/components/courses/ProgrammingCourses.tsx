@@ -124,11 +124,11 @@ const ProgrammingCourses = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map((course) => (
-          <div key={course.id} className="group relative">
+          <div key={course.id} className="group relative h-[600px]"> {/* Fixed height for all cards */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
-            <div className="relative backdrop-blur-md bg-white/10 rounded-xl border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-300">
+            <div className="relative backdrop-blur-md bg-white/10 rounded-xl border border-white/10 overflow-hidden hover:border-white/20 transition-all duration-300 h-full flex flex-col">
               {/* Course Header */}
-              <div className="p-6">
+              <div className="p-6 flex-1"> {/* Added flex-1 to allow content to fill space */}
                 <div className="flex items-center justify-between mb-4">
                   <span className={`px-3 py-1 rounded-full text-sm ${
                     course.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
@@ -188,8 +188,10 @@ const ProgrammingCourses = () => {
                     </div>
                   ))}
                 </div>
+              </div>
 
-                {/* Course Footer */}
+              {/* Course Footer */}
+              <div className="p-6 border-t border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Star className="w-5 h-5 text-yellow-400" />
