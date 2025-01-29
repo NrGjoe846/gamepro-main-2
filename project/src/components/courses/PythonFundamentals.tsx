@@ -158,12 +158,6 @@ const coursePhases: Phase[] = [
         title: '18. Sorting and Searching Algorithms',
         description: 'Basic algorithm implementation and analysis',
         completed: false
-      },
-      {
-        id: 'functional',
-        title: '19. Lambda Functions and Map, Filter, Reduce',
-        description: 'Functional programming concepts in Python',
-        completed: false
       }
     ]
   },
@@ -175,19 +169,19 @@ const coursePhases: Phase[] = [
     topics: [
       {
         id: 'regex',
-        title: '20. Basic Regular Expressions',
+        title: '19. Basic Regular Expressions',
         description: 'Pattern matching and text processing',
         completed: false
       },
       {
         id: 'testing',
-        title: '21. Debugging and Testing',
+        title: '20. Debugging and Testing',
         description: 'Writing tests and debugging Python code',
         completed: false
       },
       {
         id: 'databases',
-        title: '22. Introduction to Databases (Optional)',
+        title: '21. Introduction to Databases (Optional)',
         description: 'Basic database operations with Python',
         completed: false
       }
@@ -201,13 +195,13 @@ const coursePhases: Phase[] = [
     topics: [
       {
         id: 'git',
-        title: '23. Version Control with Git and GitHub',
+        title: '22. Version Control with Git and GitHub',
         description: 'Basic Git operations and GitHub workflow',
         completed: false
       },
       {
         id: 'projects',
-        title: '24. Building Small Projects',
+        title: '23. Building Small Projects',
         description: 'Applying Python concepts to real projects',
         completed: false
       }
@@ -220,9 +214,15 @@ const coursePhases: Phase[] = [
     icon: '🎓',
     topics: [
       {
-        id: 'practice',
-        title: '25. Project-Based Learning',
-        description: 'Building comprehensive projects and solving challenges',
+        id: 'project-learning',
+        title: '24. Project-Based Learning',
+        description: 'Building comprehensive projects and solving real-world challenges',
+        completed: false
+      },
+      {
+        id: 'specialized-libraries',
+        title: '25. Explore Specialized Libraries and Fields',
+        description: 'Introduction to data science (NumPy, Pandas), web development (Django, Flask), automation (Selenium, PyAutoGUI), and functional programming (lambda, map, filter, reduce)',
         completed: false
       }
     ]
