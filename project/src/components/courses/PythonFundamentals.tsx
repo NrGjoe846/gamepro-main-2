@@ -1,9 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { Book, Code, Play, ArrowLeft, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
-import { useSpring, animated } from 'react-spring';
 
 interface Subtopic {
   id: string;
@@ -310,6 +308,7 @@ const PythonFundamentals = () => {
   const [flippedPhase, setFlippedPhase] = useState<string | null>(null);
   const [sparklePhase, setSparklePhase] = useState<string | null>(null);
   const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<{ phaseId: string; topicId: string } | null>(null);
   const phasesContainerRef = useRef<HTMLDivElement>(null);
 
   const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
@@ -319,8 +318,9 @@ const PythonFundamentals = () => {
     setFlippedPhase(flippedPhase === phaseId ? null : phaseId);
   };
 
-  const handleTopicClick = (topicId: string) => {
+  const handleTopicClick = (phaseId: string, topicId: string) => {
     setExpandedTopic(expandedTopic === topicId ? null : topicId);
+    setSelectedTopic({ phaseId, topicId });
   };
 
   const handlePhaseClick = (index: number) => {
@@ -339,6 +339,13 @@ const PythonFundamentals = () => {
       });
     }
   };
+
+  const selectedPhaseAndTopic = selectedTopic ? {
+    phase: coursePhases.find(p => p.id === selectedTopic.phaseId),
+    topic: coursePhases
+      .find(p => p.id === selectedTopic.phaseId)
+      ?.topics.find(t => t.id === selectedTopic.topicId)
+  } : null;
 
   return (
     <div className="min-h-screen bg-[#0A1628] bg-gradient-to-b from-[#0A1628] to-[#1A2B44] text-white p-4 md:p-8">
@@ -374,10 +381,7 @@ const PythonFundamentals = () => {
                   scale: index === currentPhaseIndex ? 1 : 0.8,
                   opacity: index === currentPhaseIndex ? 1 : 0.6,
                 }}
-                transition={{ 
-                  duration: 0.2,
-                  ease: "easeOut"
-                }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
                 whileHover={{ 
                   scale: index === currentPhaseIndex ? 1.02 : 0.85,
                   transition: { duration: 0.15 }
@@ -386,7 +390,7 @@ const PythonFundamentals = () => {
                   scale: index === currentPhaseIndex ? 0.98 : 0.8,
                   transition: { duration: 0.1 }
                 }}
-                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none perspective-1000
+                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none
                   ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
                 onClick={() => handlePhaseClick(index)}
                 style={{ scrollSnapAlign: 'center' }}
@@ -413,14 +417,8 @@ const PythonFundamentals = () => {
                       {index === currentPhaseIndex && (
                         <motion.button
                           onClick={(e) => handlePhaseStart(phase.id, e)}
-                          whileHover={{ 
-                            scale: 1.05,
-                            transition: { duration: 0.15 }
-                          }}
-                          whileTap={{ 
-                            scale: 0.95,
-                            transition: { duration: 0.1 }
-                          }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none"
                         >
                           {sparklePhase === phase.id ? (
@@ -446,7 +444,7 @@ const PythonFundamentals = () => {
                         >
                           <div 
                             className="flex items-center justify-between cursor-pointer"
-                            onClick={() => handleTopicClick(topic.id)}
+                            onClick={() => handleTopicClick(phase.id, topic.id)}
                           >
                             <div>
                               <h4 className="font-bold mb-1">{topic.title}</h4>
@@ -468,36 +466,6 @@ const PythonFundamentals = () => {
                               )}
                             </div>
                           </div>
-
-                          <AnimatePresence>
-                            {expandedTopic === topic.id && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="mt-4 space-y-2 overflow-hidden"
-                              >
-                                {topic.subtopics.map((subtopic) => (
-                                  <motion.div
-                                    key={subtopic.id}
-                                    initial={{ x: -20, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-                                  >
-                                    <span className="text-sm">{subtopic.title}</span>
-                                    <motion.button
-                                      whileHover={{ scale: 1.05 }}
-                                      whileTap={{ scale: 0.95 }}
-                                      className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
-                                    >
-                                      <Play className="w-3 h-3" />
-                                      Start
-                                    </motion.button>
-                                  </motion.div>
-                                ))}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
                         </motion.div>
                       ))}
                       <motion.button
@@ -515,6 +483,39 @@ const PythonFundamentals = () => {
             ))}
           </div>
         </div>
+
+        <AnimatePresence>
+          {selectedPhaseAndTopic && selectedPhaseAndTopic.topic && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="space-y-4 mt-8"
+            >
+              <h3 className="text-xl font-bold mb-4">{selectedPhaseAndTopic.topic.title} Subtopics</h3>
+              <div className="space-y-2">
+                {selectedPhaseAndTopic.topic.subtopics.map((subtopic) => (
+                  <motion.div
+                    key={subtopic.id}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg backdrop-blur-xl border border-white/10"
+                  >
+                    <span className="text-sm">{subtopic.title}</span>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
+                    >
+                      <Play className="w-3 h-3" />
+                      Start
+                    </motion.button>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
