@@ -231,14 +231,15 @@ const coursePhases: Phase[] = [
 
 const PythonFundamentals = () => {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
-  const [expandedPhase, setExpandedPhase] = useState<string | null>(null);
+  const [flippedPhase, setFlippedPhase] = useState<string | null>(null);
   const [sparklePhase, setSparklePhase] = useState<string | null>(null);
   const phasesContainerRef = useRef<HTMLDivElement>(null);
 
-  const handlePhaseStart = (phaseId: string) => {
+  const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSparklePhase(phaseId);
     setTimeout(() => setSparklePhase(null), 1000);
-    setExpandedPhase(expandedPhase === phaseId ? null : phaseId);
+    setFlippedPhase(flippedPhase === phaseId ? null : phaseId);
   };
 
   const handlePhaseClick = (index: number) => {
@@ -296,79 +297,90 @@ const PythonFundamentals = () => {
                 }}
                 whileHover={{ scale: index === currentPhaseIndex ? 1.05 : 0.85 }}
                 whileTap={{ scale: index === currentPhaseIndex ? 0.95 : 0.8 }}
-                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none
+                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none perspective-1000
                   ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
                 onClick={() => handlePhaseClick(index)}
                 style={{ scrollSnapAlign: 'center' }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-                
-                <div className="relative h-full p-6 flex flex-col">
-                  <div className="text-4xl mb-4 select-none">{phase.icon}</div>
-                  <h3 className="text-xl font-bold mb-2 select-none">{phase.title}</h3>
-                  <p className="text-sm text-gray-400 mb-4 select-none">{phase.description}</p>
-                  
-                  {index === currentPhaseIndex && (
-                    <motion.button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePhaseStart(phase.id);
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none"
-                    >
-                      {sparklePhase === phase.id ? (
-                        <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" />
-                      ) : (
-                        <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
+                <motion.div
+                  className="relative w-full h-full transition-all duration-500 preserve-3d"
+                  animate={{ rotateY: flippedPhase === phase.id ? 180 : 0 }}
+                >
+                  {/* Front of Card */}
+                  <div className="absolute inset-0 backface-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
+                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                    
+                    <div className="relative h-full p-6 flex flex-col">
+                      <div className="text-4xl mb-4 select-none">{phase.icon}</div>
+                      <h3 className="text-xl font-bold mb-2 select-none">{phase.title}</h3>
+                      <p className="text-sm text-gray-400 mb-4 select-none">{phase.description}</p>
+                      
+                      {index === currentPhaseIndex && (
+                        <motion.button
+                          onClick={(e) => handlePhaseStart(phase.id, e)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none"
+                        >
+                          {sparklePhase === phase.id ? (
+                            <Sparkles className="w-5 h-5 text-yellow-400 animate-spin" />
+                          ) : (
+                            <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors" />
+                          )}
+                          Flip to see topics
+                        </motion.button>
                       )}
-                      Start Phase
-                    </motion.button>
-                  )}
-                </div>
+                    </div>
+                  </div>
+
+                  {/* Back of Card (Topics) */}
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl overflow-y-auto">
+                    <div className="p-6 space-y-4">
+                      <h3 className="text-xl font-bold mb-4">{phase.title} Topics</h3>
+                      {phase.topics.map((topic, topicIndex) => (
+                        <motion.div
+                          key={topic.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: topicIndex * 0.1 }}
+                          className="backdrop-blur-xl bg-blue-500/10 rounded-xl p-4 border border-blue-500/20"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-bold mb-1">{topic.title}</h4>
+                              <p className="text-sm text-gray-400">{topic.description}</p>
+                            </div>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center gap-2 text-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Handle starting the topic
+                              }}
+                            >
+                              <Play className="w-4 h-4" />
+                              Start
+                            </motion.button>
+                          </div>
+                        </motion.div>
+                      ))}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => handlePhaseStart(phase.id, e)}
+                        className="w-full mt-4 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2"
+                      >
+                        Flip back
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
               </motion.div>
             ))}
           </div>
         </div>
-
-        {/* Topics Section */}
-        <AnimatePresence mode="wait">
-          {expandedPhase && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-4 px-4"
-            >
-              {coursePhases[currentPhaseIndex].topics.map((topic, index) => (
-                <motion.div
-                  key={topic.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="backdrop-blur-xl bg-blue-500/10 rounded-xl p-6 border border-blue-500/20"
-                >
-                  <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div>
-                      <h4 className="text-lg font-bold mb-2">{topic.title}</h4>
-                      <p className="text-sm text-gray-400">{topic.description}</p>
-                    </div>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center gap-2"
-                    >
-                      <Play className="w-4 h-4" />
-                      Start
-                    </motion.button>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );
