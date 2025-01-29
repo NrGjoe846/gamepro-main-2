@@ -1,15 +1,22 @@
 import React, { useState, useRef } from 'react';
-import { Book, Code, Play, ArrowLeft, Sparkles } from 'lucide-react';
+import { Book, Code, Play, ArrowLeft, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
 import { useSpring, animated } from 'react-spring';
+
+interface Subtopic {
+  id: string;
+  title: string;
+  completed: boolean;
+}
 
 interface Topic {
   id: string;
   title: string;
   description: string;
   completed: boolean;
+  subtopics: Subtopic[];
 }
 
 interface Phase {
@@ -20,48 +27,98 @@ interface Phase {
   icon: string;
 }
 
+const pythonSubtopics = {
+  'intro': [
+    { id: 'python-install', title: 'Installing Python (Anaconda, PyCharm, or basic Python)', completed: false },
+    { id: 'ide-setup', title: 'Setting up the IDE', completed: false },
+    { id: 'first-program', title: 'Writing your first Python program: print("Hello, World!")', completed: false },
+    { id: 'syntax', title: 'Python syntax, keywords, and comments', completed: false },
+    { id: 'interpreter', title: "Python's interpreter vs. compiled languages", completed: false }
+  ],
+  'data-types': [
+    { id: 'numbers', title: 'Numbers (integers, floats, complex)', completed: false },
+    { id: 'strings', title: 'Strings', completed: false },
+    { id: 'booleans', title: 'Booleans', completed: false },
+    { id: 'type-conversion', title: 'Type conversion (int to float, string to int, etc.)', completed: false },
+    { id: 'variables', title: 'Variable naming conventions and dynamic typing', completed: false }
+  ],
+  'operators': [
+    { id: 'arithmetic', title: 'Arithmetic operators: +, -, /, //, %, *', completed: false },
+    { id: 'comparison', title: 'Comparison operators: ==, !=, >, <, >=, <=', completed: false },
+    { id: 'logical', title: 'Logical operators: and, or, not', completed: false },
+    { id: 'assignment', title: 'Assignment operators: =, +=, -=', completed: false },
+    { id: 'bitwise', title: 'Bitwise operators (optional for beginners)', completed: false }
+  ],
+  'control-flow': [
+    { id: 'conditionals', title: 'Conditionals: if, elif, else', completed: false },
+    { id: 'for-loops', title: 'for loops (with range and iterables)', completed: false },
+    { id: 'while-loops', title: 'while loops', completed: false },
+    { id: 'loop-control', title: 'Loop control statements: break, continue, pass', completed: false },
+    { id: 'nested', title: 'Nested loops and conditionals', completed: false }
+  ],
+  'functions': [
+    { id: 'def-functions', title: 'Defining functions using def', completed: false },
+    { id: 'parameters', title: 'Function parameters and return values', completed: false },
+    { id: 'scope', title: 'Function scope: local vs global variables', completed: false },
+    { id: 'default-params', title: 'Default parameters and keyword arguments', completed: false },
+    { id: 'lambda', title: 'Lambda functions (anonymous functions)', completed: false },
+    { id: 'recursion', title: 'Understanding recursion (optional for beginners)', completed: false }
+  ],
+  'io': [
+    { id: 'input', title: 'User input using input()', completed: false },
+    { id: 'output', title: 'Output formatting using print()', completed: false },
+    { id: 'string-format', title: 'String interpolation (f-strings, % formatting, .format())', completed: false }
+  ]
+};
+
 const coursePhases: Phase[] = [
   {
     id: 'phase-1',
-    title: 'Python Basics and Core Concepts',
+    title: 'Phase 1: Python Basics and Core Concepts',
     description: 'Understanding Python syntax, data types, and fundamental programming concepts',
     icon: '🚀',
     topics: [
       {
         id: 'intro',
-        title: '1. Introduction to Python',
+        title: '1. Introduction to Python Programming',
         description: 'Get started with Python programming language basics',
-        completed: false
+        completed: false,
+        subtopics: pythonSubtopics.intro
       },
       {
         id: 'data-types',
         title: '2. Basic Data Types and Variables',
         description: 'Learn about Python data types and variable declarations',
-        completed: false
+        completed: false,
+        subtopics: pythonSubtopics['data-types']
       },
       {
         id: 'operators',
         title: '3. Operators and Expressions',
         description: 'Master Python operators and expressions',
-        completed: false
+        completed: false,
+        subtopics: pythonSubtopics.operators
       },
       {
         id: 'control-flow',
         title: '4. Control Flow: Conditionals and Loops',
         description: 'Understanding if statements, loops, and control structures',
-        completed: false
+        completed: false,
+        subtopics: pythonSubtopics['control-flow']
       },
       {
         id: 'functions',
         title: '5. Functions and Modular Code',
         description: 'Creating and using functions for modular programming',
-        completed: false
+        completed: false,
+        subtopics: pythonSubtopics.functions
       },
       {
         id: 'io',
         title: '6. Basic Input and Output',
         description: 'Working with input and output operations in Python',
-        completed: false
+        completed: false,
+        subtopics: pythonSubtopics.io
       }
     ]
   },
@@ -75,31 +132,36 @@ const coursePhases: Phase[] = [
         id: 'lists',
         title: '7. Lists',
         description: 'Working with Python lists and array operations',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'tuples',
         title: '8. Tuples',
         description: 'Understanding immutable sequences in Python',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'dictionaries',
         title: '9. Dictionaries',
         description: 'Using key-value pair data structures',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'sets',
         title: '10. Sets',
         description: 'Working with unique collections',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'strings',
         title: '11. String Manipulation',
         description: 'Advanced string operations and manipulation',
-        completed: false
+        completed: false,
+        subtopics: []
       }
     ]
   },
@@ -113,31 +175,36 @@ const coursePhases: Phase[] = [
         id: 'file-handling',
         title: '12. File Handling',
         description: 'Reading and writing files in Python',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'exceptions',
         title: '13. Error and Exception Handling',
         description: 'Managing errors and exceptions in Python',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'oop-basics',
         title: '14. Object-Oriented Programming (OOP) Basics',
         description: 'Introduction to classes and objects',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'modules',
         title: '15. Modules and Packages',
         description: 'Creating and using Python modules and packages',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'libraries',
         title: '16. Working with Libraries',
         description: 'Using Python standard library and external packages',
-        completed: false
+        completed: false,
+        subtopics: []
       }
     ]
   },
@@ -151,13 +218,15 @@ const coursePhases: Phase[] = [
         id: 'data-structures',
         title: '17. Data Structures: Stacks, Queues, and Linked Lists',
         description: 'Implementation of basic data structures',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'algorithms',
         title: '18. Sorting and Searching Algorithms',
         description: 'Basic algorithm implementation and analysis',
-        completed: false
+        completed: false,
+        subtopics: []
       }
     ]
   },
@@ -171,19 +240,22 @@ const coursePhases: Phase[] = [
         id: 'regex',
         title: '19. Basic Regular Expressions',
         description: 'Pattern matching and text processing',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'testing',
         title: '20. Debugging and Testing',
         description: 'Writing tests and debugging Python code',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'databases',
         title: '21. Introduction to Databases (Optional)',
         description: 'Basic database operations with Python',
-        completed: false
+        completed: false,
+        subtopics: []
       }
     ]
   },
@@ -197,13 +269,15 @@ const coursePhases: Phase[] = [
         id: 'git',
         title: '22. Version Control with Git and GitHub',
         description: 'Basic Git operations and GitHub workflow',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'projects',
         title: '23. Building Small Projects',
         description: 'Applying Python concepts to real projects',
-        completed: false
+        completed: false,
+        subtopics: []
       }
     ]
   },
@@ -217,13 +291,15 @@ const coursePhases: Phase[] = [
         id: 'project-learning',
         title: '24. Project-Based Learning',
         description: 'Building comprehensive projects and solving real-world challenges',
-        completed: false
+        completed: false,
+        subtopics: []
       },
       {
         id: 'specialized-libraries',
         title: '25. Explore Specialized Libraries and Fields',
         description: 'Introduction to data science (NumPy, Pandas), web development (Django, Flask), automation (Selenium, PyAutoGUI), and functional programming (lambda, map, filter, reduce)',
-        completed: false
+        completed: false,
+        subtopics: []
       }
     ]
   }
@@ -233,6 +309,7 @@ const PythonFundamentals = () => {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [flippedPhase, setFlippedPhase] = useState<string | null>(null);
   const [sparklePhase, setSparklePhase] = useState<string | null>(null);
+  const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
   const phasesContainerRef = useRef<HTMLDivElement>(null);
 
   const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
@@ -240,6 +317,10 @@ const PythonFundamentals = () => {
     setSparklePhase(phaseId);
     setTimeout(() => setSparklePhase(null), 500);
     setFlippedPhase(flippedPhase === phaseId ? null : phaseId);
+  };
+
+  const handleTopicClick = (topicId: string) => {
+    setExpandedTopic(expandedTopic === topicId ? null : topicId);
   };
 
   const handlePhaseClick = (index: number) => {
@@ -356,34 +437,67 @@ const PythonFundamentals = () => {
                   <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl overflow-y-auto">
                     <div className="p-6 space-y-4">
                       <h3 className="text-xl font-bold mb-4">{phase.title} Topics</h3>
-                      {phase.topics.map((topic, topicIndex) => (
+                      {phase.topics.map((topic) => (
                         <motion.div
                           key={topic.id}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ 
-                            duration: 0.2,
-                            delay: topicIndex * 0.05
-                          }}
-                          className="backdrop-blur-xl bg-blue-500/10 rounded-xl p-4 border border-blue-500/20 mb-3"
+                          className="backdrop-blur-xl bg-white/10 rounded-xl p-4 border border-white/20"
                         >
-                          <div className="flex items-center justify-between">
+                          <div 
+                            className="flex items-center justify-between cursor-pointer"
+                            onClick={() => handleTopicClick(topic.id)}
+                          >
                             <div>
                               <h4 className="font-bold mb-1">{topic.title}</h4>
                               <p className="text-sm text-gray-400">{topic.description}</p>
                             </div>
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center gap-2 text-sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                            >
-                              <Play className="w-4 h-4" />
-                              Start
-                            </motion.button>
+                            <div className="flex items-center gap-2">
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center gap-2 text-sm"
+                              >
+                                <Play className="w-4 h-4" />
+                                Start
+                              </motion.button>
+                              {expandedTopic === topic.id ? (
+                                <ChevronUp className="w-5 h-5" />
+                              ) : (
+                                <ChevronDown className="w-5 h-5" />
+                              )}
+                            </div>
                           </div>
+
+                          <AnimatePresence>
+                            {expandedTopic === topic.id && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="mt-4 space-y-2 overflow-hidden"
+                              >
+                                {topic.subtopics.map((subtopic) => (
+                                  <motion.div
+                                    key={subtopic.id}
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                                  >
+                                    <span className="text-sm">{subtopic.title}</span>
+                                    <motion.button
+                                      whileHover={{ scale: 1.05 }}
+                                      whileTap={{ scale: 0.95 }}
+                                      className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
+                                    >
+                                      <Play className="w-3 h-3" />
+                                      Start
+                                    </motion.button>
+                                  </motion.div>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </motion.div>
                       ))}
                       <motion.button
