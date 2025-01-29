@@ -336,26 +336,10 @@ const PythonFundamentals = () => {
   const [selectedTopic, setSelectedTopic] = useState<{ phaseId: string; topicId: string } | null>(null);
   const phasesContainerRef = useRef<HTMLDivElement>(null);
 
-  const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSparklePhase(phaseId);
-    setTimeout(() => setSparklePhase(null), 500);
-    setFlippedPhase(flippedPhase === phaseId ? null : phaseId);
-    // Reset selected topic when changing phases
-    setSelectedTopic(null);
-    setExpandedTopic(null);
-  };
-
-  // Modified to only handle start button click
-  const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedTopic(expandedTopic === topicId ? null : topicId);
-    setSelectedTopic({ phaseId, topicId });
-  };
-
   const handlePhaseClick = (index: number) => {
+    // Reset any flipped card when changing phases
+    setFlippedPhase(null);
     setCurrentPhaseIndex(index);
-    // Reset selected topic when changing phases
     setSelectedTopic(null);
     setExpandedTopic(null);
     
@@ -370,6 +354,36 @@ const PythonFundamentals = () => {
         left: scrollLeft,
         behavior: 'smooth'
       });
+    }
+  };
+
+  const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSparklePhase(phaseId);
+    setTimeout(() => setSparklePhase(null), 500);
+    
+    // Reset any previously flipped card before flipping the new one
+    if (flippedPhase && flippedPhase !== phaseId) {
+      setFlippedPhase(null);
+      // Add a small delay before flipping the new card
+      setTimeout(() => {
+        setFlippedPhase(phaseId);
+      }, 150);
+    } else {
+      setFlippedPhase(flippedPhase === phaseId ? null : phaseId);
+    }
+  };
+
+  const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    // Only update the topic state without affecting the phase card flip
+    if (selectedTopic?.topicId === topicId) {
+      setExpandedTopic(null);
+      setSelectedTopic(null);
+    } else {
+      setExpandedTopic(topicId);
+      setSelectedTopic({ phaseId, topicId });
     }
   };
 
@@ -434,7 +448,7 @@ const PythonFundamentals = () => {
                     rotateY: flippedPhase === phase.id ? 180 : 0 
                   }}
                   transition={{ 
-                    duration: 0.3,
+                    duration: 0.2,
                     ease: "easeOut"
                   }}
                 >
