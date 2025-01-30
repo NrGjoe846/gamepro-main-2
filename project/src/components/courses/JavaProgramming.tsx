@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
-import { Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, 
+  AlertCircle, ChevronLeft, ChevronRight 
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import BackButton from '../BackButton';
+import GlowingButton from '../ui/GlowingButton';
 
 interface Topic {
   id: string;
@@ -21,119 +26,82 @@ interface Phase {
   description: string;
   topics: Topic[];
   expanded?: boolean;
+  icon: string;
 }
 
 const coursePhases: Phase[] = [
   {
     id: 'phase-1',
     title: 'Phase 1: Java Basics and Core Concepts',
-    description: 'Master the fundamentals of the Java programming language and build a strong foundation.',
+    description: 'Master the fundamentals of Java programming language and build a strong foundation.',
+    icon: '☕',
     topics: [
       {
         id: 'intro',
         title: '1. Introduction to Java Programming',
-        description: 'Learn about Java installation, IDE setup, and write your first program.',
+        description: 'Get started with Java programming language basics',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'setup', title: 'Installing JDK and setting up the environment (Eclipse, IntelliJ, VS Code)', completed: false },
+          { id: 'setup', title: 'Installing JDK and setting up the environment', completed: false },
           { id: 'first-program', title: 'Writing your first Java program', completed: false },
-          { id: 'compilation', title: 'Compilation and execution process', completed: false },
-          { id: 'structure', title: 'Structure of a Java program', completed: false }
+          { id: 'compilation', title: 'Understanding compilation and JVM', completed: false },
+          { id: 'syntax', title: 'Java syntax and basic structure', completed: false }
         ]
       },
       {
         id: 'data-types',
         title: '2. Data Types and Variables',
-        description: 'Understanding Java data types, variables, and type modifiers.',
+        description: 'Learn about Java data types and variable declarations',
         completed: false,
-        locked: true,
+        locked: false,
         subtopics: [
-          { id: 'primitive-types', title: 'Primitive data types: int, float, char, boolean, double', completed: false },
-          { id: 'modifiers', title: 'Type modifiers: short, long, byte', completed: false },
+          { id: 'primitive-types', title: 'Primitive data types in Java', completed: false },
           { id: 'variables', title: 'Variable declaration and initialization', completed: false },
-          { id: 'constants', title: 'Constants and literals', completed: false },
-          { id: 'type-conversion', title: 'Type conversions and casting', completed: false }
-        ]
-      },
-      {
-        id: 'operators',
-        title: '3. Control Flow and Operators',
-        description: 'Learn about operators and control flow statements in Java.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'arithmetic', title: 'Arithmetic operators: +, -, *, /, %', completed: false },
-          { id: 'relational', title: 'Relational operators: ==, !=, >, <, >=, <=', completed: false },
-          { id: 'logical', title: 'Logical operators: &&, ||, !', completed: false },
-          { id: 'control-flow', title: 'Control flow statements: if, else, switch', completed: false },
-          { id: 'loops', title: 'Loops: for, while, do-while', completed: false }
+          { id: 'type-casting', title: 'Type casting and conversion', completed: false },
+          { id: 'constants', title: 'Constants and final keyword', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-2',
-    title: 'Phase 2: Working with Data Collections',
-    description: 'Learn to store and manipulate collections of data in Java.',
+    title: 'Phase 2: Object-Oriented Programming',
+    description: 'Master object-oriented programming concepts in Java',
+    icon: '🎯',
     topics: [
       {
-        id: 'arrays',
-        title: '4. Arrays and Strings',
-        description: 'Master arrays and string handling in Java.',
+        id: 'classes',
+        title: '3. Classes and Objects',
+        description: 'Understanding classes and objects in Java',
         completed: false,
-        locked: true,
+        locked: false,
         subtopics: [
-          { id: 'array-basics', title: 'Declaring and initializing arrays', completed: false },
-          { id: 'array-ops', title: 'Array operations and manipulation', completed: false },
-          { id: 'strings', title: 'String handling methods', completed: false },
-          { id: 'string-builder', title: 'StringBuilder and StringBuffer', completed: false }
-        ]
-      },
-      {
-        id: 'collections',
-        title: '5. Collections Framework',
-        description: 'Working with Java collections and data structures.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'lists', title: 'ArrayList and LinkedList', completed: false },
-          { id: 'sets-maps', title: 'HashSet and HashMap', completed: false },
-          { id: 'iteration', title: 'Iterating over collections', completed: false },
-          { id: 'algorithms', title: 'Sorting and searching in collections', completed: false }
+          { id: 'class-basics', title: 'Class definition and structure', completed: false },
+          { id: 'objects', title: 'Creating and using objects', completed: false },
+          { id: 'constructors', title: 'Constructors and initialization', completed: false },
+          { id: 'methods', title: 'Methods and parameters', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-3',
-    title: 'Phase 3: Object-Oriented Programming',
-    description: 'Master object-oriented programming concepts in Java.',
+    title: 'Phase 3: Advanced Java Concepts',
+    description: 'Learn advanced Java programming concepts',
+    icon: '⚡',
     topics: [
       {
-        id: 'oop-basics',
-        title: '6. OOP Fundamentals',
-        description: 'Learn core OOP concepts and their implementation.',
+        id: 'inheritance',
+        title: '4. Inheritance and Polymorphism',
+        description: 'Understanding inheritance and polymorphism',
         completed: false,
-        locked: true,
+        locked: false,
         subtopics: [
-          { id: 'classes-objects', title: 'Classes and objects', completed: false },
-          { id: 'constructors', title: 'Constructors and this keyword', completed: false },
-          { id: 'inheritance', title: 'Inheritance and method overriding', completed: false },
-          { id: 'polymorphism', title: 'Polymorphism and encapsulation', completed: false }
-        ]
-      },
-      {
-        id: 'advanced-oop',
-        title: '7. Advanced OOP',
-        description: 'Advanced object-oriented programming concepts.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'abstraction', title: 'Abstract classes and methods', completed: false },
-          { id: 'interfaces', title: 'Interfaces and default methods', completed: false },
-          { id: 'nested', title: 'Nested and inner classes', completed: false },
-          { id: 'generics', title: 'Generics in Java', completed: false }
+          { id: 'inheritance-basics', title: 'Inheritance basics', completed: false },
+          { id: 'polymorphism', title: 'Polymorphism and method overriding', completed: false },
+          { id: 'abstract', title: 'Abstract classes and methods', completed: false },
+          { id: 'interfaces', title: 'Interfaces and implementation', completed: false }
         ]
       }
     ]
@@ -141,131 +109,83 @@ const coursePhases: Phase[] = [
   {
     id: 'phase-4',
     title: 'Phase 4: Exception Handling and I/O',
-    description: 'Learn to handle errors and perform input/output operations.',
+    description: 'Master exception handling and input/output operations',
+    icon: '🔧',
     topics: [
       {
-        id: 'exception-handling',
-        title: '8. Exception Handling',
-        description: 'Master error handling in Java.',
+        id: 'exceptions',
+        title: '5. Exception Handling',
+        description: 'Learn to handle exceptions in Java',
         completed: false,
-        locked: true,
+        locked: false,
         subtopics: [
           { id: 'try-catch', title: 'Try-catch blocks', completed: false },
-          { id: 'throw', title: 'Throwing exceptions', completed: false },
-          { id: 'custom', title: 'Custom exceptions', completed: false },
+          { id: 'throws', title: 'Throws clause and exception propagation', completed: false },
+          { id: 'custom-exceptions', title: 'Creating custom exceptions', completed: false },
           { id: 'finally', title: 'Finally block and resources', completed: false }
-        ]
-      },
-      {
-        id: 'io-operations',
-        title: '9. Input/Output Operations',
-        description: 'Working with files and I/O streams.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'file-io', title: 'File handling basics', completed: false },
-          { id: 'streams', title: 'Input and output streams', completed: false },
-          { id: 'readers-writers', title: 'Readers and writers', completed: false },
-          { id: 'nio', title: 'NIO.2 file operations', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-5',
-    title: 'Phase 5: Multithreading and Concurrency',
-    description: 'Understanding concurrent programming in Java.',
+    title: 'Phase 5: Collections Framework',
+    description: 'Learn to work with Java collections',
+    icon: '📚',
     topics: [
       {
-        id: 'multithreading',
-        title: '10. Multithreading Basics',
-        description: 'Learn the basics of multithreading.',
+        id: 'collections',
+        title: '6. Collections Framework',
+        description: 'Understanding Java collections framework',
         completed: false,
-        locked: true,
+        locked: false,
         subtopics: [
-          { id: 'threads', title: 'Creating and managing threads', completed: false },
-          { id: 'runnable', title: 'Implementing Runnable interface', completed: false },
-          { id: 'sync', title: 'Thread synchronization', completed: false },
-          { id: 'deadlocks', title: 'Avoiding deadlocks', completed: false }
-        ]
-      },
-      {
-        id: 'concurrent-api',
-        title: '11. Concurrent API',
-        description: 'Advanced concurrency concepts.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'executor', title: 'Executor framework', completed: false },
-          { id: 'futures', title: 'Future and CompletableFuture', completed: false },
-          { id: 'collections', title: 'Concurrent collections', completed: false },
-          { id: 'atomic', title: 'Atomic operations', completed: false }
+          { id: 'lists', title: 'Lists and ArrayList', completed: false },
+          { id: 'sets', title: 'Sets and HashSet', completed: false },
+          { id: 'maps', title: 'Maps and HashMap', completed: false },
+          { id: 'queues', title: 'Queues and Priority Queue', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-6',
-    title: 'Phase 6: Libraries and Tools',
-    description: 'Working with essential Java libraries and development tools.',
+    title: 'Phase 6: Multithreading and Concurrency',
+    description: 'Master multithreading and concurrent programming',
+    icon: '🔄',
     topics: [
       {
-        id: 'standard-libs',
-        title: '12. Standard Libraries',
-        description: 'Essential Java standard libraries.',
+        id: 'threads',
+        title: '7. Multithreading',
+        description: 'Learn about threads and concurrency',
         completed: false,
-        locked: true,
+        locked: false,
         subtopics: [
-          { id: 'date-time', title: 'Date and Time API', completed: false },
-          { id: 'optional', title: 'Optional class', completed: false },
-          { id: 'stream-api', title: 'Stream API', completed: false },
-          { id: 'regex', title: 'Regular expressions', completed: false }
-        ]
-      },
-      {
-        id: 'dev-tools',
-        title: '13. Development Tools',
-        description: 'Tools for Java development.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'maven', title: 'Apache Maven basics', completed: false },
-          { id: 'junit', title: 'Unit testing with JUnit', completed: false },
-          { id: 'logging', title: 'Logging frameworks', completed: false },
-          { id: 'debugging', title: 'Debugging techniques', completed: false }
+          { id: 'thread-basics', title: 'Thread creation and lifecycle', completed: false },
+          { id: 'synchronization', title: 'Thread synchronization', completed: false },
+          { id: 'executors', title: 'Executor framework', completed: false },
+          { id: 'concurrent', title: 'Concurrent collections', completed: false }
         ]
       }
     ]
   },
   {
     id: 'phase-7',
-    title: 'Phase 7: Project Development',
-    description: 'Apply your knowledge in real-world projects.',
+    title: 'Phase 7: Advanced Topics',
+    description: 'Explore advanced Java programming topics',
+    icon: '🚀',
     topics: [
       {
-        id: 'projects',
-        title: '14. Practical Projects',
-        description: 'Build real-world applications.',
+        id: 'advanced',
+        title: '8. Advanced Java Topics',
+        description: 'Master advanced Java concepts',
         completed: false,
-        locked: true,
+        locked: false,
         subtopics: [
-          { id: 'banking', title: 'Banking system project', completed: false },
-          { id: 'todo', title: 'Todo list manager', completed: false },
-          { id: 'inventory', title: 'Inventory management system', completed: false },
-          { id: 'chat', title: 'Chat application', completed: false }
-        ]
-      },
-      {
-        id: 'best-practices',
-        title: '15. Best Practices',
-        description: 'Professional Java development practices.',
-        completed: false,
-        locked: true,
-        subtopics: [
-          { id: 'clean-code', title: 'Clean code principles', completed: false },
-          { id: 'design-patterns', title: 'Common design patterns', completed: false },
-          { id: 'git', title: 'Version control with Git', completed: false },
-          { id: 'deployment', title: 'Application deployment', completed: false }
+          { id: 'generics', title: 'Generics and type parameters', completed: false },
+          { id: 'annotations', title: 'Annotations and reflection', completed: false },
+          { id: 'lambda', title: 'Lambda expressions', completed: false },
+          { id: 'streams', title: 'Streams API', completed: false }
         ]
       }
     ]
@@ -273,160 +193,389 @@ const coursePhases: Phase[] = [
 ];
 
 const JavaProgramming = () => {
-  const [phases, setPhases] = useState(coursePhases.map(phase => ({ ...phase, expanded: false })));
+  const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
+  const [flippedPhase, setFlippedPhase] = useState<string | null>(null);
+  const [sparklePhase, setSparklePhase] = useState<string | null>(null);
+  const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<{ phaseId: string; topicId: string } | null>(null);
+  const phasesContainerRef = useRef<HTMLDivElement>(null);
+  const subtopicsRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const dragThreshold = 5;
+  const [dragDistance, setDragDistance] = useState(0);
 
-  const togglePhase = (phaseId: string) => {
-    setPhases(prevPhases =>
-      prevPhases.map(phase => ({
-        ...phase,
-        expanded: phase.id === phaseId ? !phase.expanded : phase.expanded
-      }))
-    );
+  useEffect(() => {
+    scrollToCurrentPhase();
+  }, [currentPhaseIndex]);
+
+  const scrollToCurrentPhase = () => {
+    if (phasesContainerRef.current) {
+      const container = phasesContainerRef.current;
+      const phaseElement = container.children[currentPhaseIndex] as HTMLElement;
+      const containerWidth = container.offsetWidth;
+      const phaseWidth = phaseElement.offsetWidth;
+      const newScrollLeft = phaseElement.offsetLeft - (containerWidth / 2) + (phaseWidth / 2);
+      
+      container.scrollTo({
+        left: newScrollLeft,
+        behavior: 'smooth'
+      });
+    }
   };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!phasesContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - phasesContainerRef.current.offsetLeft);
+    setScrollLeft(phasesContainerRef.current.scrollLeft);
+    setDragDistance(0);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !phasesContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - phasesContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    phasesContainerRef.current.scrollLeft = scrollLeft - walk;
+    setDragDistance(Math.abs(walk));
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging || !phasesContainerRef.current) return;
+    setIsDragging(false);
+    
+    if (dragDistance > dragThreshold) {
+      const container = phasesContainerRef.current;
+      const phaseWidth = container.children[0].clientWidth;
+      const scrollPosition = container.scrollLeft;
+      const newIndex = Math.round(scrollPosition / phaseWidth);
+      setCurrentPhaseIndex(Math.max(0, Math.min(newIndex, coursePhases.length - 1)));
+    }
+  };
+
+  const handlePrevPhase = () => {
+    setCurrentPhaseIndex(prev => Math.max(0, prev - 1));
+  };
+
+  const handleNextPhase = () => {
+    setCurrentPhaseIndex(prev => Math.min(coursePhases.length - 1, prev + 1));
+  };
+
+  const handlePhaseClick = (index: number) => {
+    if (dragDistance <= dragThreshold) {
+      setCurrentPhaseIndex(index);
+      setSelectedTopic(null);
+      setExpandedTopic(null);
+    }
+  };
+
+  const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSparklePhase(phaseId);
+    
+    const sparkles = Array.from({ length: 8 }).map((_, i) => {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'absolute w-2 h-2 bg-blue-400 rounded-full';
+      sparkle.style.left = `${Math.random() * 100}%`;
+      sparkle.style.top = `${Math.random() * 100}%`;
+      sparkle.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
+      sparkle.style.animation = `sparkle ${Math.random() * 0.5 + 0.5}s ease-in-out ${i * 0.1}s`;
+      return sparkle;
+    });
+
+    const target = e.currentTarget as HTMLElement;
+    sparkles.forEach(sparkle => target.appendChild(sparkle));
+
+    setTimeout(() => {
+      sparkles.forEach(sparkle => sparkle.remove());
+    }, 1000);
+
+    setTimeout(() => setSparklePhase(null), 500);
+    
+    if (flippedPhase !== phaseId) {
+      setFlippedPhase(phaseId);
+    }
+  };
+
+  const handleFlipBack = (phaseId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFlippedPhase(null);
+  };
+
+  const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (selectedTopic?.topicId === topicId) {
+      setExpandedTopic(null);
+      setSelectedTopic(null);
+    } else {
+      setExpandedTopic(topicId);
+      setSelectedTopic({ phaseId, topicId });
+
+      setTimeout(() => {
+        subtopicsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  };
+
+  const selectedPhaseAndTopic = selectedTopic ? {
+    phase: coursePhases.find(p => p.id === selectedTopic.phaseId),
+    topic: coursePhases
+      .find(p => p.id === selectedTopic.phaseId)
+      ?.topics.find(t => t.id === selectedTopic.topicId)
+  } : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Link
-            to="/dashboard"
-            className="p-2 hover:bg-white/10 rounded-lg transition-all duration-300"
+      <style>
+        {`
+          @keyframes sparkle {
+            0% {
+              transform: scale(0) rotate(0deg);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.5) rotate(180deg);
+              opacity: 0.8;
+            }
+            100% {
+              transform: scale(0) rotate(360deg);
+              opacity: 0;
+            }
+          }
+        `}
+      </style>
+      
+      <div className="max-w-full mx-auto">
+        <div className="mb-8">
+          <BackButton />
+        </div>
+
+        <div className="flex justify-center mb-12">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="relative w-24 h-24 md:w-32 md:h-32"
           >
-            <ArrowLeft className="w-6 h-6" />
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Java Programming Mastery</h1>
-            <p className="text-gray-400">
-              A comprehensive course covering Java programming from basics to advanced concepts
-            </p>
-          </div>
+            <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
+            <div className="relative w-full h-full rounded-full border-2 border-blue-400/50 flex items-center justify-center bg-gradient-to-b from-blue-500/10 to-blue-500/30">
+              <span className="text-4xl md:text-5xl select-none">{coursePhases[currentPhaseIndex].icon}</span>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Course Progress */}
-        <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 border border-white/20 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Course Progress</h2>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">0% Complete</span>
-              <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full w-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" />
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-sm text-gray-400">0 Topics Completed</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-400">15 Topics Remaining</span>
-            </div>
-          </div>
-        </div>
+        <div className="relative mb-12">
+          <button
+            onClick={handlePrevPhase}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full backdrop-blur-sm transition-opacity duration-300 ${
+              currentPhaseIndex === 0 ? 'opacity-50 cursor-not-allowed' : 'opacity-100 hover:bg-black/70'
+            }`}
+            disabled={currentPhaseIndex === 0}
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
 
-        {/* Course Content */}
-        <div className="space-y-6">
-          {phases.map((phase) => (
-            <div key={phase.id} className="group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
-                <div className="relative backdrop-blur-xl bg-white/10 rounded-xl border border-white/20 overflow-hidden">
-                  {/* Phase Header */}
-                  <button
-                    onClick={() => togglePhase(phase.id)}
-                    className="w-full p-6 text-left hover:bg-white/5 transition-all duration-300"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-500/20 rounded-lg">
-                          <Book className="w-6 h-6 text-blue-400" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-semibold mb-1">{phase.title}</h3>
-                          <p className="text-gray-400 text-sm">{phase.description}</p>
-                        </div>
-                      </div>
-                      {phase.expanded ? (
-                        <ChevronUp className="w-6 h-6 text-gray-400" />
-                      ) : (
-                        <ChevronDown className="w-6 h-6 text-gray-400" />
-                      )}
-                    </div>
-                  </button>
+          <button
+            onClick={handleNextPhase}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/50 rounded-full backdrop-blur-sm transition-opacity duration-300 ${
+              currentPhaseIndex === coursePhases.length - 1 ? 'opacity-50 cursor-not-allowed' : 'opacity-100 hover:bg-black/70'
+            }`}
+            disabled={currentPhaseIndex === coursePhases.length - 1}
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
 
-                  {/* Phase Content */}
-                  {phase.expanded && (
-                    <div className="border-t border-white/10">
-                      {phase.topics.map((topic) => (
-                        <div key={topic.id} className="p-6 border-b border-white/10 last:border-b-0">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-4">
-                              <div className={`p-2 rounded-lg ${
-                                topic.locked ? 'bg-gray-700/50' : 'bg-blue-500/20'
-                              }`}>
-                                {topic.locked ? (
-                                  <Lock className="w-5 h-5 text-gray-400" />
-                                ) : (
-                                  <Code className="w-5 h-5 text-blue-400" />
-                                )}
-                              </div>
-                              <div>
-                                <h4 className="font-semibold mb-1">{topic.title}</h4>
-                                {topic.description && (
-                                  <p className="text-sm text-gray-400">{topic.description}</p>
-                                )}
-                              </div>
-                            </div>
-                            {!topic.locked && (
-                              <Link
-                                to="/compiler"
-                                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 flex items-center gap-2"
-                              >
-                                <Play className="w-4 h-4" />
-                                <span>Start</span>
-                              </Link>
-                            )}
-                          </div>
-
-                          {/* Subtopics */}
-                          {topic.subtopics && (
-                            <div className="ml-12 space-y-3">
-                              {topic.subtopics.map((subtopic) => (
-                                <div
-                                  key={subtopic.id}
-                                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    {subtopic.completed ? (
-                                      <CheckCircle className="w-4 h-4 text-green-400" />
-                                    ) : (
-                                      <div className="w-4 h-4 rounded-full border border-gray-500" />
-                                    )}
-                                    <span className="text-sm">{subtopic.title}</span>
-                                  </div>
-                                  {!topic.locked && !subtopic.completed && (
-                                    <Link
-                                      to="/compiler"
-                                      className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300"
-                                    >
-                                      Start
-                                    </Link>
-                                  )}
-                                </div>
-                              ))}
+          <div 
+            ref={phasesContainerRef}
+            className="flex gap-6 overflow-x-auto px-4 py-2 no-scrollbar touch-pan-x"
+            style={{ scrollSnapType: 'x mandatory' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            {coursePhases.map((phase, index) => (
+              <motion.div
+                key={phase.id}
+                initial={{ scale: 0.8, opacity: 0.6 }}
+                animate={{
+                  scale: index === currentPhaseIndex ? 1 : 0.8,
+                  opacity: index === currentPhaseIndex ? 1 : 0.6,
+                }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                whileHover={{ 
+                  scale: index === currentPhaseIndex ? 1.02 : 0.85,
+                  transition: { duration: 0.15 }
+                }}
+                whileTap={{ 
+                  scale: index === currentPhaseIndex ? 0.98 : 0.8,
+                  transition: { duration: 0.1 }
+                }}
+                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none
+                  ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
+                onClick={() => handlePhaseClick(index)}
+                style={{ scrollSnapAlign: 'center' }}
+              >
+                <motion.div
+                  className="relative w-full h-full transition-all preserve-3d"
+                  animate={{ 
+                    rotateY: flippedPhase === phase.id ? 180 : 0 
+                  }}
+                  transition={{ 
+                    duration: 0.2,
+                    ease: "easeOut"
+                  }}
+                >
+                  <div className="absolute inset-0 backface-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
+                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                    
+                    <div className="relative h-full p-6 flex flex-col">
+                      <div className="text-4xl mb-4 select-none">{phase.icon}</div>
+                      <h3 className="text-xl font-bold mb-2 select-none">{phase.title}</h3>
+                      <p className="text-sm text-gray-400 mb-4 select-none">{phase.description}</p>
+                      
+                      {index === currentPhaseIndex && (
+                        <motion.button
+                          onClick={(e) => handlePhaseStart(phase.id, e)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none relative overflow-hidden"
+                        >
+                          {sparklePhase === phase.id ? (
+                            <AlertCircle className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '0.5s' }} />
+                          ) : (
+                            <div className="relative">
+                              <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors duration-150" />
+                              <div className="absolute inset-0 bg-blue-400/20 rounded-full filter blur-sm transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                             </div>
                           )}
-                        </div>
-                      ))}
+                          Flip to see topics
+                        </motion.button>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+                  </div>
+
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl overflow-y-auto">
+                    <div className="p-6 space-y-4">
+                      <h3 className="text-xl font-bold mb-4">{phase.title} Topics</h3>
+                      {phase.topics.map((topic) => (
+                        <motion.div
+                          key={topic.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="backdrop-blur-xl bg-white/10 rounded-xl p-4 border border-white/20"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-bold mb-1">{topic.title}</h4>
+                              <p className="text-sm text-gray-400">{topic.description}</p>
+                            </div>
+                            <GlowingButton
+                              onClick={(e) => handleTopicStart(phase.id, topic.id, e)}
+                              className="text-sm font-medium"
+                            >
+                              <Play className="w-4 h-4" />
+                              <span>Start</span>
+                            </GlowingButton>
+                          </div>
+                        </motion.div>
+                      ))}
+                      <motion.button
+                        onClick={(e) => handleFlipBack(phase.id, e)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="w-full mt-4 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 relative overflow-hidden group"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <span className="relative z-10">Flip back</span>
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="flex justify-center gap-2 mt-4">
+            {coursePhases.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPhaseIndex(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index === currentPhaseIndex 
+                    ? 'w-8 bg-blue-500' 
+                    : 'bg-white/20 hover:bg-white/40'
+                }`}
+              />
+            ))}
+          </div>
         </div>
+
+        <AnimatePresence>
+          {selectedPhaseAndTopic && selectedPhaseAndTopic.topic && (
+            <motion.div
+              ref={subtopicsRef}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="space-y-4 mt-8"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold">{selectedPhaseAndTopic.topic.title} Subtopics</h3>
+                <button 
+                  onClick={() => setSelectedTopic(null)}
+                  className="flex items-center gap-2"
+                >
+                  {expandedTopic === selectedPhaseAndTopic.topic.id ? (
+                    <ChevronUp className="w-5 h-5" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+
+              <AnimatePresence>
+                {expandedTopic === selectedPhaseAndTopic.topic.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="space-y-2"
+                  >
+                    {selectedPhaseAndTopic.topic.subtopics?.map((subtopic) => (
+                      <motion.div
+                        key={subtopic.id}
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="flex items-center justify-between p-3 bg-white/5 rounded-lg backdrop-blur-xl border border-white/10"
+                      >
+                        <div className="flex items-center gap-3">
+                          {subtopic.completed ? (
+                            <CheckCircle className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <div className="w-4 h-4 rounded-full border border-gray-500" />
+                          )}
+                          <span className="text-sm">{subtopic.title}</span>
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
+                        >
+                          <Play className="w-3 h-3" />
+                          Start
+                        </motion.button>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
