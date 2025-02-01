@@ -92,29 +92,53 @@ const coursePhases: Phase[] = [
     icon: '⚡',
     topics: [
       {
-        id: 'control-flow',
-        title: '3. Control Flow',
+        id: 'conditional-statements',
+        title: '1. Conditional Statements',
         description: 'Understanding control structures in C',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'if-else', title: 'Conditional statements (if-else)', completed: false },
-          { id: 'loops', title: 'Loops (for, while, do-while)', completed: false },
-          { id: 'switch', title: 'Switch statements', completed: false },
-          { id: 'break-continue', title: 'Break and continue statements', completed: false }
+          { id: 'if-else', title: 'if, if-else statements', completed: false },
+          { id: 'nested-if', title: 'nested if-else statements', completed: false },
+          { id: 'switch-case', title: 'switch-case statements', completed: false }
+        ]
+      },
+      {
+        id: 'loops',
+        title: '2. Loops and Iterations',
+        description: 'Working with loops in C',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'for-loop', title: 'for loop', completed: false },
+          { id: 'while-loop', title: 'while loop', completed: false },
+          { id: 'do-while', title: 'do-while loop', completed: false },
+          { id: 'break-continue', title: 'break and continue statements', completed: false }
         ]
       },
       {
         id: 'functions',
-        title: '4. Functions',
-        description: 'Working with functions in C',
+        title: '3. Functions and Modular Programming',
+        description: 'Understanding functions in C',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'function-basics', title: 'Function declaration and definition', completed: false },
-          { id: 'parameters', title: 'Parameters and return values', completed: false },
-          { id: 'recursion', title: 'Recursive functions', completed: false },
-          { id: 'scope', title: 'Variable scope and lifetime', completed: false }
+          { id: 'function-basics', title: 'Function Declaration, Definition, and Calling', completed: false },
+          { id: 'function-args', title: 'Function Arguments and Return Values', completed: false },
+          { id: 'recursion', title: 'Recursion', completed: false }
+        ]
+      },
+      {
+        id: 'storage-classes',
+        title: '4. Storage Classes in C',
+        description: 'Understanding storage classes in C',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'auto', title: 'auto storage class', completed: false },
+          { id: 'static', title: 'static storage class', completed: false },
+          { id: 'extern', title: 'extern storage class', completed: false },
+          { id: 'register', title: 'register storage class', completed: false }
         ]
       }
     ]
