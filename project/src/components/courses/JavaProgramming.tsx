@@ -119,26 +119,76 @@ const coursePhases: Phase[] = [
     ]
   },
   {
-    id: 'phase-2',
-    title: 'Phase 2: Object-Oriented Programming',
-    description: 'Master object-oriented programming concepts in Java',
-    icon: '🎯',
-    topics: [
-      {
-        id: 'classes',
-        title: '3. Classes and Objects',
-        description: 'Understanding classes and objects in Java',
-        completed: false,
-        locked: false,
-        subtopics: [
-          { id: 'class-basics', title: 'Class definition and structure', completed: false },
-          { id: 'objects', title: 'Creating and using objects', completed: false },
-          { id: 'constructors', title: 'Constructors and initialization', completed: false },
-          { id: 'methods', title: 'Methods and parameters', completed: false }
-        ]
-      }
-    ]
-  },
+  id: 'phase-2',
+  title: 'Phase 2: Object-Oriented Programming',
+  description: 'Master object-oriented programming concepts in Java',
+  icon: '🎯',
+  topics: [
+    {
+      id: 'classes',
+      title: '3. Classes and Objects',
+      description: 'Understanding classes and objects in Java',
+      completed: false,
+      locked: false,
+      subtopics: [
+        { id: 'class-basics', title: 'Class definition and structure', completed: false },
+        { id: 'objects', title: 'Creating and using objects', completed: false },
+        { id: 'constructors', title: 'Constructors and initialization', completed: false },
+        { id: 'methods', title: 'Methods and parameters', completed: false }
+      ]
+    },
+    {
+      id: 'encapsulation',
+      title: '8. Encapsulation and Access Modifiers',
+      description: 'Understanding encapsulation and access modifiers in Java',
+      completed: false,
+      locked: false,
+      subtopics: [
+        { id: 'private-vs-public', title: 'Private vs public access modifiers', completed: false },
+        { id: 'getters-setters', title: 'Getters and setters', completed: false },
+        { id: 'encapsulation-principles', title: 'Encapsulation principles', completed: false }
+      ]
+    },
+    {
+      id: 'inheritance',
+      title: '9. Inheritance',
+      description: 'Understanding inheritance and class extensions in Java',
+      completed: false,
+      locked: false,
+      subtopics: [
+        { id: 'extends', title: 'Extending classes using `extends`', completed: false },
+        { id: 'method-overriding', title: 'Method overriding', completed: false },
+        { id: 'super-keyword', title: '`super` keyword', completed: false },
+        { id: 'types-of-inheritance', title: 'Types of inheritance: single, multilevel, hierarchical', completed: false }
+      ]
+    },
+    {
+      id: 'polymorphism',
+      title: '10. Polymorphism',
+      description: 'Understanding polymorphism in Java through method overloading and overriding',
+      completed: false,
+      locked: false,
+      subtopics: [
+        { id: 'method-overloading', title: 'Method overloading (compile-time polymorphism)', completed: false },
+        { id: 'method-overriding-runtime', title: 'Method overriding (runtime polymorphism)', completed: false },
+        { id: 'dynamic-method-dispatch', title: 'Dynamic method dispatch', completed: false }
+      ]
+    },
+    {
+      id: 'abstraction-interfaces',
+      title: '11. Abstraction and Interfaces',
+      description: 'Exploring abstraction and interfaces in Java for code design',
+      completed: false,
+      locked: false,
+      subtopics: [
+        { id: 'abstract-classes-methods', title: 'Abstract classes and methods', completed: false },
+        { id: 'interfaces-implementation', title: 'Interfaces and their implementation', completed: false },
+        { id: 'multiple-inheritance-interfaces', title: 'Multiple inheritance using interfaces', completed: false }
+      ]
+    }
+  ] // Closing the topics array properly
+},
+
   {
     id: 'phase-3',
     title: 'Phase 3: Advanced Java Concepts',
