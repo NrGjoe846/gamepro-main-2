@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { Check, X, ChevronRight, Award, Star } from 'lucide-react';
 import { useWindowSize } from 'react-use';
+import { geminiService } from '../../services/geminiService';
 
 interface QuizQuestion {
   type: 'fill-blank' | 'multiple-choice' | 'true-false' | 'word-scramble' | 'code-correction';
@@ -69,6 +70,9 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   const [showConfetti, setShowConfetti] = useState(false);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [isValidating, setIsValidating] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [explanation, setExplanation] = useState<string | null>(null);
   const { width, height } = useWindowSize();
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -80,31 +84,61 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
     }
   }, [completedQuestions]);
 
-  const handleAnswer = () => {
-    const correct = userAnswer === currentQuestion.answer;
-    setIsCorrect(correct);
-    setShowExplanation(true);
+  const handleSubmit = async () => {
+    if (!currentQuestion) return;
+    
+    setIsValidating(true);
+    try {
+      const result = await geminiService.validateCode(
+        userAnswer,
+        currentQuestion.answer,
+        'python', // or the appropriate language
+        currentQuestion.question
+      );
 
-    if (correct) {
-      setStreak(prev => prev + 1);
-      setScore(prev => prev + (100 * (streak + 1)));
-      
-      setTimeout(() => {
-        setCompletedQuestions(prev => [...prev, currentQuestionIndex]);
-        if (currentQuestionIndex < questions.length - 1) {
-          setCurrentQuestionIndex(prev => prev + 1);
-        }
-        setUserAnswer('');
-        setIsCorrect(null);
-        setShowExplanation(false);
-      }, 1500);
-    } else {
-      setStreak(0);
-      setTimeout(() => {
-        setUserAnswer('');
-        setIsCorrect(null);
-        setShowExplanation(false);
-      }, 1500);
+      setIsCorrect(result.isCorrect);
+      setFeedback(result.feedback);
+      setExplanation(result.explanation || null);
+
+      if (result.isCorrect) {
+        setScore(prev => prev + 100);
+        setStreak(prev => prev + 1);
+        
+        setTimeout(() => {
+          if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
+            setUserAnswer('');
+            setIsCorrect(null);
+            setFeedback(null);
+            setExplanation(null);
+          } else {
+            onComplete(score);
+          }
+        }, 2000);
+      } else {
+        setStreak(0);
+      }
+    } catch (error) {
+      console.error('Error validating answer:', error);
+      setFeedback('Error validating answer. Please try again.');
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleHintRequest = async () => {
+    if (!currentQuestion) return;
+    
+    try {
+      const hint = await geminiService.getHint(
+        currentQuestion.question,
+        userAnswer,
+        'python' // or the appropriate language
+      );
+      setFeedback(hint);
+    } catch (error) {
+      console.error('Error getting hint:', error);
+      setFeedback('Unable to generate hint at the moment.');
     }
   };
 
@@ -164,13 +198,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
                 animate="animate"
                 exit="exit"
                 custom={isCorrect}
-                className={`relative backdrop-blur-xl bg-white/10 rounded-xl p-6 border ${
-                  isCorrect === null
-                    ? 'border-white/20'
-                    : isCorrect
-                    ? 'border-green-500'
-                    : 'border-red-500'
-                } transition-colors duration-300`}
+                className="relative backdrop-blur-xl bg-white/10 rounded-xl p-6 border border-white/20"
               >
                 {/* Question */}
                 <div className="mb-6">
@@ -211,42 +239,39 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
                   )}
                 </div>
 
-                {/* Submit Button */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAnswer}
-                  disabled={!userAnswer}
-                  className="mt-6 w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                >
-                  Submit Answer
-                </motion.button>
-
-                {/* Explanation */}
-                <AnimatePresence>
-                  {showExplanation && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 20 }}
-                      className={`mt-6 p-4 rounded-lg ${
-                        isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        {isCorrect ? (
-                          <Check className="w-5 h-5 text-green-400" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-400" />
-                        )}
-                        <span className="font-semibold">
-                          {isCorrect ? 'Correct!' : 'Incorrect!'}
-                        </span>
+                {feedback && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className={`mt-4 p-4 rounded-lg ${
+                      isCorrect ? 'bg-green-500/20' : 'bg-blue-500/20'
+                    }`}
+                  >
+                    <p className="text-sm">{feedback}</p>
+                    {explanation && (
+                      <div className="mt-2 pt-2 border-t border-white/10">
+                        <p className="text-sm text-gray-300">{explanation}</p>
                       </div>
-                      <p className="text-sm">{currentQuestion.explanation}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    )}
+                  </motion.div>
+                )}
+
+                <div className="flex gap-4 mt-4">
+                  <button
+                    onClick={handleSubmit}
+                    disabled={!userAnswer || isValidating}
+                    className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 disabled:opacity-50"
+                  >
+                    {isValidating ? 'Checking...' : 'Submit'}
+                  </button>
+                  <button
+                    onClick={handleHintRequest}
+                    className="px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 rounded-lg transition-all duration-300"
+                  >
+                    Get Hint
+                  </button>
+                </div>
               </motion.div>
             </AnimatePresence>
 
