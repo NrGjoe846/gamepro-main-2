@@ -189,44 +189,69 @@ const coursePhases: Phase[] = [
   ] // Closing the topics array properly
 },
 
-  {
+ {
     id: 'phase-3',
-    title: 'Phase 3: Advanced Java Concepts',
-    description: 'Learn advanced Java programming concepts',
-    icon: '⚡',
+    title: 'Phase 3: Data Structures and Collections',
+    description: 'Master Java data structures and collections framework',
+    icon: '📚',
     topics: [
       {
-        id: 'inheritance',
-        title: '4. Inheritance and Polymorphism',
-        description: 'Understanding inheritance and polymorphism',
+        id: 'arrays',
+        title: '12. Arrays',
+        description: 'Working with arrays in Java',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'inheritance-basics', title: 'Inheritance basics', completed: false },
-          { id: 'polymorphism', title: 'Polymorphism and method overriding', completed: false },
-          { id: 'abstract', title: 'Abstract classes and methods', completed: false },
-          { id: 'interfaces', title: 'Interfaces and implementation', completed: false }
+          { id: 'single-dim', title: 'Single-dimensional arrays', completed: false },
+          { id: 'multi-dim', title: 'Multi-dimensional arrays', completed: false },
+          { id: 'array-manip', title: 'Array manipulation: sorting, searching', completed: false },
+          { id: 'enhanced-for', title: 'Enhanced for loop', completed: false }
+        ]
+      },
+      {
+        id: 'collections',
+        title: '13. Collections Framework',
+        description: 'Understanding Java Collections Framework',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'lists', title: 'Lists: ArrayList, LinkedList', completed: false },
+          { id: 'sets', title: 'Sets: HashSet, TreeSet', completed: false },
+          { id: 'maps', title: 'Maps: HashMap, TreeMap', completed: false },
+          { id: 'iterators', title: 'Iterators and for-each loop', completed: false }
         ]
       }
     ]
   },
-  {
+ {
     id: 'phase-4',
-    title: 'Phase 4: Exception Handling and I/O',
-    description: 'Master exception handling and input/output operations',
+    title: 'Phase 4: Exception Handling and File I/O',
+    description: 'Master error handling and file operations in Java',
     icon: '🔧',
     topics: [
       {
         id: 'exceptions',
-        title: '5. Exception Handling',
-        description: 'Learn to handle exceptions in Java',
+        title: '14. Exception Handling',
+        description: 'Understanding Java exception handling',
         completed: false,
         locked: false,
         subtopics: [
           { id: 'try-catch', title: 'Try-catch blocks', completed: false },
-          { id: 'throws', title: 'Throws clause and exception propagation', completed: false },
-          { id: 'custom-exceptions', title: 'Creating custom exceptions', completed: false },
-          { id: 'finally', title: 'Finally block and resources', completed: false }
+          { id: 'multiple-catch', title: 'Multiple catch blocks', completed: false },
+          { id: 'finally', title: 'Finally block', completed: false },
+          { id: 'custom-exceptions', title: 'Custom exceptions', completed: false }
+        ]
+      },
+      {
+        id: 'file-io',
+        title: '15. File Handling',
+        description: 'Working with files in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'file-rw', title: 'Reading and writing with FileReader/FileWriter', completed: false },
+          { id: 'buffered-rw', title: 'Using BufferedReader and BufferedWriter', completed: false },
+          { id: 'file-exceptions', title: 'Handling file exceptions', completed: false }
         ]
       }
     ]
