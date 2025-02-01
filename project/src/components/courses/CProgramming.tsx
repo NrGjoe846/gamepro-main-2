@@ -32,34 +32,55 @@ interface Phase {
 const coursePhases: Phase[] = [
   {
     id: 'phase-1',
-    title: 'Phase 1: C Basics and Core Concepts',
+    title: 'Phase 1: Introduction and Basic Concepts',
     description: 'Master the fundamentals of C programming language and build a strong foundation.',
     icon: '🎯',
     topics: [
       {
         id: 'intro',
         title: '1. Introduction to C Programming',
-        description: 'Get started with C programming language basics',
+        description: 'Understanding C programming fundamentals',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'setup', title: 'Installing GCC and setting up the environment', completed: false },
-          { id: 'first-program', title: 'Writing your first C program', completed: false },
-          { id: 'compilation', title: 'Understanding compilation process', completed: false },
-          { id: 'syntax', title: 'C syntax and basic structure', completed: false }
+          { id: 'what-is-c', title: 'What is C?', completed: false },
+          { id: 'setup', title: 'Setting up the C Environment (GCC, Code::Blocks, VS Code)', completed: false },
+          { id: 'write-run', title: 'Writing and Running a C Program', completed: false },
+          { id: 'structure', title: 'Structure of a C Program', completed: false }
         ]
       },
       {
         id: 'data-types',
-        title: '2. Data Types and Variables',
+        title: '2. Basic Data Types and Variables',
         description: 'Learn about C data types and variable declarations',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'primitive-types', title: 'Basic data types in C', completed: false },
-          { id: 'variables', title: 'Variable declaration and initialization', completed: false },
-          { id: 'type-modifiers', title: 'Type modifiers (signed, unsigned, long, short)', completed: false },
-          { id: 'constants', title: 'Constants and literals', completed: false }
+          { id: 'data-types', title: 'Data Types (int, float, char, double)', completed: false },
+          { id: 'variables', title: 'Declaring and Initializing Variables', completed: false },
+          { id: 'constants', title: 'Constants and #define', completed: false }
+        ]
+      },
+      {
+        id: 'operators',
+        title: '3. Operators in C',
+        description: 'Understanding operators in C',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'basic-operators', title: 'Arithmetic, Relational, Logical, Bitwise, and Assignment Operators', completed: false },
+          { id: 'inc-dec', title: 'Increment (++), Decrement (--)', completed: false }
+        ]
+      },
+      {
+        id: 'io',
+        title: '4. Basic Input and Output',
+        description: 'Working with input and output in C',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'printf-scanf', title: 'printf() and scanf()', completed: false },
+          { id: 'char-io', title: 'getchar(), putchar(), gets(), puts()', completed: false }
         ]
       }
     ]
