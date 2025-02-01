@@ -119,4 +119,123 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
                 <ArrowLeft className="w-6 h-6" />
               </button>
               <h2 className="text-2xl font-bold text-center">{moduleTitle}</h2>
-              <div className="w-6" /> {/* Spacer for alignment */}
+              <div className="w-6" />
+            </div>
+
+            {/* Question Content */}
+            {currentQuestion && (
+              <div className="space-y-6">
+                <div className="bg-white/5 rounded-lg p-6">
+                  <h3 className="text-xl font-bold mb-4">{currentQuestion.question}</h3>
+                  {currentQuestion.code && (
+                    <pre className="bg-black/30 p-4 rounded-lg overflow-x-auto">
+                      <code className="text-sm">{currentQuestion.code}</code>
+                    </pre>
+                  )}
+                </div>
+
+                {/* Answer Options */}
+                <div className="space-y-3">
+                  {currentQuestion.type === 'multiple-choice' && currentQuestion.options?.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setUserAnswer(index.toString())}
+                      className={`w-full p-4 text-left rounded-lg transition-all duration-300 ${
+                        userAnswer === index.toString()
+                          ? 'bg-blue-500/20 border-blue-500/50'
+                          : 'bg-white/5 border-white/10 hover:bg-white/10'
+                      } border`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+
+                  {currentQuestion.type === 'true-false' && (
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => setUserAnswer('true')}
+                        className={`flex-1 p-4 rounded-lg transition-all duration-300 ${
+                          userAnswer === 'true'
+                            ? 'bg-blue-500/20 border-blue-500/50'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10'
+                        } border`}
+                      >
+                        True
+                      </button>
+                      <button
+                        onClick={() => setUserAnswer('false')}
+                        className={`flex-1 p-4 rounded-lg transition-all duration-300 ${
+                          userAnswer === 'false'
+                            ? 'bg-blue-500/20 border-blue-500/50'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10'
+                        } border`}
+                      >
+                        False
+                      </button>
+                    </div>
+                  )}
+
+                  {(currentQuestion.type === 'fill-blank' || currentQuestion.type === 'code-correction') && (
+                    <input
+                      type="text"
+                      value={userAnswer}
+                      onChange={(e) => setUserAnswer(e.target.value)}
+                      className="w-full p-4 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-blue-500/50"
+                      placeholder="Enter your answer..."
+                    />
+                  )}
+                </div>
+
+                {/* Feedback */}
+                {feedback && (
+                  <div className={`p-4 rounded-lg ${
+                    isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      {isCorrect ? (
+                        <Check className="w-5 h-5 text-green-400" />
+                      ) : (
+                        <AlertTriangle className="w-5 h-5 text-red-400" />
+                      )}
+                      <p>{feedback}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between pt-6">
+                  <button
+                    onClick={handleBack}
+                    disabled={currentQuestionIndex === 0}
+                    className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  
+                  {showExplanation ? (
+                    <button
+                      onClick={handleNext}
+                      className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300"
+                    >
+                      {currentQuestionIndex === questions.length - 1 ? 'Complete' : 'Next'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSubmit}
+                      disabled={!userAnswer || isValidating}
+                      className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isValidating ? 'Checking...' : 'Submit'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default QuizPopup;
