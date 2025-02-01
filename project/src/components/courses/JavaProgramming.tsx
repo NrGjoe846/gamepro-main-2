@@ -43,23 +43,77 @@ const coursePhases: Phase[] = [
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'setup', title: 'Installing JDK and setting up the environment', completed: false },
-          { id: 'first-program', title: 'Writing your first Java program', completed: false },
-          { id: 'compilation', title: 'Understanding compilation and JVM', completed: false },
-          { id: 'syntax', title: 'Java syntax and basic structure', completed: false }
+          { id: 'jdk-setup', title: 'Installing Java (JDK, JRE)', completed: false },
+          { id: 'ide-setup', title: 'Setting up the IDE (IntelliJ IDEA, Eclipse, or VS Code)', completed: false },
+          { id: 'first-program', title: 'Writing your first Java program: Hello, World!', completed: false },
+          { id: 'syntax', title: 'Java syntax, keywords, and comments', completed: false },
+          { id: 'jvm', title: 'Understanding the Java Virtual Machine (JVM)', completed: false }
         ]
       },
       {
         id: 'data-types',
-        title: '2. Data Types and Variables',
+        title: '2. Basic Data Types and Variables',
         description: 'Learn about Java data types and variable declarations',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'primitive-types', title: 'Primitive data types in Java', completed: false },
-          { id: 'variables', title: 'Variable declaration and initialization', completed: false },
-          { id: 'type-casting', title: 'Type casting and conversion', completed: false },
-          { id: 'constants', title: 'Constants and final keyword', completed: false }
+          { id: 'primitive-types', title: 'Primitive data types: int, double, char, boolean', completed: false },
+          { id: 'variables', title: 'Variables and constants (final keyword)', completed: false },
+          { id: 'type-casting', title: 'Type casting: implicit and explicit', completed: false },
+          { id: 'naming', title: 'Variable naming conventions', completed: false }
+        ]
+      },
+      {
+        id: 'operators',
+        title: '3. Operators and Expressions',
+        description: 'Master Java operators and expressions',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'arithmetic', title: 'Arithmetic operators: +, -, *, /, %', completed: false },
+          { id: 'comparison', title: 'Comparison operators: ==, !=, >, <, >=, <=', completed: false },
+          { id: 'logical', title: 'Logical operators: &&, ||, !', completed: false },
+          { id: 'assignment', title: 'Assignment operators: =, +=, -=, *=, /=', completed: false },
+          { id: 'ternary', title: 'Ternary operator: ? :', completed: false }
+        ]
+      },
+      {
+        id: 'control-flow',
+        title: '4. Control Flow: Conditionals and Loops',
+        description: 'Understanding control structures in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'conditionals', title: 'Conditionals: if, else if, else', completed: false },
+          { id: 'switch', title: 'Switch-case statements', completed: false },
+          { id: 'for-loops', title: 'for loops', completed: false },
+          { id: 'while-loops', title: 'while and do-while loops', completed: false },
+          { id: 'loop-control', title: 'Loop control statements: break, continue', completed: false }
+        ]
+      },
+      {
+        id: 'methods',
+        title: '5. Functions (Methods)',
+        description: 'Working with methods in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'method-basics', title: 'Defining methods using public, private, static', completed: false },
+          { id: 'parameters', title: 'Method parameters and return values', completed: false },
+          { id: 'overloading', title: 'Method overloading', completed: false },
+          { id: 'recursion', title: 'Recursion (optional for beginners)', completed: false }
+        ]
+      },
+      {
+        id: 'io',
+        title: '6. Basic Input and Output',
+        description: 'Working with input and output operations in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'scanner', title: 'User input using Scanner class', completed: false },
+          { id: 'output', title: 'Output using System.out.println()', completed: false },
+          { id: 'formatting', title: 'Formatting output with printf()', completed: false }
         ]
       }
     ]
