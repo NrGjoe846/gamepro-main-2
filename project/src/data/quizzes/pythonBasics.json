@@ -10,7 +10,7 @@
       "question": "Fill in the blank to print \"Hello, World!\" in Python.",
       "code": "print(___)",
       "answer": "print(\"Hello, World!\")",
-      "explanation": "In Python, we use print() function with text in quotes to display output.",
+      "explanation": "In Python, we use the print() function with text enclosed in quotes to display output.",
       "hints": ["Remember to use quotes around text", "The print function needs parentheses"]
     },
     {
@@ -31,11 +31,75 @@
       "type": "true-false",
       "question": "In Python, the print() function can be used to display text on the screen.",
       "answer": true,
-      "explanation": "print() is indeed used to display text output in Python.",
+      "explanation": "The print() function is used to display text output in Python.",
       "hints": ["Think about how we show text in Python", "This is a fundamental Python concept"]
     },
     {
       "id": 4,
+      "type": "word-scramble",
+      "question": "Unscramble the words to create a Python statement that prints Hello, World!",
+      "words": ["World!", "Hello", "(\"", "print", "\")"],
+      "answer": "print(\"Hello, World!\")",
+      "explanation": "The correct order forms a valid Python print statement.",
+      "hints": ["Start with print()", "Text should be inside quotes"]
+    },
+    {
+      "id": 5,
+      "type": "multiple-choice",
+      "question": "What will the following Python code output?",
+      "code": "print(\"Welcome to Python!\")",
+      "options": [
+        "Welcome",
+        "to Python",
+        "Welcome to Python!"
+      ],
+      "answer": 2,
+      "explanation": "The print function outputs the exact text inside the parentheses.",
+      "hints": ["Look at the full string inside print()", "Python prints everything inside the quotes"]
+    },
+    {
+      "id": 6,
+      "type": "match-output",
+      "question": "Match the code with its output.",
+      "code-output-pairs": {
+        "print(\"Hello\")": "Hello",
+        "print(\"Hi!\")": "Hi!"
+      },
+      "answer": {
+        "print(\"Hello\")": "Hello",
+        "print(\"Hi!\")": "Hi!"
+      },
+      "explanation": "Each print statement outputs the exact text inside the parentheses.",
+      "hints": ["Match print statements with the correct output"]
+    },
+    {
+      "id": 7,
+      "type": "multiple-selection",
+      "question": "Which of the following are valid Python print() statements? (Select all that apply)",
+      "options": [
+        "print(\"Hello, World!\")",
+        "print(\"Goodbye)",
+        "print(Hello)"
+      ],
+      "answer": [0],
+      "explanation": "Only the first option is correct; the others have syntax errors.",
+      "hints": ["Check for missing quotes", "Python requires text to be in quotes"]
+    },
+    {
+      "id": 8,
+      "type": "ordering",
+      "question": "Arrange the steps in the correct order to run a Python program.",
+      "steps": [
+        "Open Python interpreter or IDE",
+        "Type print(\"Hello, World!\")",
+        "Press Enter/Run"
+      ],
+      "answer": [0, 1, 2],
+      "explanation": "This is the correct sequence for writing and running a Python program.",
+      "hints": ["First, you need an interpreter", "Code must be written before it can be executed"]
+    },
+    {
+      "id": 9,
       "type": "code-correction",
       "question": "What is wrong with this Python code?",
       "code": "print(Hello, World)",
@@ -47,20 +111,41 @@
       "answer": 0,
       "explanation": "String literals in Python must be enclosed in quotes.",
       "hints": ["Look at how the text is written", "Python needs to know what's text and what's code"]
+    },
+    {
+      "id": 10,
+      "type": "fill-blank",
+      "question": "Complete the code to display the following output:\n\nOutput: Python is fun!",
+      "code": "print(___)",
+      "answer": "print(\"Python is fun!\")",
+      "explanation": "Strings must be enclosed in quotes inside print().",
+      "hints": ["Enclose text in quotes", "print() needs parentheses"]
     }
   ],
   "flashcards": [
     {
-      "front": "What is the purpose of print() function?",
+      "front": "What is the purpose of the print() function?",
       "back": "The print() function outputs text to the console."
     },
     {
       "front": "What is the correct syntax for printing text?",
-      "back": "print(\"Your text here\") - using parentheses and quotes"
+      "back": "print(\"Hello, World!\") - using parentheses and quotes."
     },
     {
       "front": "Why are quotes important in print statements?",
-      "back": "Quotes tell Python that the content is a text string, not code"
+      "back": "Quotes tell Python that the content is a text string, not code."
+    },
+    {
+      "front": "What is the key concept of print() in Python?",
+      "back": "print() is a built-in function used to display information."
+    },
+    {
+      "front": "What is a common mistake when using print()?",
+      "back": "Forgetting parentheses or quotes around the text."
+    },
+    {
+      "front": "Why is printing 'Hello, World!' often the first step in learning Python?",
+      "back": "It confirms that the Python setup is working correctly and introduces basic syntax."
     }
   ]
 }
