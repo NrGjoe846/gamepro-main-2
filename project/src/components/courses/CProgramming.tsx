@@ -145,34 +145,52 @@ const coursePhases: Phase[] = [
   },
   {
     id: 'phase-3',
-    title: 'Phase 3: Arrays and Pointers',
-    description: 'Master arrays and pointer manipulation in C',
+    title: 'Phase 3: Arrays, Strings, and Pointers',
+    description: 'Master arrays, strings, and pointer manipulation in C',
     icon: '📚',
     topics: [
       {
         id: 'arrays',
-        title: '5. Arrays',
+        title: '1. Arrays',
         description: 'Working with arrays in C',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'array-basics', title: 'Array declaration and initialization', completed: false },
-          { id: 'multi-dimensional', title: 'Multi-dimensional arrays', completed: false },
-          { id: 'array-functions', title: 'Array manipulation functions', completed: false },
-          { id: 'strings', title: 'Character arrays and strings', completed: false }
+          { id: 'one-dim', title: 'One-Dimensional and Two-Dimensional Arrays', completed: false },
+          { id: 'multi-dim', title: 'Multi-Dimensional Arrays', completed: false }
+        ]
+      },
+      {
+        id: 'strings',
+        title: '2. Strings in C',
+        description: 'Understanding strings and string manipulation',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'string-funcs', title: 'String Functions (strlen(), strcpy(), strcat(), strcmp())', completed: false },
+          { id: 'char-arrays', title: 'Character Arrays and String Manipulation', completed: false }
         ]
       },
       {
         id: 'pointers',
-        title: '6. Pointers',
+        title: '3. Pointers',
         description: 'Understanding pointers in C',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'pointer-basics', title: 'Pointer declaration and initialization', completed: false },
-          { id: 'pointer-arithmetic', title: 'Pointer arithmetic', completed: false },
-          { id: 'pointer-arrays', title: 'Pointers and arrays', completed: false },
-          { id: 'function-pointers', title: 'Function pointers', completed: false }
+          { id: 'pointer-basics', title: 'Pointer Basics (* and & Operators)', completed: false },
+          { id: 'pointer-arithmetic', title: 'Pointer Arithmetic', completed: false },
+          { id: 'pointers-arrays', title: 'Pointers and Arrays', completed: false }
+        ]
+      },
+      {
+        id: 'dynamic-memory',
+        title: '4. Dynamic Memory Allocation',
+        description: 'Managing memory dynamically in C',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'memory-funcs', title: 'malloc(), calloc(), realloc(), free()', completed: false }
         ]
       }
     ]
