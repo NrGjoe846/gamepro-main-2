@@ -63,7 +63,7 @@ const coursePhases: Phase[] = [
           { id: 'naming', title: 'Variable naming conventions', completed: false }
         ]
       },
-      {
+   {
         id: 'operators',
         title: '3. Operators and Expressions',
         description: 'Master Java operators and expressions',
@@ -76,9 +76,48 @@ const coursePhases: Phase[] = [
           { id: 'assignment', title: 'Assignment operators: =, +=, -=, *=, /=', completed: false },
           { id: 'ternary', title: 'Ternary operator: ? :', completed: false }
         ]
+      },
+      {
+        id: 'control-flow',
+        title: '4. Control Flow: Conditionals and Loops',
+        description: 'Understanding control structures in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'conditionals', title: 'Conditionals: if, else if, else', completed: false },
+          { id: 'switch', title: 'Switch-case statements', completed: false },
+          { id: 'for-loops', title: 'for loops', completed: false },
+          { id: 'while-loops', title: 'while and do-while loops', completed: false },
+          { id: 'loop-control', title: 'Loop control statements: break, continue', completed: false }
+        ]
+      },
+      {
+        id: 'methods',
+        title: '5. Functions (Methods)',
+        description: 'Working with methods in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'method-basics', title: 'Defining methods using public, private, static', completed: false },
+          { id: 'parameters', title: 'Method parameters and return values', completed: false },
+          { id: 'overloading', title: 'Method overloading', completed: false },
+          { id: 'recursion', title: 'Recursion (optional for beginners)', completed: false }
+        ]
+      },
+      {
+        id: 'io',
+        title: '6. Basic Input and Output',
+        description: 'Working with input and output operations in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'scanner', title: 'User input using Scanner class', completed: false },
+          { id: 'output', title: 'Output using System.out.println()', completed: false },
+          { id: 'formatting', title: 'Formatting output with printf()', completed: false }
+        ]
       }
-    ]
-  },
+  ]
+      },
   {
     id: 'phase-2',
     title: 'Phase 2: Object-Oriented Programming',
@@ -86,16 +125,65 @@ const coursePhases: Phase[] = [
     icon: '🎯',
     topics: [
       {
-        id: 'classes',
-        title: '3. Classes and Objects',
-        description: 'Understanding classes and objects in Java',
+        id: 'intro-oop',
+        title: '7. Introduction to OOP',
+        description: 'Understanding fundamental OOP concepts',
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'class-basics', title: 'Class definition and structure', completed: false },
-          { id: 'objects', title: 'Creating and using objects', completed: false },
-          { id: 'constructors', title: 'Constructors and initialization', completed: false },
-          { id: 'methods', title: 'Methods and parameters', completed: false }
+          { id: 'classes-objects', title: 'Classes and objects', completed: false },
+          { id: 'instance-vars', title: 'Instance variables and methods', completed: false },
+          { id: 'constructors', title: 'Constructors: default and parameterized', completed: false },
+          { id: 'this-keyword', title: 'this keyword', completed: false }
+        ]
+      },
+      {
+        id: 'encapsulation',
+        title: '8. Encapsulation and Access Modifiers',
+        description: 'Understanding encapsulation and access control',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'access-modifiers', title: 'Private vs public access modifiers', completed: false },
+          { id: 'getters-setters', title: 'Getters and setters', completed: false },
+          { id: 'encapsulation-principles', title: 'Encapsulation principles', completed: false }
+        ]
+      },
+      {
+        id: 'inheritance',
+        title: '9. Inheritance',
+        description: 'Understanding inheritance and class extensions',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'extends', title: 'Extending classes using extends', completed: false },
+          { id: 'method-overriding', title: 'Method overriding', completed: false },
+          { id: 'super-keyword', title: 'super keyword', completed: false },
+          { id: 'inheritance-types', title: 'Types of inheritance: single, multilevel, hierarchical', completed: false }
+        ]
+      },
+      {
+        id: 'polymorphism',
+        title: '10. Polymorphism',
+        description: 'Understanding polymorphism in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'method-overloading', title: 'Method overloading (compile-time polymorphism)', completed: false },
+          { id: 'method-overriding-runtime', title: 'Method overriding (runtime polymorphism)', completed: false },
+          { id: 'dynamic-dispatch', title: 'Dynamic method dispatch', completed: false }
+        ]
+      },
+      {
+        id: 'abstraction',
+        title: '11. Abstraction and Interfaces',
+        description: 'Understanding abstraction and interfaces',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'abstract-classes', title: 'Abstract classes and methods', completed: false },
+          { id: 'interfaces', title: 'Interfaces and their implementation', completed: false },
+          { id: 'multiple-inheritance', title: 'Multiple inheritance using interfaces', completed: false }
         ]
       }
     ]
@@ -113,10 +201,22 @@ const coursePhases: Phase[] = [
         completed: false,
         locked: false,
         subtopics: [
-          { id: 'single-dim', title: 'Single-dimensional arrays', completed: false },
-          { id: 'multi-dim', title: 'Multi-dimensional arrays', completed: false },
-          { id: 'array-manip', title: 'Array manipulation: sorting, searching', completed: false },
+          { id: 'array-basics', title: 'Single-dimensional and multi-dimensional arrays', completed: false },
+          { id: 'array-manipulation', title: 'Array manipulation: sorting, searching', completed: false },
           { id: 'enhanced-for', title: 'Enhanced for loop', completed: false }
+        ]
+      },
+      {
+        id: 'collections',
+        title: '13. Collections Framework',
+        description: 'Understanding Java Collections Framework',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'lists', title: 'Lists: ArrayList, LinkedList', completed: false },
+          { id: 'sets', title: 'Sets: HashSet, TreeSet', completed: false },
+          { id: 'maps', title: 'Maps: HashMap, TreeMap', completed: false },
+          { id: 'iterators', title: 'Iterators and for-each loop', completed: false }
         ]
       }
     ]
@@ -138,6 +238,18 @@ const coursePhases: Phase[] = [
           { id: 'multiple-catch', title: 'Multiple catch blocks', completed: false },
           { id: 'finally', title: 'Finally block', completed: false },
           { id: 'custom-exceptions', title: 'Custom exceptions', completed: false }
+        ]
+      },
+          {
+        id: 'file-io',
+        title: '15. File Handling',
+        description: 'Working with files in Java',
+        completed: false,
+        locked: false,
+        subtopics: [
+          { id: 'file-rw', title: 'Reading from and writing to files using FileReader, FileWriter', completed: false },
+          { id: 'buffered-rw', title: 'Using BufferedReader and BufferedWriter', completed: false },
+          { id: 'file-exceptions', title: 'Handling file exceptions', completed: false }
         ]
       }
     ]
@@ -250,6 +362,7 @@ const coursePhases: Phase[] = [
     ]
   }
 ];
+     
 
 const JavaProgramming = () => {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
