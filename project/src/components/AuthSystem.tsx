@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 
 const AuthSystem = () => {
   const navigate = useNavigate();
-  const { login, skipAuth } = useAuth();
+  const { signIn, signUp } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,29 +47,17 @@ const AuthSystem = () => {
     
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful login/signup
-      const userData = {
-        id: '1',
-        name: formData.username || 'User',
-        email: formData.email,
-        token: 'mock-token'
-      };
-      
-      login(userData);
+      if (isLogin) {
+        await signIn(formData.email, formData.password);
+      } else {
+        await signUp(formData.email, formData.password, formData.username);
+      }
       navigate('/dashboard');
     } catch (error: any) {
-      setErrors({ submit: error.message });
+      setErrors({ submit: error.message || 'An error occurred during authentication' });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSkip = () => {
-    skipAuth();
-    navigate('/dashboard');
   };
 
   return (
@@ -87,27 +75,6 @@ const AuthSystem = () => {
                 ? 'Enter your credentials to access your account' 
                 : 'Start your journey with us today'}
             </p>
-          </div>
-
-          {/* Skip Button */}
-          <button
-            onClick={handleSkip}
-            className="w-full bg-white/10 hover:bg-white/20 text-white rounded-lg p-3 flex items-center justify-center gap-2 mb-6 transition-all"
-          >
-            Continue as Guest
-          </button>
-
-          {/* Social Login */}
-          <button className="w-full bg-white/10 hover:bg-white/20 text-white rounded-lg p-3 flex items-center justify-center gap-2 mb-6 transition-all">
-            <Github className="w-5 h-5" />
-            Continue with Github
-          </button>
-
-          {/* Divider */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1 h-px bg-white/20" />
-            <span className="text-white/50 text-sm">or</span>
-            <div className="flex-1 h-px bg-white/20" />
           </div>
 
           {/* Form */}
