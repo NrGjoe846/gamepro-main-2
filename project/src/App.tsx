@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import RequireAuth from './components/auth/RequireAuth';
 import AuthSystem from './components/AuthSystem';
 import Dashboard from './components/Dashboard';
 import ProfileDashboard from './components/profile/ProfileDashboard';
@@ -24,89 +24,89 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <Dashboard />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <ProfileDashboard />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/compiler"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <CompilerPage />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/courses/python-fundamentals"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <PythonFundamentals />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/courses/c-programming"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <CProgramming />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/courses/java-programming"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <JavaProgramming />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/challenges"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <ChallengeCategories />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/challenges/language-select"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <LanguageSelection />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/challenges/level-select"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <LevelSelection />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/challenges/daily"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <DailyChallenge />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route
             path="/challenges/java"
             element={
-              <ProtectedRoute>
+              <RequireAuth>
                 <JavaChallenge />
-              </ProtectedRoute>
+              </RequireAuth>
             }
           />
           <Route path="/" element={<Navigate to="/auth" replace />} />
