@@ -1,169 +1,255 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Star, Trophy, Timer } from 'lucide-react';
-import FlashCards from './FlashCards';
-import { 
-  FillBlank, MultipleChoice, TrueFalse, WordScramble,
-  MatchOutput, MultipleSelection, Ordering, CodeCorrection 
-} from './QuizTypes';
+import { ChevronRight } from 'lucide-react';
 
-interface QuizFlowProps {
-  flashcards: Array<{ front: string; back: string }>;
-  questions: Array<any>;
-  onComplete: (score: number) => void;
-  moduleTitle: string;
+interface FlashCard {
+  front: string;
+  back: string;
 }
 
-const QuizFlow: React.FC<QuizFlowProps> = ({ flashcards, questions, onComplete, moduleTitle }) => {
-  const [showFlashcards, setShowFlashcards] = useState(true);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(60);
+interface FlashCardsProps {
+  cards?: FlashCard[];
+}
 
-  const handleStartQuiz = () => {
-    setShowFlashcards(false);
+const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [direction, setDirection] = useState(0);
+
+  const handleNext = () => {
+    if (currentIndex < cards.length - 1) {
+      setDirection(1);
+      setIsFlipped(false);
+      setCurrentIndex(prev => prev + 1);
+    }
   };
 
-  const handleAnswer = (answer: any) => {
-    const question = questions[currentQuestionIndex];
-    const correct = answer === question.answer;
-    setIsCorrect(correct);
-    setShowExplanation(true);
-    
-    if (correct) {
-      setScore(prev => prev + 100);
-    }
-
-    setTimeout(() => {
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(prev => prev + 1);
-        setIsCorrect(null);
-        setShowExplanation(false);
-      } else {
-        onComplete(score);
-      }
-    }, 2000);
-  };
-
-  const renderQuestion = (question: any) => {
-    const props = {
-      ...question,
-      onAnswer: handleAnswer,
-      isCorrect,
-      showExplanation
-    };
-
-    switch (question.type) {
-      case 'fill-blank':
-        return <FillBlank {...props} />;
-      case 'multiple-choice':
-        return <MultipleChoice {...props} />;
-      case 'true-false':
-        return <TrueFalse {...props} />;
-      case 'word-scramble':
-        return <WordScramble {...props} />;
-      case 'match-output':
-        return <MatchOutput {...props} />;
-      case 'multiple-selection':
-        return <MultipleSelection {...props} />;
-      case 'ordering':
-        return <Ordering {...props} />;
-      case 'code-correction':
-        return <CodeCorrection {...props} />;
-      default:
-        return null;
-    }
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
   };
 
   return (
-    <div className="min-h-[600px] max-h-[80vh] overflow-y-auto">
-      <div className="sticky top-0 bg-[#1a1a2e] p-4 border-b border-white/10 z-10">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">{moduleTitle}</h2>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-yellow-400" />
-              <span>{score} XP</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Timer className="w-5 h-5 text-blue-400" />
-              <span>{timeLeft}s</span>
-            </div>
-          </div>
+    <div className="relative max-w-2xl mx-auto p-8">
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl font-bold">Python Basics Flashcards</h2>
+        <div className="text-sm text-gray-400">
+          {currentIndex + 1} / {cards.length}
         </div>
       </div>
 
-      <div className="p-8">
-        <AnimatePresence mode="wait">
-          {showFlashcards ? (
-            <motion.div
-              key="flashcards"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <FlashCards cards={flashcards} />
-              <div className="flex justify-center mt-8">
-                <motion.button
-                  onClick={handleStartQuiz}
-                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center gap-2 transition-all duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Start Quiz
-                  <ArrowRight className="w-5 h-5" />
-                </motion.button>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="quiz"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <div className="mb-8">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">
-                    Question {currentQuestionIndex + 1} of {questions.length}
-                  </span>
-                  <Trophy className="w-5 h-5 text-yellow-400" />
-                </div>
-                <div className="w-full h-2 bg-white/10 rounded-full mt-2">
-                  <motion.div
-                    className="h-full bg-blue-500 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ 
-                      width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` 
-                    }}
-                    transition={{ duration: 0.5 }}
-                  />
+      <div className="relative perspective-1000 h-96">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{ 
+              x: direction > 0 ? 300 : -300,
+              opacity: 0,
+              rotateY: isFlipped ? 180 : 0
+            }}
+            animate={{ 
+              x: 0,
+              opacity: 1,
+              rotateY: isFlipped ? 180 : 0
+            }}
+            exit={{ 
+              x: direction < 0 ? 300 : -300,
+              opacity: 0
+            }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 preserve-3d cursor-pointer"
+            onClick={handleFlip}
+          >
+            {/* Front of Card */}
+            <div className="absolute inset-0 backface-hidden">
+              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <h3 className="text-xl font-bold text-blue-400 mb-2">Question</h3>
+                  <p className="text-xl">{cards[currentIndex].front}</p>
+                  <p className="text-sm text-gray-400 mt-4">Click to reveal answer</p>
                 </div>
               </div>
+            </div>
 
-              {renderQuestion(questions[currentQuestionIndex])}
-
-              {showExplanation && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`mt-6 p-4 rounded-lg ${
-                    isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'
-                  }`}
-                >
-                  <p className="text-gray-300">
-                    {questions[currentQuestionIndex].explanation}
+            {/* Back of Card */}
+            <div className="absolute inset-0 backface-hidden rotate-y-180">
+              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
+                <div className="flex flex-col justify-center h-full text-center">
+                  <h3 className="text-xl font-bold text-green-400 mb-4">Answer</h3>
+                  <p className="text-lg leading-relaxed whitespace-pre-line">
+                    {cards[currentIndex].back}
                   </p>
-                </motion.div>
-              )}
-            </motion.div>
-          )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </AnimatePresence>
+      </div>
+
+      <div className="flex items-center justify-center mt-8">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleNext}
+          disabled={currentIndex === cards.length - 1}
+          className="px-6 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-500 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+        >
+          Go to Next
+          <ChevronRight className="w-5 h-5" />
+        </motion.button>
       </div>
     </div>
   );
 };
 
-export default QuizFlow;
+// Default cards with Python information
+const defaultCards: FlashCard[] = [
+  {
+    front: "What is the purpose of the print() function?",
+    back: "The print() function outputs text to the console."
+  },
+  {
+    front: "What is the correct syntax for print()?",
+    back: 'Use parentheses and quotes:\n\nprint("Hello, World!")\n\nMake sure to:\n• Use parentheses ()\n• Enclose text in quotes " "'
+  },
+  {
+    front: "What is the key concept of print()?",
+    back: "print() is a built-in function used to display information."
+  },
+  {
+    front: "What are common mistakes when using print()?",
+    back: "Common mistakes include:\n• Forgetting parentheses: print 'Hello'\n• Missing quotes: print(Hello)\n• Using wrong quotes: print('Hello\")\n\nCorrect way: print(\"Hello\")"
+  },
+  {
+    front: "Why is print() typically the first thing you learn in Python?",
+    back: "print() is taught first because:\n• It confirms your Python setup works\n• It's easy to understand\n• It provides immediate visual feedback\n• It's essential for learning other concepts"
+  }
+];
+
+export default FlashCards;import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronRight } from 'lucide-react';
+
+interface FlashCard {
+  front: string;
+  back: string;
+}
+
+interface FlashCardsProps {
+  cards?: FlashCard[];
+}
+
+const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [direction, setDirection] = useState(0);
+
+  const handleNext = () => {
+    if (currentIndex < cards.length - 1) {
+      setDirection(1);
+      setIsFlipped(false);
+      setCurrentIndex(prev => prev + 1);
+    }
+  };
+
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
+  };
+
+  return (
+    <div className="relative max-w-2xl mx-auto p-8">
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl font-bold">Python Basics Flashcards</h2>
+        <div className="text-sm text-gray-400">
+          {currentIndex + 1} / {cards.length}
+        </div>
+      </div>
+
+      <div className="relative perspective-1000 h-96">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentIndex}
+            initial={{ 
+              x: direction > 0 ? 300 : -300,
+              opacity: 0,
+              rotateY: isFlipped ? 180 : 0
+            }}
+            animate={{ 
+              x: 0,
+              opacity: 1,
+              rotateY: isFlipped ? 180 : 0
+            }}
+            exit={{ 
+              x: direction < 0 ? 300 : -300,
+              opacity: 0
+            }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 preserve-3d cursor-pointer"
+            onClick={handleFlip}
+          >
+            {/* Front of Card */}
+            <div className="absolute inset-0 backface-hidden">
+              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <h3 className="text-xl font-bold text-blue-400 mb-2">Question</h3>
+                  <p className="text-xl">{cards[currentIndex].front}</p>
+                  <p className="text-sm text-gray-400 mt-4">Click to reveal answer</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Back of Card */}
+            <div className="absolute inset-0 backface-hidden rotate-y-180">
+              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
+                <div className="flex flex-col justify-center h-full text-center">
+                  <h3 className="text-xl font-bold text-green-400 mb-4">Answer</h3>
+                  <p className="text-lg leading-relaxed whitespace-pre-line">
+                    {cards[currentIndex].back}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      <div className="flex items-center justify-center mt-8">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleNext}
+          disabled={currentIndex === cards.length - 1}
+          className="px-6 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-500 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+        >
+          Go to Next
+          <ChevronRight className="w-5 h-5" />
+        </motion.button>
+      </div>
+    </div>
+  );
+};
+
+// Default cards with Python information
+const defaultCards: FlashCard[] = [
+  {
+    front: "What is the purpose of the print() function?",
+    back: "The print() function outputs text to the console."
+  },
+  {
+    front: "What is the correct syntax for print()?",
+    back: 'Use parentheses and quotes:\n\nprint("Hello, World!")\n\nMake sure to:\n• Use parentheses ()\n• Enclose text in quotes " "'
+  },
+  {
+    front: "What is the key concept of print()?",
+    back: "print() is a built-in function used to display information."
+  },
+  {
+    front: "What are common mistakes when using print()?",
+    back: "Common mistakes include:\n• Forgetting parentheses: print 'Hello'\n• Missing quotes: print(Hello)\n• Using wrong quotes: print('Hello\")\n\nCorrect way: print(\"Hello\")"
+  },
+  {
+    front: "Why is print() typically the first thing you learn in Python?",
+    back: "print() is taught first because:\n• It confirms your Python setup works\n• It's easy to understand\n• It provides immediate visual feedback\n• It's essential for learning other concepts"
+  }
+];
+
+export default FlashCards;
