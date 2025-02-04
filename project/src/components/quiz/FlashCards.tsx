@@ -11,10 +11,19 @@ interface FlashCardsProps {
   cards: FlashCard[];
 }
 
-const FlashCards: React.FC<FlashCardsProps> = ({ cards }) => {
+const FlashCards: React.FC<FlashCardsProps> = ({ cards = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [direction, setDirection] = useState(0);
+
+  // If no cards are provided, show a placeholder
+  if (!cards || cards.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-80">
+        <p className="text-gray-400">No flashcards available for this module.</p>
+      </div>
+    );
+  }
 
   const handleNext = () => {
     if (currentIndex < cards.length - 1) {
