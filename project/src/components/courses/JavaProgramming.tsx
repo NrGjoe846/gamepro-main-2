@@ -28,6 +28,16 @@ interface Phase {
   expanded?: boolean;
   icon: string;
 }
+interface Phase {
+  id: string;
+  title: string;
+  description: string;
+  topics: Topic[];
+  expanded?: boolean;
+  icon: string;
+  backgroundImage: string;
+}
+
 
 const coursePhases: Phase[] = [
   {
@@ -601,6 +611,19 @@ const JavaProgramming = () => {
                   }}
                 >
                   <div className="absolute inset-0 backface-hidden">
+                    <div className="absolute inset-0 backface-hidden">
+  <div 
+    className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
+    style={{
+      backgroundImage: `url(${phase.backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      opacity: 0.15
+    }}
+  />
+  {/* Rest of the card content */}
+</div>
+
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
                     <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
                     
