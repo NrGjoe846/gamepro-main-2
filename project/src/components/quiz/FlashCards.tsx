@@ -111,14 +111,14 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = [] }) => {
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleNext}
-          disabled={currentIndex === cards.length - 1}
-          className="p-2 bg-white/10 rounded-full disabled:opacity-50"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </motion.button>
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={handleNext}
+  className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+>
+  Check Answer
+  <ChevronRight className="w-5 h-5" />
+</motion.button>
       </div>
     </div>
   );
