@@ -1,43 +1,27 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, RotateCw } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 interface FlashCard {
   front: string;
   back: string;
+  emoji?: string;
 }
 
 interface FlashCardsProps {
-  cards: FlashCard[];
+  cards?: FlashCard[];
 }
 
-const FlashCards: React.FC<FlashCardsProps> = ({ cards = [] }) => {
+const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [direction, setDirection] = useState(0);
-
-  // If no cards are provided, show a placeholder
-  if (!cards || cards.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-80">
-        <p className="text-gray-400">No flashcards available for this module.</p>
-      </div>
-    );
-  }
 
   const handleNext = () => {
     if (currentIndex < cards.length - 1) {
       setDirection(1);
       setIsFlipped(false);
       setCurrentIndex(prev => prev + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setDirection(-1);
-      setIsFlipped(false);
-      setCurrentIndex(prev => prev - 1);
     }
   };
 
@@ -48,13 +32,13 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = [] }) => {
   return (
     <div className="relative max-w-2xl mx-auto p-8">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold">Flashcards</h2>
+        <h2 className="text-2xl font-bold">Python Basics Flashcards</h2>
         <div className="text-sm text-gray-400">
           {currentIndex + 1} / {cards.length}
         </div>
       </div>
 
-      <div className="relative perspective-1000 h-80">
+      <div className="relative perspective-1000 h-96">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentIndex}
@@ -76,52 +60,77 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = [] }) => {
             className="absolute inset-0 preserve-3d cursor-pointer"
             onClick={handleFlip}
           >
+            {/* Front of Card */}
             <div className="absolute inset-0 backface-hidden">
-              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20 flex items-center justify-center text-center">
-                <p className="text-xl">{cards[currentIndex].front}</p>
+              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <span className="text-4xl mb-4">{cards[currentIndex].emoji}</span>
+                  <h3 className="text-xl font-bold text-blue-400 mb-2">Topic</h3>
+                  <p className="text-xl">{cards[currentIndex].front}</p>
+                  <p className="text-sm text-gray-400 mt-4">Click to reveal explanation</p>
+                </div>
               </div>
             </div>
+
+            {/* Back of Card */}
             <div className="absolute inset-0 backface-hidden rotate-y-180">
-              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20 flex items-center justify-center text-center">
-                <p className="text-xl">{cards[currentIndex].back}</p>
+              <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
+                <div className="flex flex-col justify-center h-full text-center">
+                  <span className="text-4xl mb-4">{cards[currentIndex].emoji}</span>
+                  <h3 className="text-xl font-bold text-green-400 mb-4">Explanation</h3>
+                  <p className="text-lg leading-relaxed whitespace-pre-line">
+                    {cards[currentIndex].back}
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      <div className="flex items-center justify-center gap-4 mt-8">
+      <div className="flex items-center justify-center mt-8">
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handlePrev}
-          disabled={currentIndex === 0}
-          className="p-2 bg-white/10 rounded-full disabled:opacity-50"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleNext}
+          disabled={currentIndex === cards.length - 1}
+          className="px-6 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-500 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
         >
-          <ChevronLeft className="w-6 h-6" />
+          Go to Next
+          <ChevronRight className="w-5 h-5" />
         </motion.button>
-
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleFlip}
-          className="p-2 bg-white/10 rounded-full"
-        >
-          <RotateCw className="w-6 h-6" />
-        </motion.button>
-
-        <motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  onClick={handleNext}
-  className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
->
-  Check Answer
-  <ChevronRight className="w-5 h-5" />
-</motion.button>
       </div>
     </div>
   );
 };
+
+// Default cards with Python information
+const defaultCards: FlashCard[] = [
+  {
+    emoji: "🖨️",
+    front: "What is the purpose of print() function?",
+    back: "The print() function is a built-in Python function used to output text to the console. It's one of the most fundamental functions for displaying information in Python."
+  },
+  {
+    emoji: "📝",
+    front: "What is the correct syntax for print()?",
+    back: 'Use parentheses and quotes:\n\nprint("Hello, World!")\n\nMake sure to:\n• Use parentheses ()\n• Enclose text in quotes " "'
+  },
+  {
+    emoji: "🔑",
+    front: "What is the key concept of print()?",
+    back: "print() is a built-in function in Python that serves as the primary way to display information to users. It's essential for:\n• Debugging code\n• Displaying results\n• Providing user feedback"
+  },
+  {
+    emoji: "⚠️",
+    front: "What are common mistakes when using print()?",
+    back: "Common mistakes include:\n• Forgetting parentheses: print 'Hello'\n• Missing quotes: print(Hello)\n• Using wrong quotes: print('Hello\")\n\nCorrect way: print(\"Hello\")"
+  },
+  {
+    emoji: "🎯",
+    front: "Why is print() typically the first thing you learn in Python?",
+    back: "print() is taught first because:\n• It confirms your Python setup works\n• It's easy to understand\n• It provides immediate visual feedback\n• It's essential for learning other concepts"
+  }
+];
 
 export default FlashCards;
