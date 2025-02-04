@@ -19,7 +19,6 @@ interface AuthContextType extends AuthState {
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  skipAuth: () => void;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
   updateSettings: (updates: Partial<UserSettings>) => Promise<void>;
 }
@@ -52,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
       setState(prev => ({ 
         ...prev, 
         session, 
@@ -74,18 +74,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUserData = async (userId: string) => {
     try {
       // Fetch profile
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
+      if (profileError) throw profileError;
+
       // Fetch settings
-      const { data: settings } = await supabase
+      const { data: settings, error: settingsError } = await supabase
         .from('user_settings')
         .select('*')
         .eq('user_id', userId)
         .single();
+
+      if (settingsError && settingsError.code !== 'PGRST116') {
+        throw settingsError;
+      }
 
       setState(prev => ({ 
         ...prev, 
@@ -100,27 +106,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string, username: string) => {
-    const { data: { user }, error } = await supabase.auth.signUp({
+    const { data: { user }, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    if (error) throw error;
+    if (signUpError) throw signUpError;
     if (!user) throw new Error('No user returned after signup');
 
-    // Create profile
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert([{ id: user.id, username }]);
+    try {
+      // Create profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{ 
+          id: user.id, 
+          username,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }]);
 
-    if (profileError) throw profileError;
+      if (profileError) throw profileError;
 
-    // Create settings
-    const { error: settingsError } = await supabase
-      .from('user_settings')
-      .insert([{ user_id: user.id }]);
+      // Create settings
+      const { error: settingsError } = await supabase
+        .from('user_settings')
+        .insert([{ 
+          user_id: user.id,
+          theme: 'dark',
+          notifications_enabled: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }]);
 
-    if (settingsError) throw settingsError;
+      if (settingsError) throw settingsError;
+
+    } catch (error) {
+      // If profile/settings creation fails, delete the auth user
+      await supabase.auth.admin.deleteUser(user.id);
+      throw error;
+    }
   };
 
   const signIn = async (email: string, password: string) => {
@@ -145,21 +169,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  const skipAuth = () => {
-    setState(prev => ({
-      ...prev,
-      isAuthenticated: true,
-      loading: false
-    }));
-  };
-
   const updateProfile = async (updates: Partial<Profile>) => {
     const { user } = state;
     if (!user) throw new Error('No user logged in');
 
     const { error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', user.id);
 
     if (error) throw error;
@@ -172,7 +188,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const { error } = await supabase
       .from('user_settings')
-      .update(updates)
+      .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('user_id', user.id);
 
     if (error) throw error;
@@ -185,7 +201,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signUp,
       signIn,
       signOut,
-      skipAuth,
       updateProfile,
       updateSettings,
     }}>
