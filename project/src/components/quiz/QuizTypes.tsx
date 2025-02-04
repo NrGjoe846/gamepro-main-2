@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Shuffle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Check, X, Shuffle, ArrowRight, ArrowLeft, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface QuizTypeProps {
   type: string;
@@ -15,7 +15,7 @@ interface QuizTypeProps {
 }
 
 export const FillBlank: React.FC<QuizTypeProps> = ({ question, code, onAnswer, isCorrect }) => {
-  const [input, setInput] = React.useState('');
+  const [input, setInput] = useState('');
 
   return (
     <div className="space-y-4">
@@ -97,7 +97,7 @@ export const TrueFalse: React.FC<QuizTypeProps> = ({ question, onAnswer, isCorre
 };
 
 export const WordScramble: React.FC<QuizTypeProps> = ({ question, options = [], onAnswer, isCorrect }) => {
-  const [words, setWords] = React.useState(options);
+  const [words, setWords] = useState(options);
   
   const shuffleWords = () => {
     setWords([...words].sort(() => Math.random() - 0.5));
@@ -136,7 +136,7 @@ export const WordScramble: React.FC<QuizTypeProps> = ({ question, options = [], 
 };
 
 export const MatchOutput: React.FC<QuizTypeProps> = ({ question, options = [], onAnswer, isCorrect }) => {
-  const [matches, setMatches] = React.useState<Record<string, string>>({});
+  const [matches, setMatches] = useState<Record<string, string>>({});
 
   const handleMatch = (code: string, output: string) => {
     setMatches(prev => ({
@@ -180,7 +180,7 @@ export const MatchOutput: React.FC<QuizTypeProps> = ({ question, options = [], o
 };
 
 export const MultipleSelection: React.FC<QuizTypeProps> = ({ question, options = [], onAnswer, isCorrect }) => {
-  const [selected, setSelected] = React.useState<number[]>([]);
+  const [selected, setSelected] = useState<number[]>([]);
 
   const toggleSelection = (index: number) => {
     setSelected(prev => 
@@ -226,7 +226,7 @@ export const MultipleSelection: React.FC<QuizTypeProps> = ({ question, options =
 };
 
 export const Ordering: React.FC<QuizTypeProps> = ({ question, options = [], onAnswer, isCorrect }) => {
-  const [steps, setSteps] = React.useState(options);
+  const [steps, setSteps] = useState(options);
 
   const moveStep = (from: number, to: number) => {
     const newSteps = [...steps];
@@ -278,7 +278,7 @@ export const Ordering: React.FC<QuizTypeProps> = ({ question, options = [], onAn
 };
 
 export const CodeCorrection: React.FC<QuizTypeProps> = ({ question, code = '', options = [], onAnswer, isCorrect }) => {
-  const [selectedError, setSelectedError] = React.useState<number | null>(null);
+  const [selectedError, setSelectedError] = useState<number | null>(null);
 
   return (
     <div className="space-y-4">
