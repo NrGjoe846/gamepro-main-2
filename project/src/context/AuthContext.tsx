@@ -12,12 +12,14 @@ interface AuthState {
   profile: Profile | null;
   settings: UserSettings | null;
   loading: boolean;
+  isAuthenticated: boolean;
 }
 
 interface AuthContextType extends AuthState {
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  skipAuth: () => void;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
   updateSettings: (updates: Partial<UserSettings>) => Promise<void>;
 }
@@ -31,12 +33,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     profile: null,
     settings: null,
     loading: true,
+    isAuthenticated: false
   });
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setState(prev => ({ ...prev, session, user: session?.user ?? null }));
+      setState(prev => ({ 
+        ...prev, 
+        session, 
+        user: session?.user ?? null,
+        isAuthenticated: !!session
+      }));
       if (session?.user) {
         fetchUserData(session.user.id);
       }
@@ -44,7 +52,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setState(prev => ({ ...prev, session, user: session?.user ?? null }));
+      setState(prev => ({ 
+        ...prev, 
+        session, 
+        user: session?.user ?? null,
+        isAuthenticated: !!session
+      }));
       
       if (session?.user) {
         await fetchUserData(session.user.id);
@@ -122,6 +135,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    setState(prev => ({
+      ...prev,
+      session: null,
+      user: null,
+      profile: null,
+      settings: null,
+      isAuthenticated: false
+    }));
+  };
+
+  const skipAuth = () => {
+    setState(prev => ({
+      ...prev,
+      isAuthenticated: true,
+      loading: false
+    }));
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {
@@ -156,6 +185,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signUp,
       signIn,
       signOut,
+      skipAuth,
       updateProfile,
       updateSettings,
     }}>
