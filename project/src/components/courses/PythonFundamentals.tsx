@@ -31,6 +31,16 @@ interface Phase {
   expanded?: boolean;
   icon: string;
 }
+interface Phase {
+  id: string;
+  title: string;
+  description: string;
+  topics: Topic[];
+  expanded?: boolean;
+  icon: string;
+  backgroundImage: string;
+}
+
 
 const pythonSubtopics = {
   'intro': [
@@ -189,6 +199,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 1: Python Basics and Core Concepts',
     description: 'Understanding Python syntax, data types, and fundamental programming concepts',
     icon: '🚀',
+      backgroundImage:https://media.istockphoto.com/id/1500238408/photo/program-code-development-icon-on-a-digital-lcd-display-with-reflection.jpg?s=1024x1024&w=is&k=20&c=9k0ISvEy4At1nzoYrDP-pwOyN5qyvOWf_MruUHANUKc=,
     topics: [
       {
         id: 'intro',
@@ -811,6 +822,19 @@ const PythonFundamentals = () => {
                   }}
                 >
                   <div className="absolute inset-0 backface-hidden">
+                    <div className="absolute inset-0 backface-hidden">
+  <div 
+    className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
+    style={{
+      backgroundImage: `url(${phase.backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      opacity: 0.15
+    }}
+  />
+  {/* Rest of the card content */}
+</div>
+
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
                     <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
                     
