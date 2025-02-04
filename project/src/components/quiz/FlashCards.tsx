@@ -5,7 +5,6 @@ import { ChevronRight } from 'lucide-react';
 interface FlashCard {
   front: string;
   back: string;
-  emoji?: string;
 }
 
 interface FlashCardsProps {
@@ -64,10 +63,9 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
             <div className="absolute inset-0 backface-hidden">
               <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                  <span className="text-4xl mb-4">{cards[currentIndex].emoji}</span>
-                  <h3 className="text-xl font-bold text-blue-400 mb-2">Topic</h3>
+                  <h3 className="text-xl font-bold text-blue-400 mb-2">Question</h3>
                   <p className="text-xl">{cards[currentIndex].front}</p>
-                  <p className="text-sm text-gray-400 mt-4">Click to reveal explanation</p>
+                  <p className="text-sm text-gray-400 mt-4">Click to reveal answer</p>
                 </div>
               </div>
             </div>
@@ -76,8 +74,7 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
             <div className="absolute inset-0 backface-hidden rotate-y-180">
               <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
                 <div className="flex flex-col justify-center h-full text-center">
-                  <span className="text-4xl mb-4">{cards[currentIndex].emoji}</span>
-                  <h3 className="text-xl font-bold text-green-400 mb-4">Explanation</h3>
+                  <h3 className="text-xl font-bold text-green-400 mb-4">Answer</h3>
                   <p className="text-lg leading-relaxed whitespace-pre-line">
                     {cards[currentIndex].back}
                   </p>
@@ -107,27 +104,22 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
 // Default cards with Python information
 const defaultCards: FlashCard[] = [
   {
-    emoji: "🖨️",
-    front: "What is the purpose of print() function?",
-    back: "The print() function is a built-in Python function used to output text to the console. It's one of the most fundamental functions for displaying information in Python."
+    front: "What is the purpose of the print() function?",
+    back: "The print() function outputs text to the console."
   },
   {
-    emoji: "📝",
     front: "What is the correct syntax for print()?",
     back: 'Use parentheses and quotes:\n\nprint("Hello, World!")\n\nMake sure to:\n• Use parentheses ()\n• Enclose text in quotes " "'
   },
   {
-    emoji: "🔑",
     front: "What is the key concept of print()?",
-    back: "print() is a built-in function in Python that serves as the primary way to display information to users. It's essential for:\n• Debugging code\n• Displaying results\n• Providing user feedback"
+    back: "print() is a built-in function used to display information."
   },
   {
-    emoji: "⚠️",
     front: "What are common mistakes when using print()?",
     back: "Common mistakes include:\n• Forgetting parentheses: print 'Hello'\n• Missing quotes: print(Hello)\n• Using wrong quotes: print('Hello\")\n\nCorrect way: print(\"Hello\")"
   },
   {
-    emoji: "🎯",
     front: "Why is print() typically the first thing you learn in Python?",
     back: "print() is taught first because:\n• It confirms your Python setup works\n• It's easy to understand\n• It provides immediate visual feedback\n• It's essential for learning other concepts"
   }
