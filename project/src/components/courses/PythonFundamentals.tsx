@@ -199,7 +199,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 1: Python Basics and Core Concepts',
     description: 'Understanding Python syntax, data types, and fundamental programming concepts',
     icon: '🚀',
-      backgroundImage:https://media.istockphoto.com/id/1500238408/photo/program-code-development-icon-on-a-digital-lcd-display-with-reflection.jpg?s=1024x1024&w=is&k=20&c=9k0ISvEy4At1nzoYrDP-pwOyN5qyvOWf_MruUHANUKc=,
+      backgroundImage:"https://i.pinimg.com/originals/f5/36/01/f53601133f236d1cb167ac19f05a3d60.gif",
     topics: [
       {
         id: 'intro',
@@ -256,6 +256,7 @@ const coursePhases: Phase[] = [
     title: 'Data Structures and Collections',
     description: 'Storing and manipulating data efficiently',
     icon: '📚',
+       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
     topics: [
       {
         id: 'lists',
@@ -308,6 +309,7 @@ const coursePhases: Phase[] = [
     title: 'Intermediate Topics',
     description: 'File handling, exception handling, and Object-Oriented Programming',
     icon: '⚡',
+       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
     topics: [
       {
         id: 'file-handling',
@@ -360,6 +362,7 @@ const coursePhases: Phase[] = [
     title: 'Working with Data and Basic Algorithms',
     description: 'Understanding algorithms, data structures, and computational efficiency',
     icon: '🎯',
+       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
     topics: [
       {
         id: 'data-structures',
@@ -386,6 +389,7 @@ const coursePhases: Phase[] = [
     title: 'Advanced Beginner Topics',
     description: 'Debugging, testing, and regular expressions',
     icon: '🔍',
+       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
     topics: [
       {
         id: 'regex',
@@ -421,6 +425,7 @@ const coursePhases: Phase[] = [
     title: 'Project Development and Version Control',
     description: 'Applying knowledge to real-world projects and version control',
     icon: '🛠️',
+       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
     topics: [
       {
         id: 'git',
@@ -447,6 +452,7 @@ const coursePhases: Phase[] = [
     title: 'Continuous Learning and Practice',
     description: 'Enhancing problem-solving skills through projects and challenges',
     icon: '🎓',
+       backgroundImage:"https://i.pinimg.com/736x/7d/58/e7/7d58e7168795e7dc7df49f09211a2865.jpg",
     topics: [
       {
         id: 'project-learning',
