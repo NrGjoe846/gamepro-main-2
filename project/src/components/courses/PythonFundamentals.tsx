@@ -256,7 +256,7 @@ const coursePhases: Phase[] = [
     title: 'Data Structures and Collections',
     description: 'Storing and manipulating data efficiently',
     icon: '📚',
-       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
+       backgroundImage:"https://i.pinimg.com/originals/f2/56/26/f25626b721552c0b10d156d66512a747.gif",
     topics: [
       {
         id: 'lists',
@@ -309,7 +309,7 @@ const coursePhases: Phase[] = [
     title: 'Intermediate Topics',
     description: 'File handling, exception handling, and Object-Oriented Programming',
     icon: '⚡',
-       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
+       backgroundImage:"https://i.pinimg.com/originals/7e/97/c2/7e97c2a5c22dcee50af840b1fca2277e.gif",
     topics: [
       {
         id: 'file-handling',
@@ -362,7 +362,7 @@ const coursePhases: Phase[] = [
     title: 'Working with Data and Basic Algorithms',
     description: 'Understanding algorithms, data structures, and computational efficiency',
     icon: '🎯',
-       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
+       backgroundImage:"https://i.pinimg.com/originals/82/56/35/825635092261db5aacb5ee3615098407.gif",
     topics: [
       {
         id: 'data-structures',
@@ -389,7 +389,7 @@ const coursePhases: Phase[] = [
     title: 'Advanced Beginner Topics',
     description: 'Debugging, testing, and regular expressions',
     icon: '🔍',
-       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
+       backgroundImage:"https://i.pinimg.com/originals/cc/f5/3e/ccf53ec81ee7e9baf5d1d0a28ee3d30d.gif",
     topics: [
       {
         id: 'regex',
@@ -425,7 +425,7 @@ const coursePhases: Phase[] = [
     title: 'Project Development and Version Control',
     description: 'Applying knowledge to real-world projects and version control',
     icon: '🛠️',
-       backgroundImage:"https://i.pinimg.com/736x/a8/ed/99/a8ed9925f978595d3c3f465f9b8b0ae1.jpg",
+       backgroundImage:"https://i.pinimg.com/736x/7d/35/30/7d353076f57f9e07f350bf7cec206b37.jpg",
     topics: [
       {
         id: 'git',
@@ -452,7 +452,7 @@ const coursePhases: Phase[] = [
     title: 'Continuous Learning and Practice',
     description: 'Enhancing problem-solving skills through projects and challenges',
     icon: '🎓',
-       backgroundImage:"https://i.pinimg.com/736x/7d/58/e7/7d58e7168795e7dc7df49f09211a2865.jpg",
+       backgroundImage:"https://i.pinimg.com/originals/1d/72/a2/1d72a2ecc5710dcabf7c0e95e3bccb16.gif",
     topics: [
       {
         id: 'project-learning',
@@ -835,7 +835,7 @@ const PythonFundamentals = () => {
       backgroundImage: `url(${phase.backgroundImage})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-      opacity: 0.15
+      opacity: 0.50
     }}
   />
   {/* Rest of the card content */}
