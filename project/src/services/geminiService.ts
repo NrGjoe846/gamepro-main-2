@@ -1,13 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Safely get API key with fallback
-const getApiKey = () => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('VITE_GEMINI_API_KEY is not configured in environment variables');
-  }
-  return apiKey;
-};
+// API key directly implemented
+const API_KEY = 'AIzaSyDFujDavmC63MeyvGc9vgchx_HL6vMdjm4';
 
 // Mock challenges for fallback when API is not available
 const mockChallenges = [
@@ -29,8 +23,7 @@ const mockChallenges = [
     ],
     bestSolution: 'def add_numbers(a, b):\n    return a + b',
     concepts: ['Basic arithmetic', 'Function parameters', 'Return values']
-  },
-  // Add more mock challenges as needed
+  }
 ];
 
 export interface Challenge {
@@ -60,8 +53,7 @@ export class GeminiService {
 
   constructor() {
     try {
-      const apiKey = getApiKey();
-      const genAI = new GoogleGenerativeAI(apiKey);
+      const genAI = new GoogleGenerativeAI(API_KEY);
       this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
       this.useMocks = false;
     } catch (error) {
@@ -70,9 +62,16 @@ export class GeminiService {
     }
   }
 
+  private cleanJsonString(str: string): string {
+    // Remove markdown code block syntax if present
+    str = str.replace(/```json\n?|\n?```/g, '');
+    // Remove any trailing commas before closing brackets/braces
+    str = str.replace(/,(\s*[}\]])/g, '$1');
+    return str.trim();
+  }
+
   async generateDailyChallenge(userLevel: string): Promise<Challenge> {
     if (this.useMocks) {
-      // Return a random mock challenge
       const randomIndex = Math.floor(Math.random() * mockChallenges.length);
       return { ...mockChallenges[randomIndex] };
     }
@@ -80,33 +79,41 @@ export class GeminiService {
     try {
       const prompt = `
         Generate a coding challenge for a ${userLevel} level programmer.
-        Format the response as JSON:
+        The response must be valid JSON with the following structure:
         {
-          "title": string,
-          "description": string,
-          "difficulty": "beginner" | "intermediate" | "advanced",
-          "sampleInput": string,
-          "sampleOutput": string,
-          "testCases": Array<{ input: string, output: string }>,
-          "hints": string[],
-          "bestSolution": string,
-          "concepts": string[]
+          "title": "short title",
+          "description": "clear description under 100 words",
+          "difficulty": "${userLevel}",
+          "sampleInput": "brief example input",
+          "sampleOutput": "expected output",
+          "testCases": [
+            { "input": "test input 1", "output": "expected output 1" },
+            { "input": "test input 2", "output": "expected output 2" }
+          ],
+          "hints": ["hint 1", "hint 2", "hint 3"],
+          "bestSolution": "code solution",
+          "concepts": ["concept 1", "concept 2"]
         }
+        Keep all strings concise and ensure valid JSON format.
       `;
 
       const result = await this.model.generateContent(prompt);
-      const responseText = await result.response.text();
+      const responseText = this.cleanJsonString(await result.response.text());
 
       try {
         const response = JSON.parse(responseText);
-        return { id: Date.now().toString(), ...response };
+        return { 
+          id: Date.now().toString(),
+          ...response,
+          difficulty: userLevel as 'beginner' | 'intermediate' | 'advanced'
+        };
       } catch (parseError) {
-        console.error('Error parsing challenge response:', parseError, 'Response:', responseText);
-        throw new Error('Failed to parse daily challenge response');
+        console.error('Error parsing challenge response:', parseError);
+        console.error('Response text:', responseText);
+        return mockChallenges[0];
       }
     } catch (error) {
       console.error('Error generating challenge:', error);
-      // Fallback to a mock challenge on error
       return mockChallenges[0];
     }
   }
@@ -117,7 +124,6 @@ export class GeminiService {
     language: string
   ): Promise<CodeValidationResult> {
     if (this.useMocks) {
-      // Simple mock validation
       return {
         isCorrect: userCode.includes('return') && userCode.includes('+'),
         feedback: 'Good attempt!',
@@ -129,33 +135,38 @@ export class GeminiService {
 
     try {
       const prompt = `
-        Evaluate this ${language} code solution:
+        Evaluate this ${language} code solution.
         Problem: ${challenge.description}
         Expected Output: ${challenge.sampleOutput}
-        User's Code:
-        ${userCode}
-        Provide response as JSON:
+        User's Code: ${userCode}
+        
+        Respond with valid JSON in this exact format:
         {
-          "isCorrect": boolean,
-          "feedback": string,
-          "efficiency": string,
-          "readability": string,
-          "suggestions": string[]
+          "isCorrect": true/false,
+          "feedback": "specific feedback",
+          "efficiency": "efficiency rating",
+          "readability": "readability rating",
+          "suggestions": ["suggestion 1", "suggestion 2"]
         }
       `;
 
       const result = await this.model.generateContent(prompt);
-      const responseText = await result.response.text();
+      const responseText = this.cleanJsonString(await result.response.text());
 
       try {
         return JSON.parse(responseText);
       } catch (parseError) {
-        console.error('Error parsing validation response:', parseError, 'Response:', responseText);
-        throw new Error('Failed to parse solution validation response');
+        console.error('Error parsing validation response:', parseError);
+        return {
+          isCorrect: false,
+          feedback: 'Error validating solution',
+          efficiency: 'N/A',
+          readability: 'N/A',
+          suggestions: ['Please try again']
+        };
       }
     } catch (error) {
       console.error('Error validating solution:', error);
-      // Return a generic response on error
       return {
         isCorrect: false,
         feedback: 'Unable to validate solution. Please try again.',
@@ -179,16 +190,19 @@ export class GeminiService {
       const prompt = `
         Provide a level ${hintLevel} hint for this coding challenge:
         Problem: ${challenge.description}
-        Current Code:
-        ${userCode}
-        Hint Level:
-        ${hintLevel === 1 ? 'Basic clue without code' :
+        Current Code: ${userCode}
+        Hint Level: ${
+          hintLevel === 1 ? 'Basic clue without code' :
           hintLevel === 2 ? 'More detailed explanation with approach' :
-          'Partial solution with code example'}
+          'Partial solution with code example'
+        }
+        
+        Respond with a single concise hint string.
       `;
 
       const result = await this.model.generateContent(prompt);
-      return await result.response.text();
+      const hint = await result.response.text();
+      return hint.replace(/^["']|["']$/g, '').trim();
     } catch (error) {
       console.error('Error getting hint:', error);
       return challenge.hints[hintLevel - 1] || 'Unable to generate hint. Please try again.';
