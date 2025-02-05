@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 
@@ -9,12 +9,23 @@ interface FlashCard {
 
 interface FlashCardsProps {
   cards?: FlashCard[];
+  title?: string;
 }
 
-const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
+const FlashCards: React.FC<FlashCardsProps> = ({ 
+  cards = [], 
+  title = "Python Basics Flashcards" 
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [direction, setDirection] = useState(0);
+
+  useEffect(() => {
+    // Reset state when cards change
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setDirection(0);
+  }, [cards]);
 
   const handleNext = () => {
     if (currentIndex < cards.length - 1) {
@@ -28,10 +39,14 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
     setIsFlipped(!isFlipped);
   };
 
+  if (!cards.length) {
+    return <div>No flashcards available.</div>;
+  }
+
   return (
     <div className="relative max-w-2xl mx-auto p-8">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold">Python Basics Flashcards</h2>
+        <h2 className="text-2xl font-bold">{title}</h2>
         <div className="text-sm text-gray-400">
           {currentIndex + 1} / {cards.length}
         </div>
@@ -108,29 +123,5 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
     </div>
   );
 };
-
-// Default cards with Python information
-const defaultCards: FlashCard[] = [
-  {
-    front: "What is the purpose of the print() function?",
-    back: "The print() function outputs text to the console."
-  },
-  {
-    front: "What is the correct syntax for print()?",
-    back: 'Use parentheses and quotes:\n\nprint("Hello, World!")\n\nMake sure to:\n• Use parentheses ()\n• Enclose text in quotes " "'
-  },
-  {
-    front: "What is the key concept of print()?",
-    back: "print() is a built-in function used to display information."
-  },
-  {
-    front: "What are common mistakes when using print()?",
-    back: "Common mistakes include:\n• Forgetting parentheses: print 'Hello'\n• Missing quotes: print(Hello)\n• Using wrong quotes: print('Hello\")\n\nCorrect way: print(\"Hello\")"
-  },
-  {
-    front: "Why is print() typically the first thing you learn in Python?",
-    back: "print() is taught first because:\n• It confirms your Python setup works\n• It's easy to understand\n• It provides immediate visual feedback\n• It's essential for learning other concepts"
-  }
-];
 
 export default FlashCards;
