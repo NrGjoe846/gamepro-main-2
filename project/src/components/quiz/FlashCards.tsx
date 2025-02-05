@@ -44,7 +44,7 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
             initial={{ 
               x: direction > 0 ? 300 : -300,
               opacity: 0,
-              rotateY: isFlipped ? 180 : 0
+              rotateY: 0
             }}
             animate={{ 
               x: 0,
@@ -60,7 +60,11 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
             onClick={handleFlip}
           >
             {/* Front of Card */}
-            <div className="absolute inset-0 backface-hidden">
+            <div 
+              className={`absolute inset-0 backface-hidden transition-opacity duration-300 ${
+                isFlipped ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
               <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <h3 className="text-xl font-bold text-blue-400 mb-2">Question</h3>
@@ -71,7 +75,11 @@ const FlashCards: React.FC<FlashCardsProps> = ({ cards = defaultCards }) => {
             </div>
 
             {/* Back of Card */}
-            <div className="absolute inset-0 backface-hidden rotate-y-180">
+            <div 
+              className={`absolute inset-0 backface-hidden rotate-y-180 transition-opacity duration-300 ${
+                isFlipped ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
               <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
                 <div className="flex flex-col justify-center h-full text-center">
                   <h3 className="text-xl font-bold text-green-400 mb-4">Answer</h3>
