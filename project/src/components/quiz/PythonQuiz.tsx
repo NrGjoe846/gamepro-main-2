@@ -5,7 +5,7 @@ import { Trophy, Star } from 'lucide-react';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 
-[
+const pythonQuestions = [
   {
     "type": "fill-blank",
     "question": "Fill in the blank to print 'Hello, World!' in Python.",
@@ -106,18 +106,13 @@ import { useWindowSize } from 'react-use';
   }
 ];
 
-
-interface PythonQuizProps {
-  onComplete: (score: number) => void;
-}
-
-const PythonQuiz: React.FC<PythonQuizProps> = ({ onComplete }) => {
+const PythonQuiz = ({ onComplete }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<any[]>([]);
+  const [answers, setAnswers] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const { width, height } = useWindowSize();
 
-  const handleAnswer = (answer: any) => {
+  const handleAnswer = (answer) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestionIndex] = answer;
     setAnswers(newAnswers);
@@ -125,7 +120,7 @@ const PythonQuiz: React.FC<PythonQuizProps> = ({ onComplete }) => {
 
   const handleNext = () => {
     if (currentQuestionIndex < pythonQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
     } else {
       const score = calculateScore();
       setShowResults(true);
@@ -148,17 +143,12 @@ const PythonQuiz: React.FC<PythonQuizProps> = ({ onComplete }) => {
     return (
       <>
         {score >= 70 && <Confetti width={width} height={height} />}
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="text-center"
-        >
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
           <div className="mb-8">
             <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-2">Quiz Complete!</h2>
             <p className="text-xl">Your Score: {score}%</p>
           </div>
-
           <div className="flex justify-center gap-4">
             <div className="p-4 bg-white/10 rounded-lg">
               <Star className="w-6 h-6 text-yellow-400 mb-2" />
@@ -178,22 +168,15 @@ const PythonQuiz: React.FC<PythonQuizProps> = ({ onComplete }) => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Progress Bar */}
       <div className="mb-8">
         <div className="flex justify-between text-sm mb-2">
           <span>Question {currentQuestionIndex + 1} of {pythonQuestions.length}</span>
           <span>{Math.round(((currentQuestionIndex + 1) / pythonQuestions.length) * 100)}%</span>
         </div>
         <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-blue-500"
-            initial={{ width: 0 }}
-            animate={{ width: `${((currentQuestionIndex + 1) / pythonQuestions.length) * 100}%` }}
-          />
+          <motion.div className="h-full bg-blue-500" initial={{ width: 0 }} animate={{ width: `${((currentQuestionIndex + 1) / pythonQuestions.length) * 100}%` }} />
         </div>
       </div>
-
-      {/* Question Card */}
       <AnimatePresence mode="wait">
         <QuizCard
           key={currentQuestionIndex}
