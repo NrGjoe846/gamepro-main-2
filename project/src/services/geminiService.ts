@@ -1,9 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// API key directly implemented
 const API_KEY = 'AIzaSyDFujDavmC63MeyvGc9vgchx_HL6vMdjm4';
 
-// Mock challenges for fallback when API is not available
+const DIFFICULTY_WEIGHTS = {
+  beginner: { complexity: 1, hints: 5 },
+  intermediate: { complexity: 2, hints: 4 },
+  advanced: { complexity: 3, hints: 3 }
+};
+
 const mockChallenges = [
   {
     id: 'mock-1',
@@ -45,17 +49,31 @@ export interface CodeValidationResult {
   efficiency: string;
   readability: string;
   suggestions: string[];
+  performanceScore?: number;
+  codeQualityScore?: number;
+  executionTime?: string;
+  memoryUsage?: string;
+  testCasesPassed?: number;
+  totalTestCases?: number;
+  detailedResults?: Array<{
+    testCase: string;
+    expected: string;
+    actual: string;
+    passed: boolean;
+  }>;
 }
 
 export class GeminiService {
   private model;
   private useMocks: boolean;
+  private hintCache: Map<string, string[]>;
 
   constructor() {
     try {
       const genAI = new GoogleGenerativeAI(API_KEY);
       this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
       this.useMocks = false;
+      this.hintCache = new Map();
     } catch (error) {
       console.warn('Falling back to mock data:', error);
       this.useMocks = true;
@@ -63,9 +81,7 @@ export class GeminiService {
   }
 
   private cleanJsonString(str: string): string {
-    // Remove markdown code block syntax if present
     str = str.replace(/```json\n?|\n?```/g, '');
-    // Remove any trailing commas before closing brackets/braces
     str = str.replace(/,(\s*[}\]])/g, '$1');
     return str.trim();
   }
@@ -118,6 +134,25 @@ export class GeminiService {
     }
   }
 
+  private async validateTestCases(code: string, testCases: Array<{ input: string; output: string }>, language: string): Promise<boolean> {
+    try {
+      const prompt = `
+        Validate if this ${language} code passes all test cases:
+        Code: ${code}
+        Test Cases: ${JSON.stringify(testCases)}
+        
+        Return only true or false.
+      `;
+
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response.text();
+      return response.toLowerCase().includes('true');
+    } catch (error) {
+      console.error('Error validating test cases:', error);
+      return false;
+    }
+  }
+
   async validateSolution(
     challenge: Challenge,
     userCode: string,
@@ -127,86 +162,176 @@ export class GeminiService {
       return {
         isCorrect: userCode.includes('return') && userCode.includes('+'),
         feedback: 'Good attempt!',
-        efficiency: 'Good',
-        readability: 'Clear',
-        suggestions: ['Consider adding comments']
+        efficiency: 'O(1)',
+        readability: 'Good',
+        suggestions: ['Consider adding comments'],
+        performanceScore: 85,
+        codeQualityScore: 80
       };
     }
 
     try {
+      const testCasesPassed = await this.validateTestCases(userCode, challenge.testCases, language);
+      
       const prompt = `
-        Evaluate this ${language} code solution.
+        Thoroughly evaluate this ${language} solution:
         Problem: ${challenge.description}
         Expected Output: ${challenge.sampleOutput}
         User's Code: ${userCode}
-        
-        Respond with valid JSON in this exact format:
+        Test Cases: ${JSON.stringify(challenge.testCases)}
+        Test Cases Passed: ${testCasesPassed}
+
+        Provide a comprehensive analysis including:
+        1. Code correctness
+        2. Time complexity
+        3. Space complexity
+        4. Code style and readability
+        5. Potential optimizations
+        6. Edge cases handling
+        7. Best practices followed/violated
+
+        Response must be valid JSON with:
         {
-          "isCorrect": true/false,
-          "feedback": "specific feedback",
-          "efficiency": "efficiency rating",
-          "readability": "readability rating",
-          "suggestions": ["suggestion 1", "suggestion 2"]
+          "isCorrect": ${testCasesPassed},
+          "feedback": "detailed explanation",
+          "efficiency": "Big O analysis",
+          "readability": "code style evaluation",
+          "suggestions": ["improvement 1", "improvement 2"],
+          "executionTime": "estimated runtime",
+          "memoryUsage": "estimated space usage",
+          "testCasesPassed": ${testCasesPassed ? challenge.testCases.length : 0},
+          "totalTestCases": ${challenge.testCases.length},
+          "detailedResults": [
+            {
+              "testCase": "input value",
+              "expected": "expected output",
+              "actual": "actual output",
+              "passed": boolean
+            }
+          ]
         }
       `;
 
       const result = await this.model.generateContent(prompt);
       const responseText = this.cleanJsonString(await result.response.text());
+      const validation = JSON.parse(responseText);
 
-      try {
-        return JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('Error parsing validation response:', parseError);
-        return {
-          isCorrect: false,
-          feedback: 'Error validating solution',
-          efficiency: 'N/A',
-          readability: 'N/A',
-          suggestions: ['Please try again']
-        };
-      }
+      return {
+        ...validation,
+        performanceScore: this.calculatePerformanceScore(validation),
+        codeQualityScore: this.calculateCodeQualityScore(validation)
+      };
     } catch (error) {
       console.error('Error validating solution:', error);
-      return {
-        isCorrect: false,
-        feedback: 'Unable to validate solution. Please try again.',
-        efficiency: 'N/A',
-        readability: 'N/A',
-        suggestions: ['Check your code and try again']
-      };
+      return this.getFallbackValidation();
     }
   }
 
-  async getProgressiveHint(
+  private calculatePerformanceScore(validation: CodeValidationResult): number {
+    const testCaseScore = (validation.testCasesPassed || 0) / (validation.totalTestCases || 1) * 100;
+    const efficiencyScore = this.getEfficiencyScore(validation.efficiency);
+    return Math.round((testCaseScore + efficiencyScore) / 2);
+  }
+
+  private calculateCodeQualityScore(validation: CodeValidationResult): number {
+    const readabilityScore = this.getReadabilityScore(validation.readability);
+    const bestPracticesScore = validation.suggestions.length > 0 ? 100 - (validation.suggestions.length * 10) : 100;
+    return Math.round((readabilityScore + bestPracticesScore) / 2);
+  }
+
+  private getEfficiencyScore(efficiency: string): number {
+    if (efficiency.includes('O(1)')) return 100;
+    if (efficiency.includes('O(log n)')) return 90;
+    if (efficiency.includes('O(n)')) return 80;
+    if (efficiency.includes('O(n log n)')) return 70;
+    if (efficiency.includes('O(n^2)')) return 60;
+    return 50;
+  }
+
+  private getReadabilityScore(readability: string): number {
+    const readabilityLower = readability.toLowerCase();
+    if (readabilityLower.includes('excellent')) return 100;
+    if (readabilityLower.includes('good')) return 80;
+    if (readabilityLower.includes('fair')) return 60;
+    if (readabilityLower.includes('poor')) return 40;
+    return 50;
+  }
+
+  async getInfiniteHints(
     challenge: Challenge,
     userCode: string,
-    hintLevel: number
+    previousHints: string[]
   ): Promise<string> {
     if (this.useMocks) {
-      return challenge.hints[hintLevel - 1] || 'No more hints available';
+      const fallbackHint = this.getFallbackHint(previousHints.length);
+      const cacheKey = challenge.id;
+      const existingHints = this.hintCache.get(cacheKey) || [];
+      this.hintCache.set(cacheKey, [...existingHints, fallbackHint]);
+      return fallbackHint;
     }
 
     try {
+      const difficultyWeight = DIFFICULTY_WEIGHTS[challenge.difficulty];
+      const hintLevel = previousHints.length + 1;
+      const revealLevel = (hintLevel / difficultyWeight.hints) * 100;
+
       const prompt = `
-        Provide a level ${hintLevel} hint for this coding challenge:
+        Generate hint #${hintLevel} for this coding challenge:
         Problem: ${challenge.description}
         Current Code: ${userCode}
-        Hint Level: ${
-          hintLevel === 1 ? 'Basic clue without code' :
-          hintLevel === 2 ? 'More detailed explanation with approach' :
-          'Partial solution with code example'
-        }
+        Previous Hints: ${JSON.stringify(previousHints)}
+        Reveal Level: ${revealLevel}%
         
-        Respond with a single concise hint string.
+        Rules for hint generation:
+        1. Never repeat previous hints
+        2. Progressively reveal more solution details based on reveal level
+        3. At ${revealLevel}% reveal level, provide ${
+          revealLevel < 30 ? 'conceptual guidance' :
+          revealLevel < 60 ? 'algorithmic approach' :
+          revealLevel < 90 ? 'partial implementation details' :
+          'specific implementation guidance'
+        }
+        4. Keep hints engaging and educational
+        5. For difficulty ${challenge.difficulty}, adjust complexity accordingly
+        
+        Respond with a single clear hint string.
       `;
 
       const result = await this.model.generateContent(prompt);
       const hint = await result.response.text();
-      return hint.replace(/^["']|["']$/g, '').trim();
+      
+      const cacheKey = challenge.id;
+      const existingHints = this.hintCache.get(cacheKey) || [];
+      this.hintCache.set(cacheKey, [...existingHints, hint]);
+      
+      return hint.trim();
     } catch (error) {
-      console.error('Error getting hint:', error);
-      return challenge.hints[hintLevel - 1] || 'Unable to generate hint. Please try again.';
+      console.error('Error generating hint:', error);
+      return this.getFallbackHint(previousHints.length + 1);
     }
+  }
+
+  private getFallbackValidation(): CodeValidationResult {
+    return {
+      isCorrect: false,
+      feedback: 'Unable to validate solution. Please try again.',
+      efficiency: 'N/A',
+      readability: 'N/A',
+      suggestions: ['Check your code and try again'],
+      performanceScore: 0,
+      codeQualityScore: 0
+    };
+  }
+
+  private getFallbackHint(hintLevel: number): string {
+    const fallbackHints = [
+      "Try breaking down the problem into smaller steps.",
+      "Think about edge cases in your solution.",
+      "Consider optimizing your current approach.",
+      "Look for patterns in the problem.",
+      "Think about the time complexity of your solution."
+    ];
+    return fallbackHints[hintLevel % fallbackHints.length];
   }
 }
 
