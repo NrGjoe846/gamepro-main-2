@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-import { useSpring, animated, config } from 'react-spring';
-import { Star, Clock, Trophy, Code2, Zap, HelpCircle, CheckCircle, XCircle } from 'lucide-react';
+import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
+import { useSpring, animated } from 'react-spring';
+import { Star, Clock, Trophy, Code2, Zap, HelpCircle, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import { geminiService, Challenge, CodeValidationResult } from '../../services/geminiService';
 import Confetti from 'react-confetti';
@@ -22,21 +22,21 @@ const DailyChallenge = () => {
   const { width, height } = useWindowSize();
 
   // Animation controls and scores
-  const controls = useAnimation();
+  const controls = useAnimationControls();
   const [performanceScore, setPerformanceScore] = useState<number>(0);
   const [codeQualityScore, setCodeQualityScore] = useState<number>(0);
 
-  // Spring animations
+  // Spring animations for scores
   const scoreSpring = useSpring({
     number: performanceScore,
     from: { number: 0 },
-    config: config.molasses,
+    config: { mass: 1, tension: 20, friction: 10 }
   });
 
   const qualitySpring = useSpring({
     number: codeQualityScore,
     from: { number: 0 },
-    config: config.molasses,
+    config: { mass: 1, tension: 20, friction: 10 }
   });
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const DailyChallenge = () => {
 
   const loadDailyChallenge = async () => {
     try {
-      const userLevel = 'beginner';
+      const userLevel = localStorage.getItem('challengeLevel') || 'beginner';
       const newChallenge = await geminiService.generateDailyChallenge(userLevel);
       setChallenge(newChallenge);
     } catch (error) {
@@ -112,10 +112,10 @@ const DailyChallenge = () => {
     if (!challenge || currentHint >= 2) return;
     
     try {
-      const hint = await geminiService.getProgressiveHint(
+      const hint = await geminiService.getInfiniteHints(
         challenge,
         userCode,
-        currentHint + 1
+        challenge.hints.slice(0, currentHint + 1)
       );
       setCurrentHint(prev => prev + 1);
     } catch (error) {
@@ -139,10 +139,18 @@ const DailyChallenge = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Star className="w-8 h-8 text-yellow-400" />
-            <div>
-              <h1 className="text-2xl font-bold">Daily Coding Challenge</h1>
-              <p className="text-gray-400">Keep your streak alive!</p>
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <div className="flex items-center gap-3">
+              <Star className="w-8 h-8 text-yellow-400" />
+              <div>
+                <h1 className="text-2xl font-bold">Daily Coding Challenge</h1>
+                <p className="text-gray-400">Keep your streak alive!</p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
