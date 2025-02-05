@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { useSpring, animated, config } from 'react-spring';
 import { Star, Clock, Trophy, Code2, Zap, HelpCircle, CheckCircle, XCircle } from 'lucide-react';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import { geminiService, Challenge, CodeValidationResult } from '../../services/geminiService';
@@ -19,6 +20,24 @@ const DailyChallenge = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [timeLeft, setTimeLeft] = useState('');
   const { width, height } = useWindowSize();
+
+  // Animation controls and scores
+  const controls = useAnimation();
+  const [performanceScore, setPerformanceScore] = useState<number>(0);
+  const [codeQualityScore, setCodeQualityScore] = useState<number>(0);
+
+  // Spring animations
+  const scoreSpring = useSpring({
+    number: performanceScore,
+    from: { number: 0 },
+    config: config.molasses,
+  });
+
+  const qualitySpring = useSpring({
+    number: codeQualityScore,
+    from: { number: 0 },
+    config: config.molasses,
+  });
 
   useEffect(() => {
     loadDailyChallenge();
@@ -57,6 +76,12 @@ const DailyChallenge = () => {
     if (!challenge) return;
 
     try {
+      // Trigger submission animation
+      controls.start({
+        scale: [1, 1.02, 1],
+        transition: { duration: 0.3 }
+      });
+
       const validationResult = await geminiService.validateSolution(
         challenge,
         userCode,
@@ -65,6 +90,8 @@ const DailyChallenge = () => {
 
       setResult(validationResult);
       setAttempts(prev => prev + 1);
+      setPerformanceScore(validationResult.performanceScore || 0);
+      setCodeQualityScore(validationResult.codeQualityScore || 0);
 
       if (validationResult.isCorrect) {
         handleSuccess();
@@ -134,7 +161,10 @@ const DailyChallenge = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Challenge Description */}
             <div className="space-y-6">
-              <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 border border-white/20">
+              <motion.div 
+                className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 border border-white/20"
+                animate={controls}
+              >
                 <div className="flex items-center gap-3 mb-6">
                   <Code2 className="w-6 h-6 text-blue-400" />
                   <h2 className="text-xl font-bold">{challenge.title}</h2>
@@ -174,52 +204,102 @@ const DailyChallenge = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Result Display */}
-              {result && (
-                <div className={`backdrop-blur-xl bg-white/10 rounded-2xl p-6 border ${
-                  result.isCorrect ? 'border-green-500/50' : 'border-red-500/50'
-                }`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    {result.isCorrect ? (
-                      <CheckCircle className="w-6 h-6 text-green-400" />
-                    ) : (
-                      <XCircle className="w-6 h-6 text-red-400" />
-                    )}
-                    <h3 className="font-bold">
-                      {result.isCorrect ? 'Success!' : 'Keep Trying!'}
-                    </h3>
-                  </div>
+              {/* Result Display with Animations */}
+              <AnimatePresence>
+                {result && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`backdrop-blur-xl bg-white/10 rounded-2xl p-6 border ${
+                      result.isCorrect ? 'border-green-500/50' : 'border-red-500/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      {result.isCorrect ? (
+                        <CheckCircle className="w-6 h-6 text-green-400" />
+                      ) : (
+                        <XCircle className="w-6 h-6 text-red-400" />
+                      )}
+                      <h3 className="font-bold">
+                        {result.isCorrect ? 'Success!' : 'Keep Trying!'}
+                      </h3>
+                    </div>
 
-                  <div className="space-y-3">
-                    <p className="text-gray-300">{result.feedback}</p>
-                    
-                    {!result.isCorrect && (
-                      <>
-                        <div className="text-sm">
-                          <span className="text-gray-400">Efficiency: </span>
-                          <span>{result.efficiency}</span>
-                        </div>
-                        <div className="text-sm">
-                          <span className="text-gray-400">Readability: </span>
-                          <span>{result.readability}</span>
-                        </div>
-                        {result.suggestions.length > 0 && (
+                    <div className="space-y-3">
+                      <p className="text-gray-300">{result.feedback}</p>
+                      
+                      {!result.isCorrect && (
+                        <>
                           <div className="text-sm">
-                            <span className="text-gray-400">Suggestions:</span>
-                            <ul className="list-disc list-inside mt-1 space-y-1">
-                              {result.suggestions.map((suggestion, index) => (
-                                <li key={index}>{suggestion}</li>
-                              ))}
-                            </ul>
+                            <span className="text-gray-400">Efficiency: </span>
+                            <span>{result.efficiency}</span>
                           </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
+                          <div className="text-sm">
+                            <span className="text-gray-400">Readability: </span>
+                            <span>{result.readability}</span>
+                          </div>
+                          {result.suggestions.length > 0 && (
+                            <div className="text-sm">
+                              <span className="text-gray-400">Suggestions:</span>
+                              <ul className="list-disc list-inside mt-1 space-y-1">
+                                {result.suggestions.map((suggestion, index) => (
+                                  <li key={index}>{suggestion}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Performance and Code Quality Scores */}
+              <AnimatePresence>
+                {result && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="mt-8"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <animated.div className="backdrop-blur-xl bg-white/10 rounded-xl p-4 border border-white/20">
+                        <h3 className="text-lg font-semibold mb-2">Performance Score</h3>
+                        <div className="flex items-center justify-between">
+                          <animated.div className="text-3xl font-bold text-blue-400">
+                            {scoreSpring.number.to(n => `${Math.floor(n)}%`)}
+                          </animated.div>
+                          <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <animated.div
+                              className="h-full bg-blue-500"
+                              style={{ width: scoreSpring.number.to(n => `${n}%`) }}
+                            />
+                          </div>
+                        </div>
+                      </animated.div>
+                      <animated.div className="backdrop-blur-xl bg-white/10 rounded-xl p-4 border border-white/20">
+                        <h3 className="text-lg font-semibold mb-2">Code Quality Score</h3>
+                        <div className="flex items-center justify-between">
+                          <animated.div className="text-3xl font-bold text-purple-400">
+                            {qualitySpring.number.to(n => `${Math.floor(n)}%`)}
+                          </animated.div>
+                          <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <animated.div
+                              className="h-full bg-purple-500"
+                              style={{ width: qualitySpring.number.to(n => `${n}%`) }}
+                            />
+                          </div>
+                        </div>
+                      </animated.div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Code Editor */}
