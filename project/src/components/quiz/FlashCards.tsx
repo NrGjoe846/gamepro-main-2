@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
+import PythonQuiz from './PythonQuiz';
 
 interface FlashCard {
   front: string;
@@ -10,15 +11,18 @@ interface FlashCard {
 interface FlashCardsProps {
   cards?: FlashCard[];
   title?: string;
+  questions?: any[]; // Add questions prop
 }
 
 const FlashCards: React.FC<FlashCardsProps> = ({ 
   cards = [], 
-  title = "Python Basics Flashcards" 
+  title = "Python Basics Flashcards",
+  questions = [] // Default to empty array
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   useEffect(() => {
     // Reset state when cards change
@@ -38,6 +42,19 @@ const FlashCards: React.FC<FlashCardsProps> = ({
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
+
+  const handleStartQuiz = () => {
+    setShowQuiz(true);
+  };
+
+  const handleQuizComplete = (score: number) => {
+    console.log('Quiz completed with score:', score);
+    // You can add additional logic here for handling quiz completion
+  };
+
+  if (showQuiz) {
+    return <PythonQuiz questions={questions} onComplete={handleQuizComplete} />;
+  }
 
   if (!cards.length) {
     return <div>No flashcards available.</div>;
@@ -108,17 +125,28 @@ const FlashCards: React.FC<FlashCardsProps> = ({
         </AnimatePresence>
       </div>
 
-      <div className="flex items-center justify-center mt-8">
+      <div className="flex items-center justify-center gap-4 mt-8">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleNext}
           disabled={currentIndex === cards.length - 1}
-          className="px-6 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-500 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+          className="px-6 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
         >
-          Go to Next
+          Next Card
           <ChevronRight className="w-5 h-5" />
         </motion.button>
+
+        {currentIndex === cards.length - 1 && (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleStartQuiz}
+            className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-300"
+          >
+            Start Quiz
+          </motion.button>
+        )}
       </div>
     </div>
   );
