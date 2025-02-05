@@ -28,6 +28,16 @@ interface Phase {
   expanded?: boolean;
   icon: string;
 }
+interface Phase {
+  id: string;
+  title: string;
+  description: string;
+  topics: Topic[];
+  expanded?: boolean;
+  icon: string;
+  backgroundImage: string;
+}
+
 
 const coursePhases: Phase[] = [
   {
@@ -35,6 +45,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 1: Java Basics and Core Concepts',
     description: 'Master the fundamentals of Java programming language and build a strong foundation.',
     icon: '☕',
+backgroundImage:"https://i.pinimg.com/originals/1c/a7/49/1ca74946ed770bb635e4de4711bd861f.gif",
     topics: [
       {
         id: 'intro',
@@ -123,6 +134,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 2: Object-Oriented Programming',
     description: 'Master object-oriented programming concepts in Java',
     icon: '🎯',
+    backgroundImage:"https://i.pinimg.com/originals/46/bf/ec/46bfec55b91b0bfc7bedeb7e359fa460.gif",
     topics: [
       {
         id: 'intro-oop',
@@ -193,6 +205,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 3: Data Structures and Collections',
     description: 'Master Java data structures and collections framework',
     icon: '📚',
+    backgroundImage:"https://i.pinimg.com/originals/a4/15/54/a415545bb9a81e35d09b2fc184e2e801.gif",
     topics: [
       {
         id: 'arrays',
@@ -226,6 +239,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 4: Exception Handling and File I/O',
     description: 'Master error handling and file operations in Java',
     icon: '🔧',
+    backgroundImage:"https://i.pinimg.com/originals/18/a4/94/18a4949fc9c8067172d3b96e302e7097.gif",
     topics: [
       {
         id: 'exceptions',
@@ -259,6 +273,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 5: Advanced Java Concepts',
     description: 'Master advanced Java concepts including multithreading and generics',
     icon: '🚀',
+    backgroundImage:"https://i.pinimg.com/originals/42/d9/cf/42d9cfdf7ba1d57a60cee37463f7ccbc.gif",
     topics: [
       {
         id: 'multithreading',
@@ -291,6 +306,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 6: Working with Libraries and APIs',
     description: 'Learn to work with Java libraries and interact with APIs',
     icon: '📚',
+    backgroundImage:"https://i.pinimg.com/originals/f9/66/fb/f966fb2656537b4643b316e8368ae392.gif",
     topics: [
       {
         id: 'standard-library',
@@ -322,6 +338,7 @@ const coursePhases: Phase[] = [
     title: 'Phase 7: Project Development and Continuous Learning',
     description: 'Apply your knowledge through projects and explore advanced topics',
     icon: '🏗️',
+    backgroundImage:"https://i.pinimg.com/originals/5f/08/50/5f08505655b858d52ea4ef07a6fa58d5.gif",
     topics: [
       {
         id: 'version-control',
@@ -601,6 +618,19 @@ const JavaProgramming = () => {
                   }}
                 >
                   <div className="absolute inset-0 backface-hidden">
+                    <div className="absolute inset-0 backface-hidden">
+  <div 
+    className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
+    style={{
+      backgroundImage: `url(${phase.backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      opacity: 0.75
+    }}
+  />
+  {/* Rest of the card content */}
+</div>
+
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
                     <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
                     
