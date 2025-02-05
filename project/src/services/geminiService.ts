@@ -1,6 +1,37 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+// Safely get API key with fallback
+const getApiKey = () => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('VITE_GEMINI_API_KEY is not configured in environment variables');
+  }
+  return apiKey;
+};
+
+// Mock challenges for fallback when API is not available
+const mockChallenges = [
+  {
+    id: 'mock-1',
+    title: 'Sum of Two Numbers',
+    description: 'Write a function that takes two numbers as input and returns their sum.',
+    difficulty: 'beginner' as const,
+    sampleInput: 'a = 5, b = 3',
+    sampleOutput: '8',
+    testCases: [
+      { input: '2, 3', output: '5' },
+      { input: '-1, 1', output: '0' }
+    ],
+    hints: [
+      'Use the + operator to add numbers',
+      'Remember to return the result',
+      'Consider edge cases like negative numbers'
+    ],
+    bestSolution: 'def add_numbers(a, b):\n    return a + b',
+    concepts: ['Basic arithmetic', 'Function parameters', 'Return values']
+  },
+  // Add more mock challenges as needed
+];
 
 export interface Challenge {
   id: string;
@@ -24,9 +55,28 @@ export interface CodeValidationResult {
 }
 
 export class GeminiService {
-  private model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  private model;
+  private useMocks: boolean;
+
+  constructor() {
+    try {
+      const apiKey = getApiKey();
+      const genAI = new GoogleGenerativeAI(apiKey);
+      this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      this.useMocks = false;
+    } catch (error) {
+      console.warn('Falling back to mock data:', error);
+      this.useMocks = true;
+    }
+  }
 
   async generateDailyChallenge(userLevel: string): Promise<Challenge> {
+    if (this.useMocks) {
+      // Return a random mock challenge
+      const randomIndex = Math.floor(Math.random() * mockChallenges.length);
+      return { ...mockChallenges[randomIndex] };
+    }
+
     try {
       const prompt = `
         Generate a coding challenge for a ${userLevel} level programmer.
@@ -56,7 +106,8 @@ export class GeminiService {
       }
     } catch (error) {
       console.error('Error generating challenge:', error);
-      throw new Error('Failed to generate daily challenge');
+      // Fallback to a mock challenge on error
+      return mockChallenges[0];
     }
   }
 
@@ -65,6 +116,17 @@ export class GeminiService {
     userCode: string,
     language: string
   ): Promise<CodeValidationResult> {
+    if (this.useMocks) {
+      // Simple mock validation
+      return {
+        isCorrect: userCode.includes('return') && userCode.includes('+'),
+        feedback: 'Good attempt!',
+        efficiency: 'Good',
+        readability: 'Clear',
+        suggestions: ['Consider adding comments']
+      };
+    }
+
     try {
       const prompt = `
         Evaluate this ${language} code solution:
@@ -93,7 +155,14 @@ export class GeminiService {
       }
     } catch (error) {
       console.error('Error validating solution:', error);
-      throw new Error('Failed to validate solution');
+      // Return a generic response on error
+      return {
+        isCorrect: false,
+        feedback: 'Unable to validate solution. Please try again.',
+        efficiency: 'N/A',
+        readability: 'N/A',
+        suggestions: ['Check your code and try again']
+      };
     }
   }
 
@@ -102,6 +171,10 @@ export class GeminiService {
     userCode: string,
     hintLevel: number
   ): Promise<string> {
+    if (this.useMocks) {
+      return challenge.hints[hintLevel - 1] || 'No more hints available';
+    }
+
     try {
       const prompt = `
         Provide a level ${hintLevel} hint for this coding challenge:
@@ -118,7 +191,7 @@ export class GeminiService {
       return await result.response.text();
     } catch (error) {
       console.error('Error getting hint:', error);
-      throw new Error('Failed to generate hint');
+      return challenge.hints[hintLevel - 1] || 'Unable to generate hint. Please try again.';
     }
   }
 }
