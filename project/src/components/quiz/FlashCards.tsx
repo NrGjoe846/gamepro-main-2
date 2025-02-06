@@ -11,13 +11,13 @@ interface FlashCard {
 interface FlashCardsProps {
   cards?: FlashCard[];
   title?: string;
-  questions?: any[]; // Add questions prop
+  questions?: any[];
 }
 
 const FlashCards: React.FC<FlashCardsProps> = ({ 
   cards = [], 
   title = "Python Basics Flashcards",
-  questions = [] // Default to empty array
+  questions = []
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -25,7 +25,6 @@ const FlashCards: React.FC<FlashCardsProps> = ({
   const [showQuiz, setShowQuiz] = useState(false);
 
   useEffect(() => {
-    // Reset state when cards change
     setCurrentIndex(0);
     setIsFlipped(false);
     setDirection(0);
@@ -49,7 +48,6 @@ const FlashCards: React.FC<FlashCardsProps> = ({
 
   const handleQuizComplete = (score: number) => {
     console.log('Quiz completed with score:', score);
-    // You can add additional logic here for handling quiz completion
   };
 
   if (showQuiz) {
@@ -126,18 +124,17 @@ const FlashCards: React.FC<FlashCardsProps> = ({
       </div>
 
       <div className="flex items-center justify-center gap-4 mt-8">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleNext}
-          disabled={currentIndex === cards.length - 1}
-          className="px-6 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-500 text-white rounded-lg transition-all duration-300 flex items-center gap-2"
-        >
-          Next Card
-          <ChevronRight className="w-5 h-5" />
-        </motion.button>
-
-        {currentIndex === cards.length - 1 && (
+        {currentIndex < cards.length - 1 ? (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleNext}
+            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 flex items-center gap-2"
+          >
+            Next Card
+            <ChevronRight className="w-5 h-5" />
+          </motion.button>
+        ) : (
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
