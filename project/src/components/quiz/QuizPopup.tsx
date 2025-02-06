@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Trophy, Timer } from 'lucide-react';
+import { X, Trophy, Timer, ChevronLeft, ChevronRight } from 'lucide-react';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import FlashCards from './FlashCards';
@@ -17,7 +17,27 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<string[]>([]);
   const { width, height } = useWindowSize();
+
+  const questions = [
+    {
+      question: "Fill in the blank to complete the statement about Python's execution process: Python is an example of a __________ language, meaning it is executed line-by-line by an interpreter.",
+      answer: "interpreted",
+      options: ["compiled", "interpreted", "assembled", "translated"]
+    },
+    {
+      question: "What is the primary purpose of Python's interpreter?",
+      answer: "Execute code line by line",
+      options: ["Execute code line by line", "Convert code to machine language", "Debug code", "Format code"]
+    },
+    {
+      question: "Which statement best describes Python's execution model?",
+      answer: "Code is executed directly by the interpreter",
+      options: ["Code is compiled before execution", "Code is executed directly by the interpreter", "Code is converted to assembly", "Code is translated to C++"]
+    }
+  ];
 
   const handleFlashCardsComplete = () => {
     setShowQuiz(true);
@@ -28,6 +48,33 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
     setShowResults(true);
     setShowConfetti(true);
     onComplete(quizScore);
+  };
+
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else {
+      handleQuizComplete(calculateScore());
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
+  };
+
+  const calculateScore = () => {
+    const correctAnswers = answers.filter((answer, index) => 
+      answer === questions[index].answer
+    ).length;
+    return Math.round((correctAnswers / questions.length) * 100);
+  };
+
+  const handleAnswer = (answer: string) => {
+    const newAnswers = [...answers];
+    newAnswers[currentQuestionIndex] = answer;
+    setAnswers(newAnswers);
   };
 
   if (!isOpen) return null;
@@ -62,7 +109,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
           <div className="space-y-6">
             <div className="mb-8">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Question 1/10</h2>
+                <h2 className="text-xl font-bold">Question {currentQuestionIndex + 1}/{questions.length}</h2>
                 <div className="flex items-center gap-2">
                   <Timer className="w-5 h-5 text-blue-400" />
                   <span className="text-sm">Time remaining: 30s</span>
@@ -72,30 +119,54 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
                 <motion.div
                   className="h-full bg-blue-500 rounded-full"
                   initial={{ width: 0 }}
-                  animate={{ width: '10%' }}
+                  animate={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
                 />
               </div>
             </div>
 
             <div className="space-y-6">
               <p className="text-lg">
-                Fill in the blank to complete the statement about Python's execution process: 
-                Python is an example of a __________ language, meaning it is executed line-by-line 
-                by an interpreter.
+                {questions[currentQuestionIndex].question}
               </p>
 
-              <input
-                type="text"
-                className="w-full p-3 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-blue-500"
-                placeholder="Type your answer..."
-              />
+              <div className="space-y-3">
+                {questions[currentQuestionIndex].options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswer(option)}
+                    className={`w-full p-3 text-left rounded-lg transition-all ${
+                      answers[currentQuestionIndex] === option
+                        ? 'bg-blue-500/20 border-blue-500/50'
+                        : 'bg-white/10 border-white/20 hover:bg-white/20'
+                    } border`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
 
-              <button
-                onClick={() => handleQuizComplete(100)}
-                className="w-full py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300"
-              >
-                Submit Answer
-              </button>
+              <div className="flex justify-between mt-6">
+                <button
+                  onClick={handlePrevious}
+                  disabled={currentQuestionIndex === 0}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                    currentQuestionIndex === 0
+                      ? 'bg-white/5 text-white/50 cursor-not-allowed'
+                      : 'bg-white/10 hover:bg-white/20'
+                  }`}
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  Previous
+                </button>
+
+                <button
+                  onClick={handleNext}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all"
+                >
+                  {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         )}
