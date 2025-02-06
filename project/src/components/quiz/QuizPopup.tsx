@@ -21,23 +21,86 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   const [answers, setAnswers] = useState<string[]>([]);
   const { width, height } = useWindowSize();
 
-  const questions = [
-    {
-      question: "Fill in the blank to complete the statement about Python's execution process: Python is an example of a __________ language, meaning it is executed line-by-line by an interpreter.",
-      answer: "interpreted",
-      options: ["compiled", "interpreted", "assembled", "translated"]
-    },
-    {
-      question: "What is the primary purpose of Python's interpreter?",
-      answer: "Execute code line by line",
-      options: ["Execute code line by line", "Convert code to machine language", "Debug code", "Format code"]
-    },
-    {
-      question: "Which statement best describes Python's execution model?",
-      answer: "Code is executed directly by the interpreter",
-      options: ["Code is compiled before execution", "Code is executed directly by the interpreter", "Code is converted to assembly", "Code is translated to C++"]
-    }
-  ];
+  const questions =[
+  {
+    "question": "Fill in the blank to complete the statement about Python's execution process: Python is an example of a __________ language, meaning it is executed line-by-line by an interpreter.",
+    "answer": "interpreted",
+    "options": ["compiled", "interpreted", "assembled", "translated"]
+  },
+  {
+    "question": "Which of the following is true about Python compared to compiled languages?",
+    "answer": "Python code is executed line-by-line by an interpreter.",
+    "options": [
+      "Python code is translated into machine code before execution.",
+      "Python code is executed line-by-line by an interpreter.",
+      "Python requires a separate compilation step to run.",
+      "Python does not need an interpreter."
+    ]
+  },
+  {
+    "question": "Python is a compiled language, meaning the entire program is converted into machine code before execution.",
+    "answer": "False",
+    "options": ["True", "False"]
+  },
+  {
+    "question": "Unscramble the words to form a correct statement about Python's execution:\n\n'line-by-line', 'executed', 'Python', 'is', 'code', 'by', 'an', 'interpreter'.",
+    "answer": "Python code is executed line-by-line by an interpreter.",
+    "options": [
+      "Python code is executed line-by-line by an interpreter.",
+      "An interpreter executes Python code line-by-line.",
+      "Executed line-by-line is Python code by an interpreter."
+    ]
+  },
+  {
+    "question": "What is the main difference between Python and a compiled language like C++?",
+    "answer": "Python requires an interpreter to run.",
+    "options": [
+      "Python requires an interpreter to run.",
+      "Python requires a compiler to run.",
+      "Python does not need any translation step."
+    ]
+  },
+  {
+    "question": "Match the language to whether it uses an interpreter or a compiler for execution.\n\n1. Python\n2. C++\n\nExecution Method:\nA) Interpreter\nB) Compiler",
+    "answer": "1 → A) Interpreter, 2 → B) Compiler",
+    "options": [
+      "1 → A) Interpreter, 2 → B) Compiler",
+      "1 → B) Compiler, 2 → A) Interpreter"
+    ]
+  },
+  {
+    "question": "Which of the following are advantages of interpreted languages like Python? (Select all that apply)",
+    "answer": ["Easier to debug", "Portability across different platforms"],
+    "options": ["Easier to debug", "Faster execution", "Portability across different platforms"]
+  },
+  {
+    "question": "Arrange the steps in the correct order for Python execution:\n\n1. Python code is written and saved in a .py file.\n2. The interpreter reads and executes the code line-by-line.\n3. The output is displayed on the screen.",
+    "answer": "1 → 2 → 3",
+    "options": [
+      "1 → 2 → 3",
+      "2 → 3 → 1",
+      "3 → 1 → 2"
+    ]
+  },
+  {
+    "question": "What is wrong with this statement about Python?\n\nStatement: Python code is compiled into machine code before execution.",
+    "answer": "Python code is not compiled.",
+    "options": [
+      "Python code is not compiled.",
+      "Python code is compiled into bytecode.",
+      "Python code is executed by an interpreter."
+    ]
+  },
+  {
+    "question": "Complete the code to demonstrate Python's execution process.\n\nOutput: 'Python is an interpreted language!'\n\nprint(___)",
+    "answer": "print(\"Python is an interpreted language!\")",
+    "options": [
+      "print(\"Python is an interpreted language!\")",
+      "echo \"Python is an interpreted language!\"",
+      "console.log(\"Python is an interpreted language!\")"
+    ]
+  }
+];
 
   const handleFlashCardsComplete = () => {
     setShowQuiz(true);
