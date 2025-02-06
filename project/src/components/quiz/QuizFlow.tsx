@@ -83,15 +83,7 @@ const QuizFlow: React.FC<QuizFlowProps> = ({
       <div className="p-8">
         <FlashCards cards={flashcards} />
         <div className="flex justify-center mt-8">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleStartQuiz}
-            className="px-6 py-3 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-300 flex items-center gap-2"
-          >
-            Start Quiz
-            <ChevronRight className="w-5 h-5" />
-          </motion.button>
+
         </div>
       </div>
     );
