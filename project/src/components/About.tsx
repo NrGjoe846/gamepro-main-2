@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { ExternalLink } from 'lucide-react';
+import React from 'react';
+import { ExternalLink, Globe, Youtube, Instagram, Linkedin, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import BackButton from './BackButton';
 
@@ -10,65 +10,60 @@ const About = () => {
       url: 'https://www.unaitech.com', 
       color: 'from-blue-500 to-cyan-500',
       description: 'Visit our official website for more information',
-      icon: '🌊'
+      icon: <Globe className="w-12 h-12 text-blue-400" />
     },
     { 
       name: 'YouTube', 
       url: 'https://youtube.com/@UnaiTech', 
       color: 'from-red-500 to-pink-500',
       description: 'Watch our educational content and tutorials',
-      icon: '🎥'
+      icon: <Youtube className="w-12 h-12 text-red-400" />
     },
     { 
       name: 'Instagram', 
       url: 'https://instagram.com/unai.tech', 
       color: 'from-purple-500 to-pink-500',
       description: 'Follow us for updates and behind-the-scenes',
-      icon: '📷'
+      icon: <Instagram className="w-12 h-12 text-purple-400" />
     },
     { 
       name: 'LinkedIn', 
       url: 'https://linkedin.com/company/unai-tech', 
       color: 'from-blue-600 to-blue-400',
       description: 'Connect with us professionally',
-      icon: '💼'
+      icon: <Linkedin className="w-12 h-12 text-blue-500" />
     },
     { 
       name: 'WhatsApp Community', 
       url: 'https://whatsapp.com/channel/0029VazCTXQ0G0XiHoGHy50i', 
       color: 'from-green-500 to-green-300',
       description: 'Join our WhatsApp community for real-time updates',
-      icon: '✅'
+      icon: <MessageCircle className="w-12 h-12 text-green-500" />
     }
   ];
 
-  // Floating orb animation
-  useEffect(() => {
-    const orbs = document.querySelectorAll('.floating-orb');
-    orbs.forEach((orb, index) => {
-      const delay = index * 0.5;
-      const element = orb as HTMLElement;
-      element.style.animation = `floatOrb 3s ease-in-out ${delay}s infinite`;
-    });
-  }, []);
-
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-[#0B1120] via-[#0F172A] to-[#1E293B]">
-      {/* Cosmic Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
-        <div className="absolute top-20 right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" />
-        <div className="absolute top-40 left-20 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl" />
+      {/* Cosmic Background with Floating Orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <motion.div 
+            key={i}
+            className="absolute w-32 h-32 bg-gradient-to-br from-white/10 to-white/5 rounded-full blur-3xl"
+            animate={{
+              x: [0, 50, -50, 0],
+              y: [0, -50, 50, 0],
+              rotate: [0, 360],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ top: `${Math.random() * 80}%`, left: `${Math.random() * 80}%` }}
+          />
+        ))}
       </div>
-
-      {/* Reflective Floor */}
-      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent backdrop-blur-sm" />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto p-8">
-        <div className="mb-8">
-          <BackButton />
-        </div>
+        <BackButton />
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -94,19 +89,22 @@ const About = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              whileHover={{ scale: 1.1, rotate: 2 }}
               className="group relative h-[300px]"
             >
               {/* Glowing Background */}
               <div className={`absolute inset-0 bg-gradient-to-br ${link.color} rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500`} />
               
               {/* Card Content */}
-              <div className="relative h-full backdrop-blur-xl bg-white/5 p-6 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-500 flex flex-col justify-between overflow-hidden">
-                {/* Floating Orb */}
-                <div className="floating-orb absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-r from-white/20 to-white/5 rounded-full blur-sm" />
-                
-                {/* Icon */}
-                <div className="text-4xl mb-4">{link.icon}</div>
+              <div className="relative h-full backdrop-blur-xl bg-white/5 p-6 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-500 flex flex-col justify-between overflow-hidden shadow-lg hover:shadow-xl">
+                {/* Floating Icon Animation */}
+                <motion.div 
+                  className="mb-4"
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  {link.icon}
+                </motion.div>
                 
                 {/* Content */}
                 <div>
@@ -126,19 +124,6 @@ const About = () => {
           ))}
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes floatOrb {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-            opacity: 0.5;
-          }
-          50% {
-            transform: translateY(-20px) scale(1.1);
-            opacity: 0.8;
-          }
-        }
-      `}</style>
     </div>
   );
 };
