@@ -1,106 +1,337 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI('AIzaSyDFujDavmC63MeyvGc9vgchx_HL6vMdjm4');
+const API_KEY = 'AIzaSyDFujDavmC63MeyvGc9vgchx_HL6vMdjm4';
+
+const DIFFICULTY_WEIGHTS = {
+  beginner: { complexity: 1, hints: 5 },
+  intermediate: { complexity: 2, hints: 4 },
+  advanced: { complexity: 3, hints: 3 }
+};
+
+const mockChallenges = [
+  {
+    id: 'mock-1',
+    title: 'Sum of Two Numbers',
+    description: 'Write a function that takes two numbers as input and returns their sum.',
+    difficulty: 'beginner' as const,
+    sampleInput: 'a = 5, b = 3',
+    sampleOutput: '8',
+    testCases: [
+      { input: '2, 3', output: '5' },
+      { input: '-1, 1', output: '0' }
+    ],
+    hints: [
+      'Use the + operator to add numbers',
+      'Remember to return the result',
+      'Consider edge cases like negative numbers'
+    ],
+    bestSolution: 'def add_numbers(a, b):\n    return a + b',
+    concepts: ['Basic arithmetic', 'Function parameters', 'Return values']
+  }
+];
+
+export interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  sampleInput: string;
+  sampleOutput: string;
+  testCases: Array<{ input: string; output: string }>;
+  hints: string[];
+  bestSolution: string;
+  concepts: string[];
+}
 
 export interface CodeValidationResult {
   isCorrect: boolean;
   feedback: string;
-  hint?: string;
-  explanation?: string;
+  efficiency: string;
+  readability: string;
+  suggestions: string[];
+  performanceScore?: number;
+  codeQualityScore?: number;
+  executionTime?: string;
+  memoryUsage?: string;
+  testCasesPassed?: number;
+  totalTestCases?: number;
+  detailedResults?: Array<{
+    testCase: string;
+    expected: string;
+    actual: string;
+    passed: boolean;
+  }>;
 }
 
 export class GeminiService {
-  private model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  private model;
+  private useMocks: boolean;
+  private hintCache: Map<string, string[]>;
 
-  async validateCode(
-    code: string,
-    expectedOutput: string,
-    language: string,
-    context: string
-  ): Promise<CodeValidationResult> {
+  constructor() {
+    try {
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      this.useMocks = false;
+      this.hintCache = new Map();
+    } catch (error) {
+      console.warn('Falling back to mock data:', error);
+      this.useMocks = true;
+    }
+  }
+
+  private cleanJsonString(str: string): string {
+    str = str.replace(/```json\n?|\n?```/g, '');
+    str = str.replace(/,(\s*[}\]])/g, '$1');
+    return str.trim();
+  }
+
+  async generateDailyChallenge(userLevel: string): Promise<Challenge> {
+    if (this.useMocks) {
+      const randomIndex = Math.floor(Math.random() * mockChallenges.length);
+      return { ...mockChallenges[randomIndex] };
+    }
+
     try {
       const prompt = `
-        As a coding instructor, evaluate this ${language} code:
-        
-        Context: ${context}
-        Expected Output: ${expectedOutput}
-        
-        Student's Code:
-        ${code}
-        
-        Provide a JSON response with:
-        1. isCorrect (boolean): Whether the code produces the expected output
-        2. feedback (string): Specific feedback about the code
-        3. hint (string): A helpful hint if the code is incorrect
-        4. explanation (string): Detailed explanation of the correct approach
-        
-        Format: {"isCorrect": boolean, "feedback": "string", "hint": "string", "explanation": "string"}
+        Generate a coding challenge for a ${userLevel} level programmer.
+        The response must be valid JSON with the following structure:
+        {
+          "title": "short title",
+          "description": "clear description under 100 words",
+          "difficulty": "${userLevel}",
+          "sampleInput": "brief example input",
+          "sampleOutput": "expected output",
+          "testCases": [
+            { "input": "test input 1", "output": "expected output 1" },
+            { "input": "test input 2", "output": "expected output 2" }
+          ],
+          "hints": ["hint 1", "hint 2", "hint 3"],
+          "bestSolution": "code solution",
+          "concepts": ["concept 1", "concept 2"]
+        }
+        Keep all strings concise and ensure valid JSON format.
       `;
 
       const result = await this.model.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-      
+      const responseText = this.cleanJsonString(await result.response.text());
+
       try {
-        return JSON.parse(text) as CodeValidationResult;
-      } catch (e) {
-        // If JSON parsing fails, extract information from text
-        return {
-          isCorrect: text.toLowerCase().includes('correct'),
-          feedback: text,
-          hint: text.includes('Hint:') ? text.split('Hint:')[1].split('\n')[0].trim() : undefined,
-          explanation: text.includes('Explanation:') ? text.split('Explanation:')[1].trim() : undefined
+        const response = JSON.parse(responseText);
+        return { 
+          id: Date.now().toString(),
+          ...response,
+          difficulty: userLevel as 'beginner' | 'intermediate' | 'advanced'
         };
+      } catch (parseError) {
+        console.error('Error parsing challenge response:', parseError);
+        console.error('Response text:', responseText);
+        return mockChallenges[0];
       }
     } catch (error) {
-      console.error('Gemini API Error:', error);
+      console.error('Error generating challenge:', error);
+      return mockChallenges[0];
+    }
+  }
+
+  private async validateTestCases(code: string, testCases: Array<{ input: string; output: string }>, language: string): Promise<boolean> {
+    try {
+      const prompt = `
+        Validate if this ${language} code passes all test cases:
+        Code: ${code}
+        Test Cases: ${JSON.stringify(testCases)}
+        
+        Return only true or false.
+      `;
+
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response.text();
+      return response.toLowerCase().includes('true');
+    } catch (error) {
+      console.error('Error validating test cases:', error);
+      return false;
+    }
+  }
+
+  async validateSolution(
+    challenge: Challenge,
+    userCode: string,
+    language: string
+  ): Promise<CodeValidationResult> {
+    if (this.useMocks) {
       return {
-        isCorrect: false,
-        feedback: 'Error validating code. Please try again.',
-        hint: 'Check your syntax and try again.',
+        isCorrect: userCode.includes('return') && userCode.includes('+'),
+        feedback: 'Good attempt!',
+        efficiency: 'O(1)',
+        readability: 'Good',
+        suggestions: ['Consider adding comments'],
+        performanceScore: 85,
+        codeQualityScore: 80
       };
     }
-  }
 
-  async getHint(question: string, currentCode: string, language: string): Promise<string> {
     try {
+      const testCasesPassed = await this.validateTestCases(userCode, challenge.testCases, language);
+      
       const prompt = `
-        As a coding instructor, provide a helpful hint for this ${language} problem:
-        
-        Problem: ${question}
-        Current Code:
-        ${currentCode}
-        
-        Provide a concise, specific hint that guides the student without giving away the complete solution.
+        Thoroughly evaluate this ${language} solution:
+        Problem: ${challenge.description}
+        Expected Output: ${challenge.sampleOutput}
+        User's Code: ${userCode}
+        Test Cases: ${JSON.stringify(challenge.testCases)}
+        Test Cases Passed: ${testCasesPassed}
+
+        Provide a comprehensive analysis including:
+        1. Code correctness
+        2. Time complexity
+        3. Space complexity
+        4. Code style and readability
+        5. Potential optimizations
+        6. Edge cases handling
+        7. Best practices followed/violated
+
+        Response must be valid JSON with:
+        {
+          "isCorrect": ${testCasesPassed},
+          "feedback": "detailed explanation",
+          "efficiency": "Big O analysis",
+          "readability": "code style evaluation",
+          "suggestions": ["improvement 1", "improvement 2"],
+          "executionTime": "estimated runtime",
+          "memoryUsage": "estimated space usage",
+          "testCasesPassed": ${testCasesPassed ? challenge.testCases.length : 0},
+          "totalTestCases": ${challenge.testCases.length},
+          "detailedResults": [
+            {
+              "testCase": "input value",
+              "expected": "expected output",
+              "actual": "actual output",
+              "passed": boolean
+            }
+          ]
+        }
       `;
 
       const result = await this.model.generateContent(prompt);
-      return result.response.text();
+      const responseText = this.cleanJsonString(await result.response.text());
+      const validation = JSON.parse(responseText);
+
+      return {
+        ...validation,
+        performanceScore: this.calculatePerformanceScore(validation),
+        codeQualityScore: this.calculateCodeQualityScore(validation)
+      };
     } catch (error) {
-      console.error('Gemini API Error:', error);
-      return 'Unable to generate hint at the moment. Please try again.';
+      console.error('Error validating solution:', error);
+      return this.getFallbackValidation();
     }
   }
 
-  async explainCode(code: string, language: string): Promise<string> {
+  private calculatePerformanceScore(validation: CodeValidationResult): number {
+    const testCaseScore = (validation.testCasesPassed || 0) / (validation.totalTestCases || 1) * 100;
+    const efficiencyScore = this.getEfficiencyScore(validation.efficiency);
+    return Math.round((testCaseScore + efficiencyScore) / 2);
+  }
+
+  private calculateCodeQualityScore(validation: CodeValidationResult): number {
+    const readabilityScore = this.getReadabilityScore(validation.readability);
+    const bestPracticesScore = validation.suggestions.length > 0 ? 100 - (validation.suggestions.length * 10) : 100;
+    return Math.round((readabilityScore + bestPracticesScore) / 2);
+  }
+
+  private getEfficiencyScore(efficiency: string): number {
+    if (efficiency.includes('O(1)')) return 100;
+    if (efficiency.includes('O(log n)')) return 90;
+    if (efficiency.includes('O(n)')) return 80;
+    if (efficiency.includes('O(n log n)')) return 70;
+    if (efficiency.includes('O(n^2)')) return 60;
+    return 50;
+  }
+
+  private getReadabilityScore(readability: string): number {
+    const readabilityLower = readability.toLowerCase();
+    if (readabilityLower.includes('excellent')) return 100;
+    if (readabilityLower.includes('good')) return 80;
+    if (readabilityLower.includes('fair')) return 60;
+    if (readabilityLower.includes('poor')) return 40;
+    return 50;
+  }
+
+  async getInfiniteHints(
+    challenge: Challenge,
+    userCode: string,
+    previousHints: string[]
+  ): Promise<string> {
+    if (this.useMocks) {
+      const fallbackHint = this.getFallbackHint(previousHints.length);
+      const cacheKey = challenge.id;
+      const existingHints = this.hintCache.get(cacheKey) || [];
+      this.hintCache.set(cacheKey, [...existingHints, fallbackHint]);
+      return fallbackHint;
+    }
+
     try {
+      const difficultyWeight = DIFFICULTY_WEIGHTS[challenge.difficulty];
+      const hintLevel = previousHints.length + 1;
+      const revealLevel = (hintLevel / difficultyWeight.hints) * 100;
+
       const prompt = `
-        Explain this ${language} code in a clear and concise way:
+        Generate hint #${hintLevel} for this coding challenge:
+        Problem: ${challenge.description}
+        Current Code: ${userCode}
+        Previous Hints: ${JSON.stringify(previousHints)}
+        Reveal Level: ${revealLevel}%
         
-        ${code}
+        Rules for hint generation:
+        1. Never repeat previous hints
+        2. Progressively reveal more solution details based on reveal level
+        3. At ${revealLevel}% reveal level, provide ${
+          revealLevel < 30 ? 'conceptual guidance' :
+          revealLevel < 60 ? 'algorithmic approach' :
+          revealLevel < 90 ? 'partial implementation details' :
+          'specific implementation guidance'
+        }
+        4. Keep hints engaging and educational
+        5. For difficulty ${challenge.difficulty}, adjust complexity accordingly
         
-        Focus on:
-        1. What the code does
-        2. Key concepts used
-        3. Potential improvements
+        Respond with a single clear hint string.
       `;
 
       const result = await this.model.generateContent(prompt);
-      return result.response.text();
+      const hint = await result.response.text();
+      
+      const cacheKey = challenge.id;
+      const existingHints = this.hintCache.get(cacheKey) || [];
+      this.hintCache.set(cacheKey, [...existingHints, hint]);
+      
+      return hint.trim();
     } catch (error) {
-      console.error('Gemini API Error:', error);
-      return 'Unable to explain code at the moment. Please try again.';
+      console.error('Error generating hint:', error);
+      return this.getFallbackHint(previousHints.length + 1);
     }
+  }
+
+  private getFallbackValidation(): CodeValidationResult {
+    return {
+      isCorrect: false,
+      feedback: 'Unable to validate solution. Please try again.',
+      efficiency: 'N/A',
+      readability: 'N/A',
+      suggestions: ['Check your code and try again'],
+      performanceScore: 0,
+      codeQualityScore: 0
+    };
+  }
+
+  private getFallbackHint(hintLevel: number): string {
+    const fallbackHints = [
+      "Try breaking down the problem into smaller steps.",
+      "Think about edge cases in your solution.",
+      "Consider optimizing your current approach.",
+      "Look for patterns in the problem.",
+      "Think about the time complexity of your solution."
+    ];
+    return fallbackHints[hintLevel % fallbackHints.length];
   }
 }
 
