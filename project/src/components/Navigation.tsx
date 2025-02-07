@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GraduationCap, User, Settings, Bell, Menu, X, Gift, Compass, BookOpen, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import NotificationsPanel from './notifications/NotificationsPanel';
 import SettingsPanel from './settings/SettingsPanel';
 
@@ -10,7 +11,7 @@ const Navigation = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const menuItems = [
-    { icon: <Compass className="w-5 h-5" />, label: 'Explore', path: '/explore' },
+    { icon: <Compass className="w-5 h-5" />, label: 'Explore', path: '/about' },
     { icon: <BookOpen className="w-5 h-5" />, label: 'My Courses', path: '/dashboard' },
     { icon: <Trophy className="w-5 h-5" />, label: 'Achievements', path: '/achievements' },
     { icon: <Gift className="w-5 h-5" />, label: 'Rewards', path: '/rewards' },
@@ -29,14 +30,19 @@ const Navigation = () => {
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6 ml-8">
               {menuItems.map((item, index) => (
-                <Link
+                <motion.div
                   key={index}
-                  to={item.path}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </Link>
+                  <Link
+                    to={item.path}
+                    className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>
