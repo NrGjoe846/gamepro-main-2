@@ -1,11 +1,10 @@
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, Trophy } from 'lucide-react';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useState, useEffect } from 'react';
-
 import DragDropQuestion from './DragDropQuestion';
 import MatchQuestion from './MatchQuestion';
 import FillQuestion from './FillQuestion';
@@ -23,6 +22,7 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
   const { width, height } = useWindowSize();
 
   useEffect(() => {
@@ -32,12 +32,13 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
       setShowConfetti(false);
       setCurrentQuestionIndex(0);
       setAnswers({});
+      setSubmitted(false);
     }
   }, [isOpen]);
 
   const questions = [
     { type: 'fill', question: "Python is an example of a __________ language.", answer: "interpreted", component: FillInTheBlank },
-    { type: 'multiple-choice', question: "Which is true about Python?", options: ["Python code is translated into machine code before execution.", "Python code is executed line-by-line by an interpreter.","Python requires a separate compilation step to run"], answer: "Interpreted", component: MultipleChoiceQuestion },
+    { type: 'multiple-choice', question: "Which is true about Python?", options: ["Python code is translated into machine code before execution.", "Python code is executed line-by-line by an interpreter.","Python requires a separate compilation step to run"], answer: "Python code is executed line-by-line by an interpreter.", component: MultipleChoiceQuestion },
     { type: 'true-false', question: "Python is compiled.", options: ["True", "False"], answer: "False", component: TrueFalseQuestion },
     { type: 'unscramble', question: "Unscramble the words:", options: ['line-by-line', 'executed', 'Python', 'is', 'code', 'by', 'an', 'interpreter'], answer: ['Python', 'code', 'is', 'executed', 'line-by-line', 'by', 'an', 'interpreter'], component: DragDropQuestion },
     { type: 'multiple-choice', question: "What does Python require to run?", options: ["Compiler", "Interpreter"], answer: "Interpreter", component: MultipleChoiceQuestion },
@@ -51,6 +52,7 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
+      setSubmitted(false);
     } else {
       handleQuizComplete();
     }
@@ -77,6 +79,7 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
 
   const handleAnswer = (answer) => {
     setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: answer }));
+    setSubmitted(true);
   };
 
   if (!isOpen) return null;
@@ -94,7 +97,7 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
           {!showResults ? (
             <>
               <QuestionComponent question={currentQuestion} onAnswer={handleAnswer} />
-              <button onClick={handleNext} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg">Next</button>
+              {submitted && <button onClick={handleNext} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg">Next</button>}
             </>
           ) : <div className="text-center">Quiz Completed!</div>}
         </motion.div>
