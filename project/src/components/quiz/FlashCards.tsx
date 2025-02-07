@@ -1,40 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-import PythonQuiz from './PythonQuiz';
 
-interface FlashCard {
-  front: string;
-  back: string;
-}
+const pythonInterpreterCards = [
+  {
+    front: "What is Python's execution model?",
+    back: "Python is an interpreted language, meaning code is executed line-by-line by an interpreter rather than being compiled into machine code first."
+  },
+  {
+    front: "How does Python's execution differ from compiled languages?",
+    back: "Python code is executed directly by an interpreter, while compiled languages like C++ must be converted to machine code before execution."
+  },
+  {
+    front: "What are the advantages of Python being interpreted?",
+    back: "• Easier debugging and testing\n• More portable across platforms\n• Immediate feedback during development\n• No separate compilation step needed"
+  },
+  {
+    front: "What is Python's execution process?",
+    back: "1. Code is written and saved in a .py file\n2. The interpreter reads the code\n3. Code is executed line-by-line\n4. Output is displayed immediately"
+  },
+  {
+    front: "Why is Python called an 'interpreted' language?",
+    back: "Because it uses an interpreter to execute code line-by-line at runtime, rather than requiring the code to be compiled into machine code before execution."
+  }
+];
 
 interface FlashCardsProps {
-  cards?: FlashCard[];
-  title?: string;
-  questions?: any[];
+  onComplete: () => void;
 }
 
-const FlashCards: React.FC<FlashCardsProps> = ({ 
-  cards = [], 
-  title = "Python Basics Flashcards",
-  questions = []
-}) => {
+const FlashCards: React.FC<FlashCardsProps> = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [direction, setDirection] = useState(0);
-  const [showQuiz, setShowQuiz] = useState(false);
-
-  useEffect(() => {
-    setCurrentIndex(0);
-    setIsFlipped(false);
-    setDirection(0);
-  }, [cards]);
 
   const handleNext = () => {
-    if (currentIndex < cards.length - 1) {
+    if (currentIndex < pythonInterpreterCards.length - 1) {
       setDirection(1);
       setIsFlipped(false);
       setCurrentIndex(prev => prev + 1);
+    } else {
+      onComplete();
     }
   };
 
@@ -42,28 +48,12 @@ const FlashCards: React.FC<FlashCardsProps> = ({
     setIsFlipped(!isFlipped);
   };
 
-  const handleStartQuiz = () => {
-    setShowQuiz(true);
-  };
-
-  const handleQuizComplete = (score: number) => {
-    console.log('Quiz completed with score:', score);
-  };
-
-  if (showQuiz) {
-    return <PythonQuiz questions={questions} onComplete={handleQuizComplete} />;
-  }
-
-  if (!cards.length) {
-    return <div>No flashcards available.</div>;
-  }
-
   return (
-    <div className="relative max-w-2xl mx-auto p-8">
+    <div className="max-w-2xl mx-auto p-8">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <h2 className="text-2xl font-bold">Python's Interpreter vs. Compiled Languages</h2>
         <div className="text-sm text-gray-400">
-          {currentIndex + 1} / {cards.length}
+          {currentIndex + 1} / {pythonInterpreterCards.length}
         </div>
       </div>
 
@@ -98,7 +88,7 @@ const FlashCards: React.FC<FlashCardsProps> = ({
               <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <h3 className="text-xl font-bold text-blue-400 mb-2">Question</h3>
-                  <p className="text-xl">{cards[currentIndex].front}</p>
+                  <p className="text-xl">{pythonInterpreterCards[currentIndex].front}</p>
                   <p className="text-sm text-gray-400 mt-4">Click to reveal answer</p>
                 </div>
               </div>
@@ -114,7 +104,7 @@ const FlashCards: React.FC<FlashCardsProps> = ({
                 <div className="flex flex-col justify-center h-full text-center">
                   <h3 className="text-xl font-bold text-green-400 mb-4">Answer</h3>
                   <p className="text-lg leading-relaxed whitespace-pre-line">
-                    {cards[currentIndex].back}
+                    {pythonInterpreterCards[currentIndex].back}
                   </p>
                 </div>
               </div>
@@ -124,26 +114,19 @@ const FlashCards: React.FC<FlashCardsProps> = ({
       </div>
 
       <div className="flex items-center justify-center gap-4 mt-8">
-        {currentIndex < cards.length - 1 ? (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleNext}
-            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 flex items-center gap-2"
-          >
-            Next Card
-            <ChevronRight className="w-5 h-5" />
-          </motion.button>
-        ) : (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleStartQuiz}
-            className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-300"
-          >
-            Start Quiz
-          </motion.button>
-        )}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleNext}
+          className={`px-6 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ${
+            currentIndex === pythonInterpreterCards.length - 1 
+            ? 'bg-green-600 hover:bg-green-700' // Green color for "Start Quiz"
+            : 'bg-blue-600 hover:bg-blue-700'   // Blue color for "Next Card"
+          }`}
+        >
+          {currentIndex === pythonInterpreterCards.length - 1 ? 'Start Quiz' : 'Next Card'}
+          <ChevronRight className="w-5 h-5" />
+        </motion.button>
       </div>
     </div>
   );
