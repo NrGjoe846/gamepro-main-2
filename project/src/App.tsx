@@ -14,101 +14,112 @@ import LanguageSelection from './components/challenges/LanguageSelection';
 import LevelSelection from './components/challenges/LevelSelection';
 import DailyChallenge from './components/challenges/DailyChallenge';
 import JavaChallenge from './components/challenges/JavaChallenge.tsx';
+import About from './components/About';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/auth" element={<AuthSystem />} />
-          <Route
-            path="/dashboard"
+          <Route path="/about" element={<About />} />
+
+          {/* Protected Routes */}
+          <Route 
+            path="/dashboard" 
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/profile"
+          <Route 
+            path="/profile" 
             element={
               <ProtectedRoute>
                 <ProfileDashboard />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/compiler"
+          <Route 
+            path="/compiler" 
             element={
               <ProtectedRoute>
                 <CompilerPage />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/courses/python-fundamentals"
+          
+          {/* Courses */}
+          <Route 
+            path="/courses/python-fundamentals" 
             element={
               <ProtectedRoute>
                 <PythonFundamentals />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/courses/c-programming"
+          <Route 
+            path="/courses/c-programming" 
             element={
               <ProtectedRoute>
                 <CProgramming />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/courses/java-programming"
+          <Route 
+            path="/courses/java-programming" 
             element={
               <ProtectedRoute>
                 <JavaProgramming />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/challenges"
+
+          {/* Challenges */}
+          <Route 
+            path="/challenges" 
             element={
               <ProtectedRoute>
                 <ChallengeCategories />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/challenges/language-select"
+          <Route 
+            path="/challenges/language-select" 
             element={
               <ProtectedRoute>
                 <LanguageSelection />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/challenges/level-select"
+          <Route 
+            path="/challenges/level-select" 
             element={
               <ProtectedRoute>
                 <LevelSelection />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/challenges/daily"
+          <Route 
+            path="/challenges/daily" 
             element={
               <ProtectedRoute>
                 <DailyChallenge />
               </ProtectedRoute>
-            }
+            } 
           />
-          <Route
-            path="/challenges/java"
+          <Route 
+            path="/challenges/java" 
             element={
               <ProtectedRoute>
                 <JavaChallenge />
               </ProtectedRoute>
-            }
+            } 
           />
+
+          {/* Default Route - Redirect to /auth */}
           <Route path="/" element={<Navigate to="/auth" replace />} />
         </Routes>
       </BrowserRouter>
