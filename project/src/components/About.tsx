@@ -5,11 +5,37 @@ import BackButton from './BackButton';
 
 const About = () => {
   const socialLinks = [
-    { name: 'Website', url: 'https://www.unaitech.com', color: 'from-blue-500 to-cyan-500', description: 'Visit our official website for more information' },
-    { name: 'YouTube', url: 'https://youtube.com/@UnaiTech', color: 'from-red-500 to-pink-500', description: 'Watch our educational content and tutorials' },
-    { name: 'Instagram', url: 'https://instagram.com/unai.tech', color: 'from-purple-500 to-pink-500', description: 'Follow us for updates and behind-the-scenes' },
-    { name: 'LinkedIn', url: 'https://linkedin.com/company/unai-tech', color: 'from-blue-600 to-blue-400', description: 'Connect with us professionally' }
-  ];
+    { 
+        name: 'Website', 
+        url: 'https://www.unaitech.com', 
+        color: 'from-blue-500 to-cyan-500', 
+        description: 'Visit our official website for more information' 
+    },
+    { 
+        name: 'YouTube', 
+        url: 'https://youtube.com/@UnaiTech', 
+        color: 'from-red-500 to-pink-500', 
+        description: 'Watch our educational content and tutorials' 
+    },
+    { 
+        name: 'Instagram', 
+        url: 'https://instagram.com/unai.tech', 
+        color: 'from-purple-500 to-pink-500', 
+        description: 'Follow us for updates and behind-the-scenes' 
+    },
+    { 
+        name: 'LinkedIn', 
+        url: 'https://linkedin.com/company/unai-tech', 
+        color: 'from-blue-600 to-blue-400', 
+        description: 'Connect with us professionally' 
+    },
+    { 
+        name: 'WhatsApp Community', 
+        url: 'https://whatsapp.com/channel/0029VazCTXQ0G0XiHoGHy50i', 
+        color: 'from-green-500 to-green-300', 
+        description: 'Join our WhatsApp community for real-time updates' 
+    }
+];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
