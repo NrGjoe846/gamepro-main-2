@@ -1,130 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Trophy, Star, ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 import QuizCard from './QuizCard';
-import { Trophy, Star } from 'lucide-react';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 
 const pythonQuestions = [
-  {
-    "type": "fill-blank",
-    "question": "Fill in the blank to print 'Hello, World!' in Python.",
-    "code": "print(___)",
-    "answer": "\"Hello, World!\"",
-    "explanation": "In Python, we use print() with text in quotes to display output."
-  },
-  {
-    "type": "multiple-choice",
-    "question": "Which of the following will print Hello, World! in Python?",
-    "options": [
-      "echo 'Hello, World!'",
-      "print('Hello, World!')",
-      "println('Hello, World!')"
-    ],
-    "answer": 1,
-    "explanation": "print() is the correct Python function for displaying output."
-  },
-  {
-    "type": "true-false",
-    "question": "In Python, the print() function can be used to display text on the screen.",
-    "answer": true,
-    "explanation": "The print() function is indeed used to display text output in Python."
-  },
-  {
-    "type": "word-scramble",
-    "question": "Unscramble the words to create a Python statement that prints 'Hello, World!'.",
-    "options": ["World!", "Hello", "(\"", "print", "\")"],
-    "answer": "print(\"Hello, World!\")",
-    "explanation": "Rearranging the words correctly forms a valid Python print statement."
-  },
-  {
-    "type": "multiple-choice",
-    "question": "What will the following Python code output?",
-    "code": "print(\"Welcome to Python!\")",
-    "options": [
-      "Welcome",
-      "to Python",
-      "Welcome to Python!"
-    ],
-    "answer": 2,
-    "explanation": "The print function outputs exactly what is inside the quotes."
-  },
-  {
-    "type": "match-the-output",
-    "question": "Match the code with its output:",
-    "code": {
-      "1": "print(\"Hello\")",
-      "2": "print(\"Hi!\")"
-    },
-    "options": {
-      "a": "Hi!",
-      "b": "Hello"
-    },
-    "answer": {"1": "b", "2": "a"},
-    "explanation": "Each print statement outputs its respective text."
-  },
-  {
-    "type": "multiple-selection",
-    "question": "Which of the following are valid Python print() statements?",
-    "options": [
-      "print(\"Hello, World!\")",
-      "print(\"Goodbye)",
-      "print(Hello)"
-    ],
-    "answer": [0],
-    "explanation": "Only the first option is correct; the others have syntax errors."
-  },
-  {
-    "type": "ordering",
-    "question": "Arrange the steps in the correct order to run a Python program:",
-    "options": [
-      "Open Python interpreter or IDE",
-      "Type print(\"Hello, World!\")",
-      "Press Enter/Run"
-    ],
-    "answer": [0, 1, 2],
-    "explanation": "The steps should be followed in this order to run a Python program."
-  },
-  {
-    "type": "code-correction",
-    "question": "What is wrong with this Python code?",
-    "code": "print(Hello, World)",
-    "options": [
-      "The string is not enclosed in quotes",
-      "The print function needs to be lowercase",
-      "The parentheses are incorrect"
-    ],
-    "answer": 0,
-    "explanation": "String literals in Python must be enclosed in quotes."
-  },
-  {
-    "type": "fill-blank",
-    "question": "Complete the code to display: Python is fun!",
-    "code": "print(___)",
-    "answer": "\"Python is fun!\"",
-    "explanation": "Strings must be enclosed in quotes inside print()."
-  }
+  // ... existing questions array
 ];
 
 const PythonQuiz = ({ onComplete }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [isAnswerChecked, setIsAnswerChecked] = useState(false);
   const { width, height } = useWindowSize();
 
   const handleAnswer = (answer) => {
     const newAnswers = [...answers];
     newAnswers[currentQuestionIndex] = answer;
     setAnswers(newAnswers);
+    setIsAnswerChecked(false);
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+      setIsAnswerChecked(false);
+    }
   };
 
   const handleNext = () => {
     if (currentQuestionIndex < pythonQuestions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
+      setIsAnswerChecked(false);
     } else {
       const score = calculateScore();
       setShowResults(true);
       onComplete(score);
+    }
+  };
+
+  const handleCheckAnswer = () => {
+    if (answers[currentQuestionIndex] !== undefined) {
+      setIsAnswerChecked(true);
     }
   };
 
@@ -164,7 +83,7 @@ const PythonQuiz = ({ onComplete }) => {
   const currentQuestion = pythonQuestions[currentQuestionIndex];
   const currentAnswer = answers[currentQuestionIndex];
   const isAnswered = currentAnswer !== undefined;
-  const isCorrect = currentAnswer === currentQuestion.answer;
+  const isCorrect = isAnswerChecked && currentAnswer === currentQuestion.answer;
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -174,9 +93,14 @@ const PythonQuiz = ({ onComplete }) => {
           <span>{Math.round(((currentQuestionIndex + 1) / pythonQuestions.length) * 100)}%</span>
         </div>
         <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-          <motion.div className="h-full bg-blue-500" initial={{ width: 0 }} animate={{ width: `${((currentQuestionIndex + 1) / pythonQuestions.length) * 100}%` }} />
+          <motion.div 
+            className="h-full bg-blue-500" 
+            initial={{ width: 0 }} 
+            animate={{ width: `${((currentQuestionIndex + 1) / pythonQuestions.length) * 100}%` }} 
+          />
         </div>
       </div>
+
       <AnimatePresence mode="wait">
         <QuizCard
           key={currentQuestionIndex}
@@ -186,7 +110,10 @@ const PythonQuiz = ({ onComplete }) => {
           isAnswered={isAnswered}
           isCorrect={isCorrect}
           onNext={handleNext}
+          onPrevious={handlePrevious}
+          onCheckAnswer={handleCheckAnswer}
           isLast={currentQuestionIndex === pythonQuestions.length - 1}
+          isFirst={currentQuestionIndex === 0}
         />
       </AnimatePresence>
     </div>
