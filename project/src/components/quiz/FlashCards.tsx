@@ -118,7 +118,11 @@ const FlashCards: React.FC<FlashCardsProps> = ({ onComplete }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleNext}
-          className="px-6 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-all duration-300 flex items-center gap-2"
+          className={`px-6 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ${
+            currentIndex === pythonInterpreterCards.length - 1 
+            ? 'bg-green-600 hover:bg-green-700' // Green color for "Start Quiz"
+            : 'bg-blue-600 hover:bg-blue-700'   // Blue color for "Next Card"
+          }`}
         >
           {currentIndex === pythonInterpreterCards.length - 1 ? 'Start Quiz' : 'Next Card'}
           <ChevronRight className="w-5 h-5" />
