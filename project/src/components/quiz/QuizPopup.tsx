@@ -35,18 +35,104 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
     }
   }, [isOpen]);
 
-  const questions = [
-    { type: 'fill', question: "Python is an example of a __________ language.", answer: "interpreted", component: FillInTheBlank },
-    { type: 'multiple-choice', question: "Which is true about Python?", options: ["Python code is translated into machine code before execution.", "Python code is executed line-by-line by an interpreter.", "Python requires a separate compilation step to run"], answer: "Python code is executed line-by-line by an interpreter.", component: MultipleChoiceQuestion },
-    { type: 'true-false', question: "Python is compiled.", answer: "False", component: TrueFalseQuestion },
-    { type: 'unscramble', question: "Unscramble the words:", options: ['line-by-line', 'executed', 'Python', 'is', 'code', 'by', 'an', 'interpreter'], answer: ['Python', 'code', 'is', 'executed', 'line-by-line', 'by', 'an', 'interpreter'], component: DragDropQuestion },
-    { type: 'multiple-choice', question: "What does Python require to run?", options: ["Compiler", "Interpreter"], answer: "Interpreter", component: MultipleChoiceQuestion },
-    { type: 'match', question: "Match the languages with execution type:", options: [{ term: "Python", match: "Interpreter" }, { term: "C++", match: "Compiler" }], component: MatchQuestion },
-    { type: 'multiple-selection', question: "Which are advantages of Python?", options: ["Easy debugging", "Faster execution", "Portability"], answer: ["Easy debugging", "Portability"], component: MultipleSelectionQuestion },
-    { type: 'order', question: "Arrange the Python execution steps:", options: ["Write code", "Interpreter runs", "Output displayed"], correctOrder: ["Write code", "Interpreter runs", "Output displayed"], component: OrderQuestion },
-    { type: 'code-correction', question: "Fix the syntax error in the following code:", options: ["print 'Hello World'", "print('Hello World')"], answer: "print('Hello World')", component: CodeCorrectionQuestion },
-    { type: 'translate', question: "Translate this Python print statement to Java:", options: ["System.out.println('Hello');", "console.log('Hello');"], answer: "System.out.println('Hello');", component: TranslateCodeQuestion }
-  ];
+const questions = [
+  { 
+    type: 'fill', 
+    question: "Python is an example of a __________ language, meaning it is executed line-by-line by an interpreter.", 
+    answer: "interpreted", 
+    component: FillInTheBlank 
+  },
+  { 
+    type: 'multiple-choice', 
+    question: "Which of the following is true about Python compared to compiled languages?", 
+    options: [
+      "Python code is translated into machine code before execution.", 
+      "Python code is executed line-by-line by an interpreter.", 
+      "Python requires a separate compilation step to run."
+    ], 
+    answer: "Python code is executed line-by-line by an interpreter.", 
+    component: MultipleChoiceQuestion 
+  },
+  { 
+    type: 'true-false', 
+    question: "Python is a compiled language, meaning the entire program is converted into machine code before execution.", 
+    answer: "False", 
+    component: TrueFalseQuestion 
+  },
+ { 
+  type: 'unscramble', 
+  question: "Unscramble the words to form a correct statement about Python's execution:", 
+  options: ['line-by-line', 'executed', 'Python', 'is', 'code', 'by', 'an', 'interpreter'], 
+  answer: ['Python', 'code', 'is', 'executed', 'line-by-line', 'by', 'an', 'interpreter'], 
+  component: DragDropQuestion 
+},
+
+  { 
+    type: 'multiple-choice', 
+    question: "What is the main difference between Python and a compiled language like C++?", 
+    options: [
+      "Python requires an interpreter to run.", 
+      "Python requires a compiler to run.", 
+      "Python does not need any translation step."
+    ], 
+    answer: "Python requires an interpreter to run.", 
+    component: MultipleChoiceQuestion 
+  },
+  { 
+    type: 'match', 
+    question: "Match the language to whether it uses an interpreter or a compiler for execution:", 
+    options: [
+      { term: "Python", match: "Interpreter" }, 
+      { term: "C++", match: "Compiler" }
+    ], 
+    component: MatchQuestion 
+  },
+  { 
+    type: 'multiple-selection', 
+    question: "Which of the following are advantages of interpreted languages like Python? (Select all that apply)", 
+    options: [
+      "Easier to debug", 
+      "Faster execution", 
+      "Portability across different platforms"
+    ], 
+    answer: ["Easier to debug", "Portability across different platforms"], 
+    component: MultipleSelectionQuestion 
+  },
+  { 
+    type: 'order', 
+    question: "Arrange the steps in the correct order for Python execution:", 
+    options: [
+      "Python code is written and saved in a .py file.", 
+      "The interpreter reads and executes the code line-by-line.", 
+      "The output is displayed on the screen."
+    ], 
+    correctOrder: [
+      "Python code is written and saved in a .py file.", 
+      "The interpreter reads and executes the code line-by-line.", 
+      "The output is displayed on the screen."
+    ], 
+    component: OrderQuestion 
+  },
+  { 
+    type: 'code-correction', 
+    question: "What is wrong with this statement about Python?\n\n\nPython code is compiled into machine code before execution.", 
+    options: [
+      "Python code is not compiled.", 
+      "Python code is compiled into bytecode.", 
+      "Python code is executed by an interpreter."
+    ], 
+    answer: "Python code is not compiled.", 
+    component: CodeCorrectionQuestion 
+  },
+  { 
+    type: 'fill', 
+    question: "Complete the code to demonstrate Python's execution process.\n\nOutput: `Python is an interpreted language!`", 
+    answer: "print(\"Python is an interpreted language!\")", 
+    component: FillInTheBlank 
+  }
+];
+
+
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
