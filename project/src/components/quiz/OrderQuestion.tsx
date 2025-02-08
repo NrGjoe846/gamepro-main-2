@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { CheckCircle, XCircle } from "lucide-react";
 
 interface OrderingQuestionProps {
   question: {
@@ -92,16 +93,27 @@ const OrderingQuestion: React.FC<OrderingQuestionProps> = ({ question, onAnswer 
       {!submitted && (
         <button
           onClick={handleSubmit}
-          className="w-full mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 font-bold text-white"
+          className="w-full mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 font-bold text-white flex items-center justify-center"
         >
           Submit Answer
+          <CheckCircle className="w-5 h-5 ml-2" />
         </button>
       )}
 
       {submitted && (
-        <p className={`mt-2 p-2 text-white font-bold rounded-lg ${isCorrect ? "bg-green-500" : "bg-red-500"}`}>
-          {isCorrect ? "Correct Order!" : "Incorrect Order, Try Again!"}
-        </p>
+        <div className="mt-2 p-2 text-white font-bold rounded-lg flex items-center space-x-2">
+          {isCorrect ? (
+            <>
+              <CheckCircle className="w-6 h-6 text-green-500" />
+              <span className="text-green-500">Correct Order!</span>
+            </>
+          ) : (
+            <>
+              <XCircle className="w-6 h-6 text-red-500" />
+              <span className="text-red-500">Incorrect Order, Try Again!</span>
+            </>
+          )}
+        </div>
       )}
     </div>
   );
