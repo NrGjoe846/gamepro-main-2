@@ -12,20 +12,46 @@ interface OrderingQuestionProps {
 
 const OrderingQuestion: React.FC<OrderingQuestionProps> = ({ question, onAnswer }) => {
   const [userOrder, setUserOrder] = useState<string[]>([...question.options]);
+  const [submitted, setSubmitted] = useState<boolean>(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
+  // Function to swap the position of selected options
   const handleChange = (index: number, selectedIndex: number) => {
+    if (submitted) return; // Prevent changes after submission
+
     const newOrder = [...userOrder];
-    const [item] = newOrder.splice(index, 1); // Remove the item from its old position
-    newOrder.splice(selectedIndex, 0, item); // Insert it at the new position
+    const [movedItem] = newOrder.splice(index, 1); // Remove item from current position
+    newOrder.splice(selectedIndex, 0, movedItem); // Insert item at new position
+
     setUserOrder(newOrder);
     setIsCorrect(null); // Reset correctness state
   };
 
+  // Function to check if the user's order matches the correct order
+  const checkIfCorrect = (user: string[], correct: string[]) => {
+    return user.length === correct.length && user.every((val, idx) => val === correct[idx]);
+  };
+
+  // Handle submission of the answer
   const handleSubmit = () => {
-    const correct = JSON.stringify(userOrder) === JSON.stringify(question.correctOrder);
+    if (!question.correctOrder) {
+      console.error("Error: correctOrder is undefined in the question object.");
+      return;
+    }
+
+    const correct = checkIfCorrect(userOrder, question.correctOrder);
     setIsCorrect(correct);
+    setSubmitted(true);
     onAnswer(correct);
+
+    // Reset order after 1.5 seconds if incorrect
+    if (!correct) {
+      setTimeout(() => {
+        setUserOrder([...question.options]);
+        setSubmitted(false);
+        setIsCorrect(null);
+      }, 1500);
+    }
   };
 
   return (
@@ -34,11 +60,23 @@ const OrderingQuestion: React.FC<OrderingQuestionProps> = ({ question, onAnswer 
 
       <div className="space-y-2">
         {userOrder.map((option, index) => (
-          <div key={option} className="flex items-center space-x-4 p-2 border rounded-lg bg-gray-100">
+          <div
+            key={option}
+            className={`flex items-center space-x-4 p-2 border rounded-lg font-semibold text-white transition-all duration-300
+              ${
+                submitted
+                  ? isCorrect
+                    ? "bg-green-500 border-green-600"
+                    : "bg-red-500 border-red-600"
+                  : "bg-gray-800 border-gray-600"
+              }
+            `}
+          >
             <select
               value={index}
               onChange={(e) => handleChange(index, parseInt(e.target.value))}
-              className="p-2 border rounded-lg"
+              className="p-2 border rounded-lg text-black"
+              disabled={submitted}
             >
               {userOrder.map((_, i) => (
                 <option key={i} value={i}>
@@ -51,15 +89,17 @@ const OrderingQuestion: React.FC<OrderingQuestionProps> = ({ question, onAnswer 
         ))}
       </div>
 
-      <button
-        onClick={handleSubmit}
-        className="w-full mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300"
-      >
-        Submit Answer
-      </button>
+      {!submitted && (
+        <button
+          onClick={handleSubmit}
+          className="w-full mt-4 px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 font-bold text-white"
+        >
+          Submit Answer
+        </button>
+      )}
 
-      {isCorrect !== null && (
-        <p className={`mt-2 p-2 text-white rounded-lg ${isCorrect ? "bg-green-500" : "bg-red-500"}`}>
+      {submitted && (
+        <p className={`mt-2 p-2 text-white font-bold rounded-lg ${isCorrect ? "bg-green-500" : "bg-red-500"}`}>
           {isCorrect ? "Correct Order!" : "Incorrect Order, Try Again!"}
         </p>
       )}
