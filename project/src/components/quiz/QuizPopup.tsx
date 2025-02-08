@@ -37,7 +37,7 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
 
   const questions = [
     { type: 'fill', question: "Python is an example of a __________ language.", answer: "interpreted", component: FillInTheBlank },
-    { type: 'multiple-choice', question: "Which is true about Python?", options: ["Python code is translated into machine code before execution.", "Python code is executed line-by-line by an interpreter.","Python requires a separate compilation step to run"], answer: "Python code is executed line-by-line by an interpreter.", component: MultipleChoiceQuestion },
+    { type: 'multiple-choice', question: "Which is true about Python?", options: ["Python code is translated into machine code before execution.", "Python code is executed line-by-line by an interpreter.", "Python requires a separate compilation step to run"], answer: "Python code is executed line-by-line by an interpreter.", component: MultipleChoiceQuestion },
     { type: 'true-false', question: "Python is compiled.", answer: "False", component: TrueFalseQuestion },
     { type: 'unscramble', question: "Unscramble the words:", options: ['line-by-line', 'executed', 'Python', 'is', 'code', 'by', 'an', 'interpreter'], answer: ['Python', 'code', 'is', 'executed', 'line-by-line', 'by', 'an', 'interpreter'], component: DragDropQuestion },
     { type: 'multiple-choice', question: "What does Python require to run?", options: ["Compiler", "Interpreter"], answer: "Interpreter", component: MultipleChoiceQuestion },
