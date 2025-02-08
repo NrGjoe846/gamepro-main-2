@@ -1,6 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const API_KEY = 'AIzaSyDFujDavmC63MeyvGc9vgchx_HL6vMdjm4';
+import { Challenge } from '../types/challenges';
 
 const DIFFICULTY_WEIGHTS = {
   beginner: { complexity: 1, hints: 5 },
@@ -63,20 +61,56 @@ export interface CodeValidationResult {
   }>;
 }
 
-export class GeminiService {
+export class DeepSeekService {
   private model;
   private useMocks: boolean;
   private hintCache: Map<string, string[]>;
 
   constructor() {
     try {
-      const genAI = new GoogleGenerativeAI(API_KEY);
-      this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      // Initialize DeepSeek model
+      this.initializeDeepSeekModel();
       this.useMocks = false;
       this.hintCache = new Map();
     } catch (error) {
       console.warn('Falling back to mock data:', error);
       this.useMocks = true;
+    }
+  }
+
+  private async initializeDeepSeekModel() {
+    try {
+      const response = await fetch('/api/deepseek/init', {
+        method: 'POST'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to initialize DeepSeek model');
+      }
+    } catch (error) {
+      console.error('Error initializing DeepSeek model:', error);
+      this.useMocks = true;
+    }
+  }
+
+  private async generateDeepSeekResponse(prompt: string): Promise<string> {
+    try {
+      const response = await fetch('/api/deepseek/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate response');
+      }
+
+      const data = await response.json();
+      return data.response;
+    } catch (error) {
+      console.error('Error generating DeepSeek response:', error);
+      throw error;
     }
   }
 
@@ -113,11 +147,11 @@ export class GeminiService {
         Keep all strings concise and ensure valid JSON format.
       `;
 
-      const result = await this.model.generateContent(prompt);
-      const responseText = this.cleanJsonString(await result.response.text());
+      const responseText = await this.generateDeepSeekResponse(prompt);
+      const cleanedResponse = this.cleanJsonString(responseText);
 
       try {
-        const response = JSON.parse(responseText);
+        const response = JSON.parse(cleanedResponse);
         return { 
           id: Date.now().toString(),
           ...response,
@@ -125,7 +159,7 @@ export class GeminiService {
         };
       } catch (parseError) {
         console.error('Error parsing challenge response:', parseError);
-        console.error('Response text:', responseText);
+        console.error('Response text:', cleanedResponse);
         return mockChallenges[0];
       }
     } catch (error) {
@@ -144,8 +178,7 @@ export class GeminiService {
         Return only true or false.
       `;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response.text();
+      const response = await this.generateDeepSeekResponse(prompt);
       return response.toLowerCase().includes('true');
     } catch (error) {
       console.error('Error validating test cases:', error);
@@ -212,9 +245,9 @@ export class GeminiService {
         }
       `;
 
-      const result = await this.model.generateContent(prompt);
-      const responseText = this.cleanJsonString(await result.response.text());
-      const validation = JSON.parse(responseText);
+      const responseText = await this.generateDeepSeekResponse(prompt);
+      const cleanedResponse = this.cleanJsonString(responseText);
+      const validation = JSON.parse(cleanedResponse);
 
       return {
         ...validation,
@@ -297,8 +330,7 @@ export class GeminiService {
         Respond with a single clear hint string.
       `;
 
-      const result = await this.model.generateContent(prompt);
-      const hint = await result.response.text();
+      const hint = await this.generateDeepSeekResponse(prompt);
       
       const cacheKey = challenge.id;
       const existingHints = this.hintCache.get(cacheKey) || [];
@@ -335,4 +367,4 @@ export class GeminiService {
   }
 }
 
-export const geminiService = new GeminiService();
+export const deepseekService = new DeepSeekService();
