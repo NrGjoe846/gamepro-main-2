@@ -40,9 +40,12 @@ const CodeCorrectionQuestion: React.FC<CodeCorrectionQuestionProps> = ({ questio
 
   return (
     <div className="space-y-4">
+      {/* ✅ Displays the question */}
       <p className="text-lg font-semibold">{question.question}</p>
-      <pre className="bg-gray-900 p-4 rounded-lg text-white border border-gray-600">{question.options[0]}</pre>
-      
+
+      {/* ❌ Removed the dialogue box (pre box) to prevent unnecessary display */}
+
+      {/* ✅ Displays selectable options */}
       <div className="space-y-2">
         {question.options.map((option, index) => (
           <button
@@ -73,6 +76,7 @@ const CodeCorrectionQuestion: React.FC<CodeCorrectionQuestionProps> = ({ questio
         ))}
       </div>
 
+      {/* ✅ Submit Button (Disabled until an option is selected) */}
       {!submitted && (
         <button
           onClick={handleSubmit}
@@ -83,6 +87,7 @@ const CodeCorrectionQuestion: React.FC<CodeCorrectionQuestionProps> = ({ questio
         </button>
       )}
 
+      {/* ✅ Feedback message (Correct/Incorrect) */}
       {submitted && (
         <div className="flex items-center space-x-2 mt-3">
           {isCorrect ? (
