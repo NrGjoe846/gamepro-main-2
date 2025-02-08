@@ -43,7 +43,7 @@ const QuizPopup = ({ isOpen, onClose, onComplete }) => {
     { type: 'multiple-choice', question: "What does Python require to run?", options: ["Compiler", "Interpreter"], answer: "Interpreter", component: MultipleChoiceQuestion },
     { type: 'match', question: "Match the languages with execution type:", options: [{ term: "Python", match: "Interpreter" }, { term: "C++", match: "Compiler" }], component: MatchQuestion },
     { type: 'multiple-selection', question: "Which are advantages of Python?", options: ["Easy debugging", "Faster execution", "Portability"], answer: ["Easy debugging", "Portability"], component: MultipleSelectionQuestion },
-    { type: 'order', question: "Arrange the Python execution steps:", options: ["Write code", "Interpreter runs", "Output displayed"], answer: ["Write code", "Interpreter runs", "Output displayed"], component: OrderQuestion },
+    { type: 'order', question: "Arrange the Python execution steps:", options: ["Write code", "Interpreter runs", "Output displayed"], correctOrder: ["Write code", "Interpreter runs", "Output displayed"], component: OrderQuestion },
     { type: 'code-correction', question: "Fix the syntax error in the following code:", options: ["print 'Hello World'", "print('Hello World')"], answer: "print('Hello World')", component: CodeCorrectionQuestion },
     { type: 'translate', question: "Translate this Python print statement to Java:", options: ["System.out.println('Hello');", "console.log('Hello');"], answer: "System.out.println('Hello');", component: TranslateCodeQuestion }
   ];
