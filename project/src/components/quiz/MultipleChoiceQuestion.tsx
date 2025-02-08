@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CheckCircle, XCircle } from 'lucide-react';
 
 interface MultipleChoiceQuestionProps {
   question: {
@@ -12,6 +13,7 @@ interface MultipleChoiceQuestionProps {
 const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ question, onAnswer }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const handleSelect = (option: string) => {
     if (!submitted) {
@@ -21,8 +23,18 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ questio
 
   const handleSubmit = () => {
     if (selectedOption) {
+      const correct = selectedOption === question.answer;
+      setIsCorrect(correct);
       setSubmitted(true);
       onAnswer(selectedOption);
+
+      if (!correct) {
+        setTimeout(() => {
+          setSelectedOption(null);
+          setSubmitted(false);
+          setIsCorrect(null);
+        }, 1500);
+      }
     }
   };
 
@@ -33,17 +45,18 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ questio
         {question.options.map((option, index) => (
           <button
             key={index}
-            className={`w-full p-3 rounded-lg border border-gray-500 transition-all ${
-              submitted
-                ? option === question.answer
-                  ? 'bg-green-500 text-white'
+            className={`w-full p-3 rounded-lg border transition-all text-white font-semibold
+              ${
+                submitted
+                  ? selectedOption === option
+                    ? isCorrect
+                      ? 'bg-green-500 border-green-600'
+                      : 'bg-red-500 border-red-600'
+                    : 'bg-gray-800 border-gray-600'
                   : selectedOption === option
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-800 text-gray-200'
-                : selectedOption === option
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-800 text-gray-200'
-            }`}
+                  ? 'bg-blue-500 border-blue-600'
+                  : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
+              }`}
             onClick={() => handleSelect(option)}
             disabled={submitted}
           >
@@ -51,13 +64,29 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ questio
           </button>
         ))}
       </div>
-      <button
-        onClick={handleSubmit}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg disabled:opacity-50"
-        disabled={!selectedOption || submitted}
-      >
-        Submit
-      </button>
+
+      {!submitted && (
+        <button
+          onClick={handleSubmit}
+          className="w-full p-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all flex items-center justify-center"
+          disabled={!selectedOption}
+        >
+          Submit <CheckCircle className="w-5 h-5 ml-2" />
+        </button>
+      )}
+
+      {submitted && (
+        <div className="flex items-center space-x-2 mt-3">
+          {isCorrect ? (
+            <CheckCircle className="w-6 h-6 text-green-500" />
+          ) : (
+            <XCircle className="w-6 h-6 text-red-500" />
+          )}
+          <span className={`text-lg ${isCorrect ? 'text-green-500' : 'text-red-500'}`}>
+            {isCorrect ? 'Correct!' : 'Incorrect, try again!'}
+          </span>
+        </div>
+      )}
     </div>
   );
 };
