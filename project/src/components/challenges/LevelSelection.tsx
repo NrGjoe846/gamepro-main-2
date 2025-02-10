@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Book, Target, Trophy, AlertCircle } from 'lucide-react';
+import { Book, Target, Trophy, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface DifficultyLevel {
@@ -18,7 +18,7 @@ const difficultyLevels: DifficultyLevel[] = [
     title: 'Beginner',
     description: 'Perfect for those just starting their coding journey',
     questionsPerDay: 1,
-    icon: <Book className="w-6 h-6" />,
+    icon: <Book className="w-6 h-6" />, 
     color: 'from-green-500/20 to-emerald-500/20'
   },
   {
@@ -26,7 +26,7 @@ const difficultyLevels: DifficultyLevel[] = [
     title: 'Intermediate',
     description: 'For coders with some experience under their belt',
     questionsPerDay: 2,
-    icon: <Target className="w-6 h-6" />,
+    icon: <Target className="w-6 h-6" />, 
     color: 'from-blue-500/20 to-indigo-500/20'
   },
   {
@@ -34,7 +34,7 @@ const difficultyLevels: DifficultyLevel[] = [
     title: 'Advanced',
     description: 'Challenge yourself with complex problems',
     questionsPerDay: 5,
-    icon: <Trophy className="w-6 h-6" />,
+    icon: <Trophy className="w-6 h-6" />, 
     color: 'from-purple-500/20 to-pink-500/20'
   }
 ];
@@ -60,6 +60,17 @@ const LevelSelection = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
       <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <button 
+          onClick={() => navigate(-1)} 
+          className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 mb-6"
+        >
+          <div className="text-blue-400">
+            <ArrowLeft className="w-5 h-5" />
+          </div>
+          <span className="text-sm font-medium">Back</span>
+        </button>
+        
         {/* Progress Indicator */}
         <div className="mb-8">
           <div className="flex items-center justify-between max-w-xs mx-auto">
