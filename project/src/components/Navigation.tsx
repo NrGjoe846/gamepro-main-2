@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { GraduationCap, User, Settings, Bell, Menu, X, Gift, Compass, BookOpen, Trophy } from 'lucide-react';
+import { GraduationCap, User, Settings, Bell, Menu, X, Gift, Compass, BookOpen, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import NotificationsPanel from './notifications/NotificationsPanel';
 import SettingsPanel from './settings/SettingsPanel';
+import CourseMenu from './CourseMenu';
 
 const Navigation = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showCourseMenu, setShowCourseMenu] = useState(false);
 
   const menuItems = [
     { icon: <Compass className="w-5 h-5" />, label: 'Explore', path: '/explore' },
-    { icon: <BookOpen className="w-5 h-5" />, label: 'My Courses', path: '/dashboard' },
     { icon: <Trophy className="w-5 h-5" />, label: 'Achievements', path: '/achievements' },
     { icon: <Gift className="w-5 h-5" />, label: 'Rewards', path: '/rewards' },
   ];
@@ -28,6 +30,20 @@ const Navigation = () => {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6 ml-8">
+              {/* Course Menu Button */}
+              <button
+                onClick={() => setShowCourseMenu(!showCourseMenu)}
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-white/10 transition-all duration-300"
+              >
+                <BookOpen className="w-5 h-5" />
+                <span>Courses</span>
+                {showCourseMenu ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </button>
+
               {menuItems.map((item, index) => (
                 <Link
                   key={index}
@@ -76,22 +92,49 @@ const Navigation = () => {
         </div>
 
         {/* Mobile Menu */}
-        {showMobileMenu && (
-          <div className="md:hidden py-4 border-t border-white/10">
-            {menuItems.map((item, index) => (
-              <Link
-                key={index}
-                to={item.path}
-                className="flex items-center space-x-2 px-4 py-3 hover:bg-white/10 transition-all duration-300"
-                onClick={() => setShowMobileMenu(false)}
+        <AnimatePresence>
+          {showMobileMenu && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="md:hidden py-4 border-t border-white/10"
+            >
+              <button
+                onClick={() => setShowCourseMenu(!showCourseMenu)}
+                className="flex items-center justify-between w-full px-4 py-3 hover:bg-white/10 transition-all duration-300"
               >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </div>
-        )}
+                <div className="flex items-center space-x-2">
+                  <BookOpen className="w-5 h-5" />
+                  <span>Courses</span>
+                </div>
+                {showCourseMenu ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </button>
+
+              {menuItems.map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.path}
+                  className="flex items-center space-x-2 px-4 py-3 hover:bg-white/10 transition-all duration-300"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+
+      {/* Course Menu */}
+      <AnimatePresence>
+        {showCourseMenu && <CourseMenu onClose={() => setShowCourseMenu(false)} />}
+      </AnimatePresence>
 
       {/* Notifications Panel */}
       {showNotifications && (
