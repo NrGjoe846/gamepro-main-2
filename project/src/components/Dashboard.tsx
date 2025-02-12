@@ -65,20 +65,22 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
             <LearningPath 
               icon={<Code className="w-8 h-8" />}
-              title="Programming"
-              description="Master modern programming languages and frameworks"
+              title="MiniProject.Diy"
+              description="Turn your Imagination into Reality"
               progress={65}
             />
-            <LearningPath 
-              icon={<Atom className="w-8 h-8" />}
-              title="Computer Science"
-              description="Deep dive into algorithms and computer science fundamentals"
-              progress={42}
-            />
+            <Link to="/aptitude-test">
+              <LearningPath 
+                icon={<Atom className="w-8 h-8" />}
+                title="Aptitude test"
+                description="Test your self"
+                progress={42}
+              />
+            </Link>
             <LearningPath 
               icon={<Activity className="w-8 h-8" />}
-              title="Data Science"
-              description="Learn data analysis and machine learning"
+              title="AI interview BOT"
+              description="Take an interview test from our interview expert"
               progress={28}
             />
           </div>
