@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import CodeEditor from '../CodeEditor';
+import CodeEditor from '../CodeEditor/CodeEditor';
 
 interface Question {
   text: string;
