@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import CodeEditor from '../CodeEditor';
 
 interface Question {
   text: string;
@@ -8,6 +10,11 @@ interface Question {
     yes: string;
     no: string;
   };
+}
+
+interface ProgrammingQuestionnaireProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const questions: Question[] = [
@@ -53,24 +60,23 @@ const questions: Question[] = [
   }
 ];
 
-interface ProgrammingQuestionnaireProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
 const ProgrammingQuestionnaire: React.FC<ProgrammingQuestionnaireProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, boolean>>({});
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [showCodeEditor, setShowCodeEditor] = useState(false);
 
   const handleAnswer = (answer: boolean) => {
     setAnswers(prev => ({ ...prev, [currentQuestionIndex]: answer }));
     setFeedback(answer ? questions[currentQuestionIndex].answers.yes : questions[currentQuestionIndex].answers.no);
     
-    // Auto-advance after a short delay
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
         handleNext();
+      } else {
+        // Show code editor after the last question
+        setShowCodeEditor(true);
       }
     }, 1500);
   };
@@ -88,6 +94,16 @@ const ProgrammingQuestionnaire: React.FC<ProgrammingQuestionnaireProps> = ({ isO
       setFeedback(null);
     }
   };
+
+  if (showCodeEditor) {
+    return (
+      <div className="fixed inset-0 bg-[#0F1117] z-50">
+        <div className="h-full p-8">
+          <CodeEditor />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AnimatePresence>
