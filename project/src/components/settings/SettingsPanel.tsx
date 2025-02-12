@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Moon, Sun, Volume2, Bell, Shield, Palette, X, Eye, Sparkles, Type } from 'lucide-react';
+import { Settings, Volume2, Bell, Shield, Palette, X, Eye, Sparkles, Type } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SettingsPanelProps {
@@ -7,7 +7,6 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [volume, setVolume] = useState(80);
   const [notifications, setNotifications] = useState(true);
   const [privacy, setPrivacy] = useState('friends');
@@ -15,12 +14,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
   const [isChanging, setIsChanging] = useState(false);
   const [instructionText, setInstructionText] = useState('Click anywhere to customize the dashboard');
   const [fontSize, setFontSize] = useState(() => localStorage.getItem('fontSize') || 'medium');
-
-  const themes = [
-    { id: 'dark', name: 'Dark', icon: <Moon className="w-5 h-5" />, color: 'from-gray-900 to-gray-800' },
-    { id: 'light', name: 'Light', icon: <Sun className="w-5 h-5" />, color: 'from-white to-gray-100' },
-    { id: 'system', name: 'System', icon: <Palette className="w-5 h-5" />, color: 'from-blue-600 to-purple-600' }
-  ];
 
   const fontSizes = [
     { id: 'small', name: 'Small', scale: '0.875' },
@@ -43,8 +36,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
   }, [isChanging]);
 
   useEffect(() => {
-    // Apply initial theme and font size
-    applyTheme(theme);
     applyFontSize(fontSize);
   }, []);
 
@@ -59,31 +50,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
         ? 'Dashboard customization mode activated!'
         : 'Click anywhere to customize the dashboard'
     );
-  };
-
-  const applyTheme = (selectedTheme: string) => {
-    setTheme(selectedTheme);
-    
-    // Apply theme classes to root element
-    const root = document.documentElement;
-    root.classList.remove('theme-dark', 'theme-light', 'theme-system');
-    root.classList.add(`theme-${selectedTheme}`);
-    
-    localStorage.setItem('theme', selectedTheme);
-
-    // Apply theme-specific styles
-    if (selectedTheme === 'dark') {
-      root.style.setProperty('--bg-primary', '#1a1a2e');
-      root.style.setProperty('--text-primary', '#ffffff');
-    } else if (selectedTheme === 'light') {
-      root.style.setProperty('--bg-primary', '#ffffff');
-      root.style.setProperty('--text-primary', '#1a1a2e');
-    } else {
-      // System theme - detect user preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.style.setProperty('--bg-primary', prefersDark ? '#1a1a2e' : '#ffffff');
-      root.style.setProperty('--text-primary', prefersDark ? '#ffffff' : '#1a1a2e');
-    }
   };
 
   const applyFontSize = (size: string) => {
@@ -120,46 +86,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Theme */}
-        <motion.div 
-          className="space-y-3"
-          whileHover={{ scale: 1.02 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          <h4 className="text-sm font-medium text-gray-400">Theme</h4>
-          <div className="grid grid-cols-3 gap-2">
-            {themes.map((t) => (
-              <motion.button
-                key={t.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  applyTheme(t.id);
-                }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`relative p-3 rounded-lg flex flex-col items-center gap-2 ${
-                  theme === t.id 
-                    ? 'bg-gradient-to-b ' + t.color + ' border-blue-500/50' 
-                    : 'bg-white/5 border-white/10'
-                } border hover:bg-white/10 transition-all duration-300 overflow-hidden`}
-              >
-                {theme === t.id && (
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  />
-                )}
-                <div className={`relative z-10 ${theme === t.id ? 'text-white' : ''}`}>
-                  {t.icon}
-                  <span className="text-sm block mt-1">{t.name}</span>
-                </div>
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-
         {/* Font Size */}
         <motion.div 
           className="space-y-3"
