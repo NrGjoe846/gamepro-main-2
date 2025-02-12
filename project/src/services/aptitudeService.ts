@@ -34,17 +34,34 @@ class AptitudeService {
   }
 
   private cleanJsonString(str: string): string {
-    // Remove markdown code blocks
-    str = str.replace(/```json\n?|\n?```/g, '');
-    // Remove trailing commas
-    str = str.replace(/,(\s*[}\]])/g, '$1');
-    // Remove any non-JSON text before or after
-    const jsonStart = str.indexOf('[');
-    const jsonEnd = str.lastIndexOf(']') + 1;
-    if (jsonStart >= 0 && jsonEnd > jsonStart) {
-      str = str.slice(jsonStart, jsonEnd);
+    try {
+      // Remove markdown code blocks
+      str = str.replace(/```json\n?|\n?```/g, '');
+      
+      // Find the first [ and last ]
+      const start = str.indexOf('[');
+      const end = str.lastIndexOf(']') + 1;
+      
+      if (start === -1 || end === 0) {
+        throw new Error('Invalid JSON structure');
+      }
+      
+      // Extract just the JSON array
+      str = str.slice(start, end);
+      
+      // Remove trailing commas
+      str = str.replace(/,(\s*[}\]])/g, '$1');
+      
+      // Remove any line breaks in strings
+      str = str.replace(/(?<=\":)\s*\"[^"]*\"/g, match => 
+        match.replace(/\n/g, ' ').replace(/\s+/g, ' ')
+      );
+      
+      return str.trim();
+    } catch (error) {
+      console.error('Error cleaning JSON string:', error);
+      return '[]';
     }
-    return str.trim();
   }
 
   async generateQuestions(topic: string, count: number = 5): Promise<AptitudeQuestion[]> {
@@ -76,11 +93,6 @@ class AptitudeService {
         3. Explanations should be educational and clear
         4. Difficulty should be one of: "easy", "medium", "hard"
         5. correctAnswer should be the index (0-3) of the correct option
-        6. Questions should be specific to ${topic} and test real knowledge
-        7. Include practical, real-world examples where applicable
-        8. Ensure questions are progressively challenging
-        9. Mix theoretical and practical questions
-        10. Include both conceptual and calculation-based questions if relevant
         
         Return only the JSON array, no additional text.
       `;
@@ -111,7 +123,6 @@ class AptitudeService {
         return validatedQuestions;
       } catch (parseError) {
         console.error('Error parsing questions:', parseError);
-        console.error('Cleaned response text:', cleanedJson);
         return this.getFallbackQuestions(topic, count);
       }
     } catch (error) {
@@ -123,7 +134,7 @@ class AptitudeService {
   private validateQuestions(questions: any[]): AptitudeQuestion[] {
     return questions.filter(q => {
       try {
-        return (
+        const isValid = (
           q.id && 
           typeof q.id === 'string' &&
           q.topic && 
@@ -141,83 +152,34 @@ class AptitudeService {
           q.difficulty &&
           ['easy', 'medium', 'hard'].includes(q.difficulty)
         );
+
+        if (!isValid) {
+          console.error('Invalid question format:', q);
+        }
+
+        return isValid;
       } catch (error) {
         console.error('Error validating question:', error);
         return false;
       }
-    }).map(q => ({
-      ...q,
-      id: q.id.replace(/[^a-zA-Z0-9-]/g, '-'),
-      options: q.options.map(String),
-      explanation: String(q.explanation)
-    }));
+    });
   }
 
   private getFallbackQuestions(topic: string, count: number): AptitudeQuestion[] {
-    const difficulties: ('easy' | 'medium' | 'hard')[] = ['easy', 'medium', 'hard'];
-    
     return Array.from({ length: count }, (_, i) => ({
       id: `fallback-${i + 1}`,
       topic,
-      question: `Sample question ${i + 1} about ${topic}: What is the most important concept to understand in ${topic}?`,
+      question: `Sample question ${i + 1} about ${topic}`,
       options: [
-        'Understanding core principles',
-        'Memorizing formulas',
-        'Taking notes',
-        'Reading textbooks'
+        'Option A',
+        'Option B',
+        'Option C',
+        'Option D'
       ],
       correctAnswer: 0,
-      explanation: `Understanding core principles is essential in ${topic} as it forms the foundation for more advanced concepts.`,
-      difficulty: difficulties[i % difficulties.length]
+      explanation: `This is a sample explanation for question ${i + 1} about ${topic}.`,
+      difficulty: 'medium' as const
     }));
-  }
-
-  async getTopicHints(topic: string): Promise<string[]> {
-    if (this.useMocks) {
-      return [
-        'Review basic concepts',
-        'Practice with examples',
-        'Focus on key formulas'
-      ];
-    }
-
-    try {
-      const prompt = `
-        Generate 3 helpful study hints for the topic: ${topic}
-        Format as a JSON array of strings.
-        Make hints specific, actionable, and focused on key concepts.
-      `;
-
-      const result = await this.model.generateContent(prompt);
-      const responseText = result.response.text();
-      
-      if (!responseText) {
-        return this.getFallbackHints();
-      }
-
-      const cleanedJson = this.cleanJsonString(responseText);
-      
-      try {
-        const hints = JSON.parse(cleanedJson);
-        if (!Array.isArray(hints) || hints.length === 0) {
-          return this.getFallbackHints();
-        }
-        return hints.map(String);
-      } catch {
-        return this.getFallbackHints();
-      }
-    } catch (error) {
-      console.error('Error generating hints:', error);
-      return this.getFallbackHints();
-    }
-  }
-
-  private getFallbackHints(): string[] {
-    return [
-      'Review the fundamental concepts',
-      'Practice with sample problems',
-      'Focus on understanding rather than memorizing'
-    ];
   }
 }
 
