@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Book, MessageSquare, Lightbulb, Globe, ArrowLeft } from 'lucide-react';
+import { 
+  Brain, Book, MessageSquare, Lightbulb, Globe, ArrowLeft 
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { aptitudeService, AptitudeQuestion, TopicScore } from '../../services/aptitudeService';
+import Loader from '../ui/Loader';
 
 const aptitudeTopics = [
   {
@@ -47,18 +50,26 @@ const AptitudeTest = () => {
     const savedScores = localStorage.getItem('aptitudeScores');
     return savedScores ? JSON.parse(savedScores) : [];
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('aptitudeScores', JSON.stringify(scores));
   }, [scores]);
 
   const handleTopicSelect = async (topic: string) => {
+    setIsLoading(true);
     setSelectedTopic(topic);
-    const newQuestions = await aptitudeService.generateQuestions(topic);
-    setQuestions(newQuestions);
-    setCurrentQuestionIndex(0);
-    setSelectedAnswer(null);
-    setShowExplanation(false);
+    try {
+      const newQuestions = await aptitudeService.generateQuestions(topic);
+      setQuestions(newQuestions);
+      setCurrentQuestionIndex(0);
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAnswerSubmit = () => {
@@ -110,6 +121,7 @@ const AptitudeTest = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
+      {isLoading && <Loader />}
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Link
