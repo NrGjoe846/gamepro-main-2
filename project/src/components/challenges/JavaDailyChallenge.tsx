@@ -96,6 +96,11 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
     }
   };
 
+  const handleBack = () => {
+    // Use navigate(-1) to go back to the previous page
+    navigate(-1);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -113,7 +118,7 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate('/challenges/java')}
+              onClick={handleBack}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
