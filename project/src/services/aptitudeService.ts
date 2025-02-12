@@ -1,6 +1,6 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const API_KEY = 'AIzaSyDFujDavmC63MeyvGc9vgchx_HL6vMdjm4';
 
 export interface AptitudeQuestion {
   id: string;
@@ -20,56 +20,72 @@ export interface TopicScore {
 }
 
 class AptitudeService {
-  private openai;
+  private model;
+  private useMocks = false;
 
   constructor() {
-    if (!API_KEY) {
-      throw new Error('OpenAI API key is not configured');
+    try {
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    } catch (error) {
+      console.warn('Failed to initialize Gemini client, falling back to mock data:', error);
+      this.useMocks = true;
     }
-    
-    this.openai = new OpenAI({
-      apiKey: API_KEY,
-      dangerouslyAllowBrowser: true // Only for development! In production, use a backend proxy
-    });
+  }
+
+  private cleanJsonString(str: string): string {
+    str = str.replace(/```json\n?|\n?```/g, '');
+    str = str.replace(/,(\s*[}\]])/g, '$1');
+    return str.trim();
   }
 
   async generateQuestions(topic: string, count: number = 5): Promise<AptitudeQuestion[]> {
+    if (this.useMocks) {
+      return this.getFallbackQuestions(topic, count);
+    }
+
     try {
-      const prompt = `Generate ${count} multiple choice questions about ${topic}.
-      Each question should be challenging but fair, with 4 options where only one is correct.
-      Format as JSON array with properties:
-      - id (string)
-      - topic (string, matching the input topic)
-      - question (string, clear and concise)
-      - options (array of 4 strings)
-      - correctAnswer (number 0-3)
-      - explanation (string explaining why the correct answer is right)
-      - difficulty (easy/medium/hard)`;
+      const prompt = `
+        Generate ${count} multiple choice questions about ${topic}.
+        Each question should be challenging but fair, with 4 options where only one is correct.
+        
+        Format the response as a JSON array of questions with the following structure:
+        [
+          {
+            "id": "unique-string",
+            "topic": "${topic}",
+            "question": "clear and concise question",
+            "options": ["option1", "option2", "option3", "option4"],
+            "correctAnswer": 0,
+            "explanation": "detailed explanation of the correct answer",
+            "difficulty": "medium"
+          }
+        ]
 
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{
-          role: "system",
-          content: "You are a helpful assistant that generates quiz questions in JSON format."
-        }, {
-          role: "user",
-          content: prompt
-        }],
-        temperature: 0.7,
-        presence_penalty: 0.6,
-        frequency_penalty: 0.3
-      });
+        Requirements:
+        1. Questions should be diverse and cover different aspects of ${topic}
+        2. All options should be plausible but only one correct
+        3. Explanations should be educational and clear
+        4. Difficulty should be one of: "easy", "medium", "hard"
+        5. correctAnswer should be the index (0-3) of the correct option
+        
+        Return only the JSON array, no additional text.
+      `;
 
-      const text = response.choices[0]?.message?.content?.trim();
-      if (!text) {
-        throw new Error('No response from OpenAI');
+      const result = await this.model.generateContent(prompt);
+      const responseText = this.cleanJsonString(await result.response.text());
+      
+      try {
+        const questions = JSON.parse(responseText);
+        return this.validateQuestions(questions);
+      } catch (parseError) {
+        console.error('Error parsing questions:', parseError);
+        console.error('Response text:', responseText);
+        return this.getFallbackQuestions(topic, count);
       }
-
-      const questions = text.startsWith('[') ? JSON.parse(text) : [];
-      return this.validateQuestions(questions);
     } catch (error) {
       console.error('Error generating questions:', error);
-      return this.getFallbackQuestions(topic);
+      return this.getFallbackQuestions(topic, count);
     }
   }
 
@@ -88,16 +104,16 @@ class AptitudeService {
     );
   }
 
-  private getFallbackQuestions(topic: string): AptitudeQuestion[] {
-    return [{
-      id: 'fallback-1',
+  private getFallbackQuestions(topic: string, count: number): AptitudeQuestion[] {
+    return Array.from({ length: count }, (_, i) => ({
+      id: `fallback-${i + 1}`,
       topic,
-      question: 'This is a sample question about ' + topic,
-      options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+      question: `Sample question ${i + 1} about ${topic}`,
+      options: ['Option A', 'Option B', 'Option C', 'Option D'],
       correctAnswer: 0,
-      explanation: 'This is a fallback question while the service is unavailable.',
-      difficulty: 'medium'
-    }];
+      explanation: 'This is a mock question while the service is unavailable.',
+      difficulty: 'medium' as const
+    }));
   }
 }
 
