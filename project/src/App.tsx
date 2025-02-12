@@ -14,6 +14,7 @@ import LanguageSelection from './components/challenges/LanguageSelection';
 import LevelSelection from './components/challenges/LevelSelection';
 import DailyChallenge from './components/challenges/DailyChallenge';
 import JavaChallenge from './components/challenges/JavaChallenge.tsx';
+import AptitudeTest from './components/aptitude/AptitudeTest';
 
 function App() {
   return (
@@ -106,6 +107,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <JavaChallenge />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/aptitude-test"
+            element={
+              <ProtectedRoute>
+                <AptitudeTest />
               </ProtectedRoute>
             }
           />

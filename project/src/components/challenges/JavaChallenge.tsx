@@ -1,302 +1,130 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Code2, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import CodeEditor from '../CodeEditor/CodeEditor';
-import { Challenge, Difficulty } from '../../types/challenges';
-import { javaChallenges } from '../../data/challenges/javaChallenges';
-import BackButton from '../BackButton';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Book, Target, Trophy, ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-interface JavaChallengeProgress {
-  level: Difficulty | null;
-  questionsCompletedToday: number;
-  lastCompletedDate: string | null;
-  completedQuestionIds: number[];
+interface DifficultyLevel {
+  id: 'beginner' | 'intermediate' | 'advanced';
+  title: string;
+  description: string;
+  questionsPerDay: number;
+  icon: React.ReactNode;
+  color: string;
 }
 
-const QUESTIONS_PER_DAY = {
-  beginner: 1,
-  intermediate: 2,
-  advanced: 5,
-};
+const difficultyLevels: DifficultyLevel[] = [
+  {
+    id: 'beginner',
+    title: 'Beginner',
+    description: 'Perfect for those just starting their coding journey',
+    questionsPerDay: 1,
+    icon: <Book className="w-6 h-6" />, 
+    color: 'from-green-500/20 to-emerald-500/20'
+  },
+  {
+    id: 'intermediate',
+    title: 'Intermediate',
+    description: 'For coders with some experience under their belt',
+    questionsPerDay: 2,
+    icon: <Target className="w-6 h-6" />, 
+    color: 'from-blue-500/20 to-indigo-500/20'
+  },
+  {
+    id: 'advanced',
+    title: 'Advanced',
+    description: 'Challenge yourself with complex problems',
+    questionsPerDay: 5,
+    icon: <Trophy className="w-6 h-6" />, 
+    color: 'from-purple-500/20 to-pink-500/20'
+  }
+];
 
 const JavaChallenge = () => {
-  const [progress, setProgress] = useState<JavaChallengeProgress>(() => {
-    const saved = localStorage.getItem('javaProgress');
-    return saved ? JSON.parse(saved) : {
-      level: null,
-      questionsCompletedToday: 0,
-      lastCompletedDate: null,
-      completedQuestionIds: [],
-    };
-  });
-
-  const [currentQuestion, setCurrentQuestion] = useState<Challenge | null>(null);
-  const [code, setCode] = useState('');
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
-  const [showLevelSelection, setShowLevelSelection] = useState(!progress.level);
+  const navigate = useNavigate();
+  const selectedLanguage = localStorage.getItem('selectedLanguage');
 
   useEffect(() => {
-    localStorage.setItem('javaProgress', JSON.stringify(progress));
-  }, [progress]);
-
-  useEffect(() => {
-    if (progress.level) {
-      const today = new Date().toDateString();
-      if (progress.lastCompletedDate !== today) {
-        setProgress(prev => ({
-          ...prev,
-          questionsCompletedToday: 0,
-          lastCompletedDate: today,
-        }));
-      }
-      if (!currentQuestion) {
-        loadNextQuestion(progress.level);
-      }
+    if (!selectedLanguage || selectedLanguage !== 'java') {
+      navigate('/challenges/language-select');
     }
-  }, [progress.level]);
+  }, [selectedLanguage, navigate]);
 
-  const handleLevelSelect = (level: Difficulty) => {
-    setProgress({
-      level,
-      questionsCompletedToday: 0,
-      lastCompletedDate: new Date().toDateString(),
-      completedQuestionIds: [],
-    });
-    setShowLevelSelection(false);
-    loadNextQuestion(level);
+  const handleLevelSelect = (level: DifficultyLevel) => {
+    localStorage.setItem('selectedLevel', level.id);
+    localStorage.setItem('questionsPerDay', level.questionsPerDay.toString());
+    localStorage.setItem('questionsCompleted', '0');
+    localStorage.setItem('lastChallengeDate', new Date().toISOString().split('T')[0]);
+    navigate('/challenges/daily/java');
   };
-
-  const loadNextQuestion = (level: Difficulty) => {
-    const availableQuestions = javaChallenges.filter(q => 
-      q.difficulty === level && 
-      !progress.completedQuestionIds.includes(q.id)
-    );
-    
-    if (availableQuestions.length > 0) {
-      const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-      const question = availableQuestions[randomIndex];
-      setCurrentQuestion(question);
-      setCode(question.starterCode);
-      setResult(null);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!currentQuestion) return;
-
-    try {
-      const response = await fetch('/api/java', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          code,
-          testCases: currentQuestion.testCases 
-        }),
-      });
-
-      const data = await response.json();
-      const success = data.success;
-      
-      if (success) {
-        setProgress(prev => ({
-          ...prev,
-          questionsCompletedToday: prev.questionsCompletedToday + 1,
-          completedQuestionIds: [...prev.completedQuestionIds, currentQuestion.id],
-        }));
-      }
-
-      setResult({
-        success,
-        message: success ? 'All test cases passed! Well done!' : 'Some test cases failed. Try again!',
-      });
-
-      if (success && progress.level) {
-        setTimeout(() => {
-          const questionsRemaining = QUESTIONS_PER_DAY[progress.level!] - progress.questionsCompletedToday - 1;
-          if (questionsRemaining > 0) {
-            loadNextQuestion(progress.level!);
-          }
-        }, 1500);
-      }
-    } catch (error) {
-      setResult({
-        success: false,
-        message: 'Error executing code. Please try again.',
-      });
-    }
-  };
-
-  const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset your progress? This will clear all completed questions.')) {
-      setProgress({
-        level: null,
-        questionsCompletedToday: 0,
-        lastCompletedDate: null,
-        completedQuestionIds: [],
-      });
-      setShowLevelSelection(true);
-      setCurrentQuestion(null);
-      setCode('');
-      setResult(null);
-    }
-  };
-
-  const handleLevelChange = () => {
-    if (window.confirm('Change difficulty level? Your daily progress will be reset, but completed questions will be saved.')) {
-      setShowLevelSelection(true);
-      setCurrentQuestion(null);
-      setCode('');
-      setResult(null);
-    }
-  };
-
-  if (showLevelSelection) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <BackButton />
-          </div>
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Java Programming Challenge</h1>
-            <p className="text-gray-400">Choose your difficulty level to begin</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {Object.entries(QUESTIONS_PER_DAY).map(([level, questions]) => (
-              <button
-                key={level}
-                onClick={() => handleLevelSelect(level as Difficulty)}
-                className="group relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
-                <div className="relative backdrop-blur-xl bg-white/10 p-6 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-300">
-                  <h3 className="text-xl font-bold mb-2 capitalize">{level}</h3>
-                  <p className="text-gray-400 mb-4">
-                    {questions} {questions === 1 ? 'question' : 'questions'} per day
-                  </p>
-                  <div className="text-sm text-blue-400">
-                    Click to start
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const questionsRemaining = progress.level 
-    ? QUESTIONS_PER_DAY[progress.level] - progress.questionsCompletedToday 
-    : 0;
-
-  if (questionsRemaining === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">Great job! 🎉</h2>
-          <p className="text-xl mb-8">You've completed all your Java challenges for today.</p>
-          <p className="text-gray-400 mb-8">Come back tomorrow for more challenges!</p>
-          <button
-            onClick={handleReset}
-            className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300"
-          >
-            Reset Progress
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <BackButton />
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold mb-2">Java Programming Challenge</h1>
-            <div className="flex items-center gap-4">
-              <p className="text-gray-400">
-                Level: {progress.level?.charAt(0).toUpperCase() + progress.level?.slice(1)} • 
-                Questions remaining today: {questionsRemaining}
-              </p>
-              <button
-                onClick={handleLevelChange}
-                className="text-sm px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300"
-              >
-                Change Level
-              </button>
-              <button
-                onClick={handleReset}
-                className="text-sm px-3 py-1 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Reset Progress
-              </button>
+      <div className="max-w-4xl mx-auto">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="group flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 mb-6"
+        >
+          <div className="text-blue-400">
+            <ArrowLeft className="w-5 h-5" />
+          </div>
+          <span className="text-sm font-medium">Back</span>
+        </button>
+        
+        <div className="mb-8">
+          <div className="flex items-center justify-between max-w-xs mx-auto">
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                ✓
+              </div>
+              <span className="text-sm mt-2">Language</span>
+            </div>
+            <div className="flex-1 h-1 bg-blue-500 mx-2" />
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                2
+              </div>
+              <span className="text-sm mt-2">Level</span>
+            </div>
+            <div className="flex-1 h-1 bg-white/10 mx-2" />
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                3
+              </div>
+              <span className="text-sm mt-2">Challenge</span>
             </div>
           </div>
         </div>
 
-        {currentQuestion && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Question Panel */}
-            <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 border border-white/20">
-              <div className="flex items-center gap-3 mb-6">
-                <Code2 className="w-6 h-6 text-blue-400" />
-                <h2 className="text-xl font-bold">{currentQuestion.title}</h2>
-              </div>
-              
-              <div className="space-y-4 mb-6">
-                <div>
-                  <h3 className="font-semibold mb-2">Problem:</h3>
-                  <p className="text-gray-300">{currentQuestion.description}</p>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold mb-2">Example:</h3>
-                  <div className="bg-black/30 rounded-lg p-4">
-                    <p className="text-gray-300">Input: {currentQuestion.input}</p>
-                    <p className="text-gray-300">Output: {currentQuestion.output}</p>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold mb-2">Hint:</h3>
-                  <p className="text-gray-300">{currentQuestion.hint}</p>
-                </div>
-              </div>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Java Programming Challenge</h1>
+          <p className="text-gray-400">
+            Select a difficulty level that matches your coding expertise
+          </p>
+        </div>
 
-              {/* Result Display */}
-              {result && (
-                <div className={`p-4 rounded-lg ${
-                  result.success ? 'bg-green-500/20' : 'bg-red-500/20'
-                }`}>
-                  <div className="flex items-center gap-2">
-                    {result.success ? (
-                      <CheckCircle className="w-5 h-5 text-green-400" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-red-400" />
-                    )}
-                    <span>{result.message}</span>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {difficultyLevels.map((level) => (
+            <motion.button
+              key={level.id}
+              onClick={() => handleLevelSelect(level)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative text-left"
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${level.color} rounded-xl blur-xl transition-all duration-300 opacity-0 group-hover:opacity-100`} />
+              <div className="relative backdrop-blur-xl bg-white/10 p-6 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-300">
+                <div className="p-3 bg-white/10 rounded-lg w-fit mb-4">
+                  {level.icon}
                 </div>
-              )}
-            </div>
-
-            {/* Code Editor */}
-            <div className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
-              <CodeEditor 
-                value={code} 
-                onChange={setCode} 
-                onSubmit={handleSubmit}
-                language="java"
-              />
-            </div>
-          </div>
-        )}
+                <h3 className="text-xl font-bold mb-2">{level.title}</h3>
+                <p className="text-gray-400 text-sm mb-4">{level.description}</p>
+                <div className="text-sm text-blue-400">
+                  {level.questionsPerDay} {level.questionsPerDay === 1 ? 'question' : 'questions'} per day
+                </div>
+              </div>
+            </motion.button>
+          ))}
+        </div>
       </div>
     </div>
   );
