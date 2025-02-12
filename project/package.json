@@ -31,6 +31,7 @@
     "express": "^4.18.3",
     "framer-motion": "^11.0.8",
     "lucide-react": "^0.344.0",
+    "openai": "^4.28.4",
     "python-shell": "^5.0.0",
     "react": "^18.2.0",
     "react-confetti": "^6.1.0",
