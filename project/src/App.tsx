@@ -15,6 +15,7 @@ import LevelSelection from './components/challenges/LevelSelection';
 import DailyChallenge from './components/challenges/DailyChallenge';
 import JavaChallenge from './components/challenges/JavaChallenge.tsx';
 import AptitudeTest from './components/aptitude/AptitudeTest';
+import MiniProjectPage from './components/miniproject/MiniProjectPage';
 
 function App() {
   return (
@@ -115,6 +116,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AptitudeTest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/miniproject"
+            element={
+              <ProtectedRoute>
+                <MiniProjectPage />
               </ProtectedRoute>
             }
           />
