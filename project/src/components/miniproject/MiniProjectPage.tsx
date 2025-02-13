@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Code2, Play, ArrowRight, ArrowLeft, AlertCircle, RefreshCw } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import BackButton from '../BackButton';
-import CodeEditor from '../CodeEditor/CodeEditor';
 
 const API_KEY = 'AIzaSyCW3F1qklqeJ06T9j_b_ofwoKNdBBsJYws';
 
@@ -92,6 +91,9 @@ const MiniProjectPage = () => {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [isExplanationLoading, setIsExplanationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [typingText, setTypingText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const typingSpeed = 30; // milliseconds per character
 
   // Initialize Gemini AI
   const genAI = new GoogleGenerativeAI(API_KEY);
@@ -107,6 +109,18 @@ const MiniProjectPage = () => {
     setCodeLines(lines);
     fetchExplanation(0, lines[0].code);
   }, []);
+
+  const typeCode = async (code: string) => {
+    setIsTyping(true);
+    setTypingText('');
+    
+    for (let i = 0; i < code.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, typingSpeed));
+      setTypingText(prev => prev + code[i]);
+    }
+    
+    setIsTyping(false);
+  };
 
   const fetchExplanation = async (lineIndex: number, code: string) => {
     if (!code.trim() || code.trim().startsWith('#')) {
@@ -173,10 +187,11 @@ const MiniProjectPage = () => {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentLineIndex < codeLines.length - 1) {
       const nextIndex = currentLineIndex + 1;
       setCurrentLineIndex(nextIndex);
+      await typeCode(codeLines[nextIndex].code);
       if (!codeLines[nextIndex].explanation) {
         fetchExplanation(nextIndex, codeLines[nextIndex].code);
       }
@@ -227,7 +242,7 @@ const MiniProjectPage = () => {
                       index === currentLineIndex ? 'bg-blue-500/20 -mx-4 px-4' : ''
                     }`}
                   >
-                    {line.code}
+                    {index === currentLineIndex && isTyping ? typingText : line.code}
                   </motion.div>
                 ))}
               </div>
@@ -295,7 +310,7 @@ const MiniProjectPage = () => {
                 </button>
                 <button
                   onClick={handleNext}
-                  disabled={currentLineIndex === codeLines.length - 1}
+                  disabled={currentLineIndex === codeLines.length - 1 || isTyping}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
