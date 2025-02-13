@@ -9,6 +9,7 @@ import DailyChallenge from './DailyChallenge';
 import AchievementBadge from './gamification/AchievementBadge';
 import FloatingCompiler from './FloatingCompiler';
 import ProgrammingCourses from './courses/ProgrammingCourses';
+import InterviewBot from './interview/InterviewBot';
 
 const Dashboard = () => {
   const recentAchievements = [
@@ -79,12 +80,14 @@ const Dashboard = () => {
                 progress={42}
               />
             </Link>
-            <LearningPath 
-              icon={<Activity className="w-8 h-8" />}
-              title="AI interview BOT"
-              description="Take an interview test from our interview expert"
-              progress={28}
-            />
+            <Link to="/interview-bot">
+              <LearningPath 
+                icon={<Activity className="w-8 h-8" />}
+                title="AI interview BOT"
+                description="Take an interview test from our interview expert"
+                progress={28}
+              />
+            </Link>
           </div>
 
           {/* Stats Section */}
