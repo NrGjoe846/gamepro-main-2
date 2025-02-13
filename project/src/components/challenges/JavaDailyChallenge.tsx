@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSpring, animated } from 'react-spring';
 import { useWindowSize } from 'react-use';
@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import Confetti from 'react-confetti';
 import { geminiService } from '../../services/geminiService';
+import Loader from '../ui/Loader';
 
 interface JavaDailyChallengeProps {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
@@ -29,7 +30,6 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
   const [codeQualityScore, setCodeQualityScore] = useState(0);
   const { width, height } = useWindowSize();
 
-  // Spring animations for scores
   const scoreSpring = useSpring({
     number: performanceScore,
     from: { number: 0 },
@@ -96,12 +96,12 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
@@ -109,11 +109,10 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
       {showConfetti && <Confetti width={width} height={height} />}
 
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate('/challenges/java')}
+              onClick={handleBack}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
@@ -136,7 +135,6 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
 
         {challenge && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Challenge Description */}
             <div className="space-y-6">
               <motion.div 
                 className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 border border-white/20"
@@ -175,7 +173,6 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
                 </div>
               </motion.div>
 
-              {/* Result Display */}
               <AnimatePresence>
                 {result && (
                   <motion.div
@@ -201,7 +198,6 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
                 )}
               </AnimatePresence>
 
-              {/* Performance and Code Quality Scores */}
               <AnimatePresence>
                 {result?.success && (
                   <motion.div
@@ -243,7 +239,6 @@ const JavaDailyChallenge: React.FC<JavaDailyChallengeProps> = ({ difficulty }) =
               </AnimatePresence>
             </div>
 
-            {/* Code Editor */}
             <div className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 overflow-hidden">
               <CodeEditor
                 value={code}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Code, Atom, Trophy, Users, Activity, Terminal } from 'lucide-react';
+import { GraduationCap, Code, Atom, Trophy, Users, Activity, Terminal, Code2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
 import LearningPath from './LearningPath';
@@ -64,12 +64,14 @@ const Dashboard = () => {
 
           {/* Learning Paths Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-            <LearningPath 
-              icon={<Code className="w-8 h-8" />}
-              title="MiniProject.Diy"
-              description="Turn your Imagination into Reality"
-              progress={65}
-            />
+            <Link to="/miniproject">
+              <LearningPath 
+                icon={<Code2 className="w-8 h-8" />}
+                title="MiniProject.Diy"
+                description="Turn your Imagination into Reality"
+                progress={65}
+              />
+            </Link>
             <Link to="/aptitude-test">
               <LearningPath 
                 icon={<Atom className="w-8 h-8" />}

@@ -16,6 +16,7 @@ import DailyChallenge from './components/challenges/DailyChallenge';
 import JavaChallenge from './components/challenges/JavaChallenge';
 import AptitudeTest from './components/aptitude/AptitudeTest';
 import InterviewBot from './components/interview/InterviewBot';
+import MiniProjectPage from './components/miniproject/MiniProjectPage';
 
 function App() {
   return (
@@ -119,11 +120,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
             path="/interview-bot"
             element={
               <ProtectedRoute>
                 <InterviewBot />
+
+            path="/miniproject"
+            element={
+              <ProtectedRoute>
+                <MiniProjectPage />
+
               </ProtectedRoute>
             }
           />

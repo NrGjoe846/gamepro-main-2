@@ -57,6 +57,37 @@
   .animate-glow {
     animation: glow-pulse 2s ease-in-out infinite;
   }
+
+  /* Card Glow Animation */
+  @keyframes rotBGimg {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .card-glow {
+    animation: rotBGimg 3s linear infinite;
+    transition: all 0.2s linear;
+  }
+
+  /* UNAI Loader Animation */
+  @keyframes dashArray {
+    0% { stroke-dasharray: 0 1 359 0; }
+    50% { stroke-dasharray: 0 359 1 0; }
+    100% { stroke-dasharray: 359 1 0 0; }
+  }
+
+  @keyframes dashOffset {
+    0% { stroke-dashoffset: 365; }
+    100% { stroke-dashoffset: 5; }
+  }
+
+  .animate-dashArray {
+    animation: dashArray 2s ease-in-out infinite, dashOffset 2s linear infinite;
+  }
 }
 
 /* Smooth Scrolling */
