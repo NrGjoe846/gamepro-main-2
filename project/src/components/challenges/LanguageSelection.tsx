@@ -17,7 +17,7 @@ const languages: ProgrammingLanguage[] = [
   {
     id: 'python',
     title: 'Python',
-    description: 'Perfect for beginners and data science enthusiasts',
+    description: 'Great for data science, automation, web development, scripting, and AI',
     icon: <Code2 className="w-6 h-6" />,
     color: 'from-blue-500/20 to-cyan-500/20',
     path: '/challenges/level-select'
