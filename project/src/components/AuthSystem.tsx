@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Github } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Loader from './ui/Loader';
 
 const AuthSystem = () => {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ const AuthSystem = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -59,7 +61,13 @@ const AuthSystem = () => {
       };
       
       login(userData);
-      navigate('/dashboard');
+      setShowLoader(true);
+      
+      // Show loader for 5 seconds before navigating
+      setTimeout(() => {
+        setShowLoader(false);
+        navigate('/dashboard');
+      }, 5000);
     } catch (error: any) {
       setErrors({ submit: error.message });
     } finally {
@@ -69,8 +77,16 @@ const AuthSystem = () => {
 
   const handleSkip = () => {
     skipAuth();
-    navigate('/dashboard');
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowLoader(false);
+      navigate('/dashboard');
+    }, 5000);
   };
+
+  if (showLoader) {
+    return <Loader />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black flex items-center justify-center p-4">

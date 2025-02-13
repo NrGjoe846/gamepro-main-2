@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Book, Target, Trophy, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import JavaDailyChallenge from './JavaDailyChallenge';
 
 interface DifficultyLevel {
   id: 'beginner' | 'intermediate' | 'advanced';
@@ -41,6 +42,7 @@ const difficultyLevels: DifficultyLevel[] = [
 
 const JavaChallenge = () => {
   const navigate = useNavigate();
+  const [selectedLevel, setSelectedLevel] = useState<DifficultyLevel['id'] | null>(null);
   const selectedLanguage = localStorage.getItem('selectedLanguage');
 
   useEffect(() => {
@@ -50,12 +52,17 @@ const JavaChallenge = () => {
   }, [selectedLanguage, navigate]);
 
   const handleLevelSelect = (level: DifficultyLevel) => {
+    setSelectedLevel(level.id);
     localStorage.setItem('selectedLevel', level.id);
     localStorage.setItem('questionsPerDay', level.questionsPerDay.toString());
     localStorage.setItem('questionsCompleted', '0');
     localStorage.setItem('lastChallengeDate', new Date().toISOString().split('T')[0]);
-    navigate('/challenges/daily/java');
   };
+
+  // If a level is selected, show the JavaDailyChallenge component
+  if (selectedLevel) {
+    return <JavaDailyChallenge difficulty={selectedLevel} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
