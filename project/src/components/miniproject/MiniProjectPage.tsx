@@ -6,85 +6,204 @@ import BackButton from '../BackButton';
 
 const API_KEY = 'AIzaSyCW3F1qklqeJ06T9j_b_ofwoKNdBBsJYws';
 
-const TODO_LIST_CODE = `# Simple To-Do List Application
-
-# Dictionary to store tasks with a status (Pending/Done)
-tasks = {}
-
-# Function to display the menu
-def display_menu():
-    print("\\n--- To-Do List Menu ---")
-    print("1. Add Task")
-    print("2. View Tasks")
-    print("3. Mark Task as Done")
-    print("4. Delete Task")
-    print("5. Exit")
-
-# Function to add a new task
-def add_task():
-    task_name = input("Enter the task: ")
-    if task_name in tasks:
-        print("Task already exists!")
-    else:
-        tasks[task_name] = "Pending"
-        print(f"Task '{task_name}' added successfully!")
-
-# Function to view all tasks
-def view_tasks():
-    if not tasks:
-        print("No tasks available.")
-    else:
-        print("\\n--- Task List ---")
-        for i, (task, status) in enumerate(tasks.items(), start=1):
-            print(f"{i}. {task} - {status}")
-
-# Function to mark a task as done
-def mark_task_done():
-    task_name = input("Enter the task to mark as done: ")
-    if task_name in tasks:
-        tasks[task_name] = "Done"
-        print(f"Task '{task_name}' marked as done!")
-    else:
-        print("Task not found!")
-
-# Function to delete a task
-def delete_task():
-    task_name = input("Enter the task to delete: ")
-    if task_name in tasks:
-        del tasks[task_name]
-        print(f"Task '{task_name}' deleted successfully!")
-    else:
-        print("Task not found!")
-
-# Main function to run the To-Do List application
-def main():
-    while True:
-        display_menu()
-        choice = input("Choose an option (1-5): ")
-        if choice == "1":
-            add_task()
-        elif choice == "2":
-            view_tasks()
-        elif choice == "3":
-            mark_task_done()
-        elif choice == "4":
-            delete_task()
-        elif choice == "5":
-            print("Exiting To-Do List. Goodbye!")
-            break
-        else:
-            print("Invalid choice! Please choose a valid option.")
-
-# Run the application
-if __name__ == "__main__":
-    main()`;
-
-interface CodeLine {
+interface Project {
+  name: string;
+  description: string;
   code: string;
-  explanation: string;
-  isLoading?: boolean;
-  error?: string;
+  language: string;
 }
+
+const CALCULATOR_CODE = `# Simple Calculator Program
+
+# Function to perform addition
+def add(x, y):
+    return x + y
+
+# Function to perform subtraction
+def subtract(x, y):
+    return x - y
+
+# Function to perform multiplication
+def multiply(x, y):
+    return x * y
+
+# Function to perform division
+def divide(x, y):
+    if y == 0:
+        return "Cannot divide by zero!"
+    return x / y
+
+# Main calculator loop
+while True:
+    print("Select operation:")
+    print("1. Add")
+    print("2. Subtract")
+    print("3. Multiply")
+    print("4. Divide")
+    print("5. Exit")
+    
+    choice = input("Enter choice (1-5): ")
+    
+    if choice == '5':
+        print("Goodbye!")
+        break
+        
+    if choice in ('1', '2', '3', '4'):
+        num1 = float(input("Enter first number: "))
+        num2 = float(input("Enter second number: "))
+        
+        if choice == '1':
+            print(f"{num1} + {num2} = {add(num1, num2)}")
+        elif choice == '2':
+            print(f"{num1} - {num2} = {subtract(num1, num2)}")
+        elif choice == '3':
+            print(f"{num1} * {num2} = {multiply(num1, num2)}")
+        elif choice == '4':
+            result = divide(num1, num2)
+            print(f"{num1} / {num2} = {result}")
+    else:
+        print("Invalid input")`;
+
+const NUMBER_GUESSING_CODE = `# Number Guessing Game
+import random
+
+# Generate a random number between 1 and 100
+number = random.randint(1, 100)
+attempts = 0
+max_attempts = 10
+
+print("Welcome to the Number Guessing Game!")
+print(f"I'm thinking of a number between 1 and 100.")
+print(f"You have {max_attempts} attempts to guess it.")
+
+while attempts < max_attempts:
+    try:
+        # Get the player's guess
+        guess = int(input("Enter your guess: "))
+        attempts += 1
+        
+        # Check if the guess is correct
+        if guess == number:
+            print(f"Congratulations! You guessed the number in {attempts} attempts!")
+            break
+        elif guess < number:
+            print("Too low! Try again.")
+        else:
+            print("Too high! Try again.")
+            
+        # Show remaining attempts
+        remaining = max_attempts - attempts
+        print(f"You have {remaining} attempts left.")
+        
+    except ValueError:
+        print("Please enter a valid number.")
+        
+if attempts == max_attempts and guess != number:
+    print(f"Game Over! The number was {number}.")`;
+
+const UNIT_CONVERTER_CODE = `# Kilometers to Miles Converter
+
+def km_to_miles(kilometers):
+    # Conversion factor: 1 kilometer = 0.621371 miles
+    miles = kilometers * 0.621371
+    return miles
+
+while True:
+    try:
+        # Get input from user
+        kilometers = float(input("Enter distance in kilometers (or 0 to exit): "))
+        
+        # Check if user wants to exit
+        if kilometers == 0:
+            print("Goodbye!")
+            break
+            
+        # Convert and display result
+        miles = km_to_miles(kilometers)
+        print(f"{kilometers} kilometers is equal to {miles:.2f} miles")
+        
+    except ValueError:
+        print("Please enter a valid number.")`;
+
+const ROCK_PAPER_SCISSORS_CODE = `# Rock, Paper, Scissors Game
+import random
+
+def get_computer_choice():
+    choices = ['rock', 'paper', 'scissors']
+    return random.choice(choices)
+
+def determine_winner(player_choice, computer_choice):
+    if player_choice == computer_choice:
+        return "It's a tie!"
+    
+    if player_choice == 'rock':
+        if computer_choice == 'scissors':
+            return "You win!"
+        return "Computer wins!"
+    
+    if player_choice == 'paper':
+        if computer_choice == 'rock':
+            return "You win!"
+        return "Computer wins!"
+    
+    if player_choice == 'scissors':
+        if computer_choice == 'paper':
+            return "You win!"
+        return "Computer wins!"
+
+# Main game loop
+while True:
+    print("\nRock, Paper, Scissors - Let's play!")
+    print("Enter your choice (rock/paper/scissors) or 'quit' to exit:")
+    
+    # Get player's choice
+    player_choice = input().lower()
+    
+    if player_choice == 'quit':
+        print("Thanks for playing!")
+        break
+        
+    if player_choice not in ['rock', 'paper', 'scissors']:
+        print("Invalid choice. Please try again.")
+        continue
+    
+    # Get computer's choice
+    computer_choice = get_computer_choice()
+    
+    # Show choices
+    print(f"\nYou chose: {player_choice}")
+    print(f"Computer chose: {computer_choice}")
+    
+    # Determine and show winner
+    result = determine_winner(player_choice, computer_choice)
+    print(result)`;
+
+const beginnerProjects = [
+  {
+    name: "Calculator Program",
+    description: "A simple calculator that performs basic arithmetic operations",
+    code: CALCULATOR_CODE,
+    language: "python"
+  },
+  {
+    name: "Number Guessing Game",
+    description: "Guess a number between 1 and 100 with helpful feedback",
+    code: NUMBER_GUESSING_CODE,
+    language: "python"
+  },
+  {
+    name: "Unit Converter",
+    description: "Convert kilometers to miles with user input",
+    code: UNIT_CONVERTER_CODE,
+    language: "python"
+  },
+  {
+    name: "Rock, Paper, Scissors Game",
+    description: "Play the classic game against the computer",
+    code: ROCK_PAPER_SCISSORS_CODE,
+    language: "python"
+  }
+];
 
 const difficultyLevels = [
   {
@@ -92,14 +211,7 @@ const difficultyLevels = [
     description: "Perfect for those just starting their coding journey",
     icon: <BookOpen className="w-6 h-6" />,
     color: "from-green-500/20 to-emerald-500/20",
-    projects: [
-      {
-        name: "Python To-Do List",
-        description: "A simple command-line to-do list application",
-        code: TODO_LIST_CODE,
-        language: "python"
-      }
-    ]
+    projects: beginnerProjects
   },
   {
     title: "Intermediate",
@@ -117,6 +229,13 @@ const difficultyLevels = [
   }
 ];
 
+interface CodeLine {
+  code: string;
+  explanation: string;
+  isLoading?: boolean;
+  error?: string;
+}
+
 const MiniProjectPage = () => {
   const [codeLines, setCodeLines] = useState<CodeLine[]>([]);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
@@ -124,11 +243,7 @@ const MiniProjectPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [typingText, setTypingText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<{
-    name: string;
-    code: string;
-    language: string;
-  } | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const typingSpeed = 30;
 
   const genAI = new GoogleGenerativeAI(API_KEY);
@@ -244,7 +359,7 @@ const MiniProjectPage = () => {
     fetchExplanation(currentLineIndex, codeLines[currentLineIndex].code);
   };
 
-  const handleProjectSelect = (project: { name: string; code: string; language: string }) => {
+  const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     setCurrentLineIndex(0);
     setCodeLines([]);
