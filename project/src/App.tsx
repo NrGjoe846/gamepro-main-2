@@ -1,146 +1,61 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import AuthSystem from './components/AuthSystem';
-import Dashboard from './components/Dashboard';
-import ProfileDashboard from './components/profile/ProfileDashboard';
-import CompilerPage from './components/compiler/CompilerPage';
-import PythonFundamentals from './components/courses/PythonFundamentals';
-import CProgramming from './components/courses/CProgramming';
-import JavaProgramming from './components/courses/JavaProgramming';
-import ChallengeCategories from './components/challenges/ChallengeCategories';
-import LanguageSelection from './components/challenges/LanguageSelection';
-import LevelSelection from './components/challenges/LevelSelection';
-import DailyChallenge from './components/challenges/DailyChallenge';
-import JavaChallenge from './components/challenges/JavaChallenge';
-import AptitudeTest from './components/aptitude/AptitudeTest';
-import InterviewBot from './components/interview/InterviewBot'; // Keep InterviewBot
-import MiniProjectPage from './components/miniproject/MiniProjectPage'; // Keep MiniProjectPage
-
-function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth" element={<AuthSystem />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfileDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/compiler"
-            element={
-              <ProtectedRoute>
-                <CompilerPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/courses/python-fundamentals"
-            element={
-              <ProtectedRoute>
-                <PythonFundamentals />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/courses/c-programming"
-            element={
-              <ProtectedRoute>
-                <CProgramming />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/courses/java-programming"
-            element={
-              <ProtectedRoute>
-                <JavaProgramming />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/challenges"
-            element={
-              <ProtectedRoute>
-                <ChallengeCategories />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/challenges/language-select"
-            element={
-              <ProtectedRoute>
-                <LanguageSelection />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/challenges/level-select"
-            element={
-              <ProtectedRoute>
-                <LevelSelection />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/challenges/daily"
-            element={
-              <ProtectedRoute>
-                <DailyChallenge />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/challenges/java"
-            element={
-              <ProtectedRoute>
-                <JavaChallenge />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/aptitude-test"
-            element={
-              <ProtectedRoute>
-                <AptitudeTest />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/interview-bot"
-            element={
-              <ProtectedRoute>
-                <InterviewBot />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/miniproject"
-            element={
-              <ProtectedRoute>
-                <MiniProjectPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/auth" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
-  );
+{
+  "name": "code-execution-server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "server": "node server.js"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.11.1",
+    "@codemirror/commands": "^6.3.3",
+    "@codemirror/lang-java": "^6.0.1",
+    "@codemirror/lang-javascript": "^6.2.1",
+    "@codemirror/lang-python": "^6.1.3",
+    "@codemirror/language": "^6.10.0",
+    "@codemirror/lint": "^6.4.2",
+    "@codemirror/search": "^6.5.5",
+    "@codemirror/state": "^6.4.0",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@codemirror/view": "^6.23.0",
+    "@google/generative-ai": "^0.1.3",
+    "@radix-ui/react-slider": "^1.1.2",
+    "@radix-ui/react-switch": "^1.0.3",
+    "@radix-ui/react-tooltip": "^1.0.7",
+    "codemirror": "^6.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "framer-motion": "^11.0.8",
+    "lucide-react": "^0.344.0",
+    "python-shell": "^5.0.0",
+    "react": "^18.3.1",
+    "react-confetti": "^6.1.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.22.3",
+    "react-spring": "^9.7.3",
+    "react-use": "^17.5.0",
+    "react-use-gesture": "^9.1.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^15.9.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.3.0",
+    "vite": "^5.4.2"
+  }
 }
-
-export default App;
