@@ -7,6 +7,7 @@ import { geminiService, Challenge, CodeValidationResult } from '../../services/g
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../ui/Loader';
 
 const DailyChallenge = () => {
   const navigate = useNavigate();
@@ -124,11 +125,7 @@ const DailyChallenge = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
