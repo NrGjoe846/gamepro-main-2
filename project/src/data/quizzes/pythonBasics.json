@@ -1,9 +1,24 @@
 {
-  "phase": "Phase 1: Python Basics",
-  "topic": "Introduction to Python",
-  "subtopic": "Writing your first Python program",
-  "description": "Learn the fundamentals of writing and executing Python code",
-  "questionsData": [
+  "phase": "Phase 1: Python Basics and Core Concepts",
+  "topics": [
+    {
+      "topic": "1. Introduction to Python Programming",
+      "subtopics": [
+        {
+          "subtopic": "Installing Python (Anaconda, PyCharm, or basic Python)",
+          "questionsData": [
+           
+          ]
+        },
+        {
+          "subtopic": "Setting up the IDE",
+          "questionsData": [
+          
+          ]
+        },
+        {
+          "subtopic": "Writing your first Python program: print(\"Hello, World!\")",
+          "questionsData": [
     {
       "type": "fill",
       "question": "Python is an example of a __________ language, meaning it is executed line-by-line by an interpreter.",
@@ -96,6 +111,114 @@
       "question": "Complete the code to demonstrate Python's execution process.\n\nOutput: `Python is an interpreted language!`",
       "answer": "print(\"Python is an interpreted language!\")",
       "component": "FillInTheBlank"
+    }
+  ]
+        },
+        {
+          "subtopic": "Python's interpreter vs. compiled languages",
+          "questionsData": [
+            {
+              "type": "multiple-choice",
+              "question": "What is the main difference between Python and compiled languages?",
+              "options": [
+                "Python code is executed line by line",
+                "Python code must be compiled first",
+                "Python code runs faster",
+                "Python code uses more memory"
+              ],
+              "answer": "Python code is executed line by line",
+              "component": "MultipleChoiceQuestion"
+            },
+            {
+              "type": "match",
+              "question": "Match the concepts with their descriptions:",
+              "options": [
+                { "term": "Interpreter", "match": "Executes code line by line" },
+                { "term": "Compiler", "match": "Converts entire code to machine language" }
+              ],
+              "component": "MatchQuestion"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "2. Basic Data Types and Variables",
+      "subtopics": [
+        {
+          "subtopic": "Numbers (integers, floats, complex)",
+          "questionsData": [
+            {
+              "type": "multiple-choice",
+              "question": "Which of these is a valid integer in Python?",
+              "options": [
+                "1.0",
+                "1,000",
+                "1_000",
+                "1.000"
+              ],
+              "answer": "1_000",
+              "component": "MultipleChoiceQuestion"
+            }
+          ]
+        },
+        {
+          "subtopic": "Strings",
+          "questionsData": [
+            {
+              "type": "fill",
+              "question": "What is the output of 'Python'[1:4]?",
+              "answer": "yth",
+              "component": "FillInTheBlank"
+            }
+          ]
+        },
+        {
+          "subtopic": "Booleans",
+          "questionsData": [
+            {
+              "type": "true-false",
+              "question": "The value True in Python is equal to 1.",
+              "answer": "True",
+              "component": "TrueFalseQuestion"
+            }
+          ]
+        },
+        {
+          "subtopic": "Type conversion (int to float, string to int, etc.)",
+          "questionsData": [
+            {
+              "type": "multiple-choice",
+              "question": "Which function converts a string to an integer?",
+              "options": [
+                "int()",
+                "str()",
+                "float()",
+                "bool()"
+              ],
+              "answer": "int()",
+              "component": "MultipleChoiceQuestion"
+            }
+          ]
+        },
+        {
+          "subtopic": "Variable naming conventions and dynamic typing",
+          "questionsData": [
+            {
+              "type": "multiple-selection",
+              "question": "Which of these are valid Python variable names?",
+              "options": [
+                "my_variable",
+                "1variable",
+                "_hidden",
+                "class"
+              ],
+              "answer": ["my_variable", "_hidden"],
+              "component": "MultipleSelectionQuestion"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
