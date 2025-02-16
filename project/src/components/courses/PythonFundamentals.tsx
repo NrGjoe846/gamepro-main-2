@@ -9,7 +9,7 @@ import GlowingButton from '../ui/GlowingButton';
 import QuizPopup from '../quiz/QuizPopup';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
-import { coursePhases } from "../courses/PythonCourseData";
+import { coursePhases } from "./PythonCourseData";
 
 interface Topic {
   id: string;
@@ -41,6 +41,7 @@ const PythonFundamentals = () => {
   const [selectedTopic, setSelectedTopic] = useState<{ phaseId: string; topicId: string } | null>(null);
   const [showQuiz, setShowQuiz] = useState(false);
   const [currentQuizTopic, setCurrentQuizTopic] = useState<string>('');
+  const [currentQuizSubtopic, setCurrentQuizSubtopic] = useState<string>('');
   const [showConfetti, setShowConfetti] = useState(false);
   const [userProgress, setUserProgress] = useState(() => {
     const saved = localStorage.getItem('pythonProgress');
@@ -182,18 +183,10 @@ const PythonFundamentals = () => {
   };
 
   const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
-    // Only show quiz for subtopics
-    setCurrentQuizTopic(subtopicTitle);
+    console.log("Starting quiz for Topic:", topicTitle, "Subtopic:", subtopicTitle);
+    setCurrentQuizTopic(topicTitle);
+    setCurrentQuizSubtopic(subtopicTitle);
     setShowQuiz(true);
-  };
-
-  const calculateXP = (difficulty: string): number => {
-    switch (difficulty.toLowerCase()) {
-      case 'beginner': return 50;
-      case 'intermediate': return 100;
-      case 'advanced': return 200;
-      default: return 50;
-    }
   };
 
   const handleQuizComplete = (score: number) => {
@@ -205,7 +198,7 @@ const PythonFundamentals = () => {
       const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
       
       if (topic && topic.subtopics) {
-        const subtopic = topic.subtopics.find(s => s.title === currentQuizTopic);
+        const subtopic = topic.subtopics.find(s => s.title === currentQuizSubtopic);
         if (subtopic) {
           const newCompletedSubtopics = {
             ...userProgress.completedSubtopics,
@@ -215,7 +208,7 @@ const PythonFundamentals = () => {
             ]
           };
 
-          const baseXP = calculateXP(topic.difficulty || 'beginner');
+          const baseXP = 50; // Base XP for completing a subtopic
           const bonusXP = Math.floor(score * baseXP / 100);
           const totalXP = baseXP + bonusXP;
 
@@ -538,7 +531,7 @@ const PythonFundamentals = () => {
           isOpen={showQuiz}
           onClose={() => setShowQuiz(false)}
           onComplete={handleQuizComplete}
-          moduleTitle={currentQuizTopic}
+          moduleTitle={currentQuizSubtopic}
         />
       </div>
     </div>
