@@ -175,11 +175,6 @@ const PythonFundamentals = () => {
       setExpandedTopic(topicId);
       setSelectedTopic({ phaseId, topicId });
 
-      if (phaseId === 'phase-1' && topicId === 'intro') {
-        setCurrentQuizTopic('Introduction to Python Programming');
-        setShowQuiz(true);
-      }
-
       setTimeout(() => {
         subtopicsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
@@ -187,6 +182,7 @@ const PythonFundamentals = () => {
   };
 
   const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
+    // Only show quiz for subtopics
     setCurrentQuizTopic(subtopicTitle);
     setShowQuiz(true);
   };
@@ -434,7 +430,7 @@ const PythonFundamentals = () => {
                               className="text-sm font-medium"
                             >
                               <Play className="w-4 h-4" />
-                              <span>Start</span>
+                              <span>View</span>
                             </GlowingButton>
                           </div>
                         </motion.div>
