@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, 
-  AlertCircle, ChevronLeft, ChevronRight 
+  AlertCircle, ChevronLeft, ChevronRight, Star, Trophy, Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
 import GlowingButton from '../ui/GlowingButton';
+import QuizPopup from '../quiz/QuizPopup';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
 import { coursePhases } from "./JavaCourseData";
 
 interface Topic {
@@ -30,16 +33,31 @@ interface Phase {
   icon: string;
 }
 
-
-
 const JavaProgramming = () => {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [flippedPhase, setFlippedPhase] = useState<string | null>(null);
   const [sparklePhase, setSparklePhase] = useState<string | null>(null);
   const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<{ phaseId: string; topicId: string } | null>(null);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [currentQuizTopic, setCurrentQuizTopic] = useState<string>('');
+  const [currentQuizSubtopic, setCurrentQuizSubtopic] = useState<string>('');
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [userProgress, setUserProgress] = useState(() => {
+    const saved = localStorage.getItem('javaProgress');
+    return saved ? JSON.parse(saved) : {
+      completedTopics: [],
+      completedSubtopics: {},
+      xp: 0,
+      level: 1,
+      streak: 0,
+      lastCompletedDate: null
+    };
+  });
+
   const phasesContainerRef = useRef<HTMLDivElement>(null);
   const subtopicsRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useWindowSize();
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -49,6 +67,10 @@ const JavaProgramming = () => {
   useEffect(() => {
     scrollToCurrentPhase();
   }, [currentPhaseIndex]);
+
+  useEffect(() => {
+    localStorage.setItem('javaProgress', JSON.stringify(userProgress));
+  }, [userProgress]);
 
   const scrollToCurrentPhase = () => {
     if (phasesContainerRef.current) {
@@ -160,6 +182,71 @@ const JavaProgramming = () => {
     }
   };
 
+  const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
+    setCurrentQuizTopic(topicTitle);
+    setCurrentQuizSubtopic(subtopicTitle);
+    setShowQuiz(true);
+  };
+
+  const handleQuizComplete = (score: number) => {
+    setShowQuiz(false);
+    setShowConfetti(true);
+
+    if (selectedTopic) {
+      const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
+      const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
+      
+      if (topic && topic.subtopics) {
+        const subtopic = topic.subtopics.find(s => s.title === currentQuizSubtopic);
+        if (subtopic) {
+          const newCompletedSubtopics = {
+            ...userProgress.completedSubtopics,
+            [selectedTopic.topicId]: [
+              ...(userProgress.completedSubtopics[selectedTopic.topicId] || []),
+              subtopic.id
+            ]
+          };
+
+          const baseXP = 50;
+          const bonusXP = Math.floor(score * baseXP / 100);
+          const totalXP = baseXP + bonusXP;
+
+          const today = new Date().toDateString();
+          const streakBonus = userProgress.lastCompletedDate === new Date(Date.now() - 86400000).toDateString()
+            ? userProgress.streak + 1
+            : 1;
+
+          const newXP = userProgress.xp + totalXP;
+          const newLevel = Math.floor(newXP / 1000) + 1;
+
+          setUserProgress(prev => ({
+            ...prev,
+            completedSubtopics: newCompletedSubtopics,
+            xp: newXP,
+            level: newLevel,
+            streak: streakBonus,
+            lastCompletedDate: today
+          }));
+
+          const allSubtopicsCompleted = topic.subtopics.every(s => 
+            newCompletedSubtopics[selectedTopic.topicId]?.includes(s.id)
+          );
+
+          if (allSubtopicsCompleted) {
+            setUserProgress(prev => ({
+              ...prev,
+              completedTopics: [...prev.completedTopics, topic.id]
+            }));
+          }
+        }
+      }
+    }
+
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000);
+  };
+
   const selectedPhaseAndTopic = selectedTopic ? {
     phase: coursePhases.find(p => p.id === selectedTopic.phaseId),
     topic: coursePhases
@@ -169,6 +256,8 @@ const JavaProgramming = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
+      {showConfetti && <Confetti width={width} height={height} />}
+      
       <style>
         {`
           @keyframes sparkle {
@@ -191,6 +280,21 @@ const JavaProgramming = () => {
       <div className="max-w-full mx-auto">
         <div className="mb-8">
           <BackButton />
+        </div>
+
+        <div className="fixed top-4 right-4 flex items-center gap-4 bg-black/50 backdrop-blur-sm p-3 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Star className="w-5 h-5 text-yellow-400" />
+            <span className="font-bold">{userProgress.xp} XP</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-blue-400" />
+            <span className="font-bold">Level {userProgress.level}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Award className="w-5 h-5 text-purple-400" />
+            <span className="font-bold">{userProgress.streak} Day Streak</span>
+          </div>
         </div>
 
         <div className="flex justify-center mb-12">
@@ -318,7 +422,7 @@ const JavaProgramming = () => {
                               className="text-sm font-medium"
                             >
                               <Play className="w-4 h-4" />
-                              <span>Start</span>
+                              <span>View</span>
                             </GlowingButton>
                           </div>
                         </motion.div>
@@ -393,7 +497,7 @@ const JavaProgramming = () => {
                         className="flex items-center justify-between p-3 bg-white/5 rounded-lg backdrop-blur-xl border border-white/10"
                       >
                         <div className="flex items-center gap-3">
-                          {subtopic.completed ? (
+                          {userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id) ? (
                             <CheckCircle className="w-4 h-4 text-green-400" />
                           ) : (
                             <div className="w-4 h-4 rounded-full border border-gray-500" />
@@ -403,10 +507,15 @@ const JavaProgramming = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
+                          onClick={() => handleSubtopicStart(selectedPhaseAndTopic.topic.title, subtopic.title)}
                           className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
+                          disabled={userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id)}
                         >
                           <Play className="w-3 h-3" />
-                          Start
+                          {userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id) 
+                            ? 'Completed' 
+                            : 'Start'
+                          }
                         </motion.button>
                       </motion.div>
                     ))}
@@ -416,6 +525,13 @@ const JavaProgramming = () => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <QuizPopup
+          isOpen={showQuiz}
+          onClose={() => setShowQuiz(false)}
+          onComplete={handleQuizComplete}
+          moduleTitle={currentQuizSubtopic}
+        />
       </div>
     </div>
   );
