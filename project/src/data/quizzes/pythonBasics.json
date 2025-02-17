@@ -1,151 +1,224 @@
 {
-  "phase": "Phase 1: Python Basics",
-  "topic": "Introduction to Python",
-  "subtopic": "Writing your first Python program",
-  "description": "Learn the fundamentals of writing and executing Python code",
-  "questions": [
+  "phase": "Phase 1: Python Basics and Core Concepts",
+  "topics": [
     {
-      "id": 1,
-      "type": "fill-blank",
-      "question": "Fill in the blank to print \"Hello, World!\" in Python.",
-      "code": "print(___)",
-      "answer": "print(\"Hello, World!\")",
-      "explanation": "In Python, we use the print() function with text enclosed in quotes to display output.",
-      "hints": ["Remember to use quotes around text", "The print function needs parentheses"]
+      "topic": "1. Introduction to Python Programming",
+      "subtopics": [
+        {
+          "subtopic": "Installing Python (Anaconda, PyCharm, or basic Python)",
+          "questionsData": [
+           
+          ]
+        },
+        {
+          "subtopic": "Setting up the IDE",
+          "questionsData": [
+          
+          ]
+        },
+        {
+          "subtopic": "Writing your first Python program: print(\"Hello, World!\")",
+          "questionsData": [
+    {
+      "type": "fill",
+      "question": "Python is an example of a __________ language, meaning it is executed line-by-line by an interpreter.",
+      "answer": "interpreted",
+      "component": "FillInTheBlank"
     },
     {
-      "id": 2,
       "type": "multiple-choice",
-      "question": "Which of the following will print Hello, World! in Python?",
+      "question": "Which of the following is true about Python compared to compiled languages?",
       "options": [
-        "echo \"Hello, World!\"",
-        "print(\"Hello, World!\")",
-        "println(\"Hello, World!\")"
+        "Python code is translated into machine code before execution.",
+        "Python code is executed line-by-line by an interpreter.",
+        "Python requires a separate compilation step to run."
       ],
-      "answer": 1,
-      "explanation": "print() is the correct Python function for displaying output.",
-      "hints": ["Python uses print() for output", "Other options are from different languages"]
+      "answer": "Python code is executed line-by-line by an interpreter.",
+      "component": "MultipleChoiceQuestion"
     },
     {
-      "id": 3,
       "type": "true-false",
-      "question": "In Python, the print() function can be used to display text on the screen.",
-      "answer": true,
-      "explanation": "The print() function is used to display text output in Python.",
-      "hints": ["Think about how we show text in Python", "This is a fundamental Python concept"]
+      "question": "Python is a compiled language, meaning the entire program is converted into machine code before execution.",
+      "answer": "False",
+      "component": "TrueFalseQuestion"
     },
     {
-      "id": 4,
-      "type": "word-scramble",
-      "question": "Unscramble the words to create a Python statement that prints Hello, World!",
-      "words": ["World!", "Hello", "(\"", "print", "\")"],
-      "answer": "print(\"Hello, World!\")",
-      "explanation": "The correct order forms a valid Python print statement.",
-      "hints": ["Start with print()", "Text should be inside quotes"]
+      "type": "unscramble",
+      "question": "Unscramble the words to form a correct statement about Python's execution:",
+      "options": ["line-by-line", "executed", "Python", "is", "code", "by", "an", "interpreter"],
+      "answer": ["Python", "code", "is", "executed", "line-by-line", "by", "an", "interpreter"],
+      "component": "DragDropQuestion"
     },
     {
-      "id": 5,
       "type": "multiple-choice",
-      "question": "What will the following Python code output?",
-      "code": "print(\"Welcome to Python!\")",
+      "question": "What is the main difference between Python and a compiled language like C++?",
       "options": [
-        "Welcome",
-        "to Python",
-        "Welcome to Python!"
+        "Python requires an interpreter to run.",
+        "Python requires a compiler to run.",
+        "Python does not need any translation step."
       ],
-      "answer": 2,
-      "explanation": "The print function outputs the exact text inside the parentheses.",
-      "hints": ["Look at the full string inside print()", "Python prints everything inside the quotes"]
+      "answer": "Python requires an interpreter to run.",
+      "component": "MultipleChoiceQuestion"
     },
     {
-      "id": 6,
-      "type": "match-output",
-      "question": "Match the code with its output.",
-      "code-output-pairs": {
-        "print(\"Hello\")": "Hello",
-        "print(\"Hi!\")": "Hi!"
-      },
-      "answer": {
-        "print(\"Hello\")": "Hello",
-        "print(\"Hi!\")": "Hi!"
-      },
-      "explanation": "Each print statement outputs the exact text inside the parentheses.",
-      "hints": ["Match print statements with the correct output"]
+      "type": "match",
+      "question": "Match the language to whether it uses an interpreter or a compiler for execution:",
+      "options": [
+        { "term": "Python", "match": "Interpreter" },
+        { "term": "C++", "match": "Compiler" }
+      ],
+      "component": "MatchQuestion"
     },
     {
-      "id": 7,
       "type": "multiple-selection",
-      "question": "Which of the following are valid Python print() statements? (Select all that apply)",
+      "question": "Which of the following are advantages of interpreted languages like Python? (Select all that apply)",
       "options": [
-        "print(\"Hello, World!\")",
-        "print(\"Goodbye)",
-        "print(Hello)"
+        "Easier to debug",
+        "Faster execution",
+        "Portability across different platforms"
       ],
-      "answer": [0],
-      "explanation": "Only the first option is correct; the others have syntax errors.",
-      "hints": ["Check for missing quotes", "Python requires text to be in quotes"]
+      "answer": ["Easier to debug", "Portability across different platforms"],
+      "component": "MultipleSelectionQuestion"
     },
     {
-      "id": 8,
-      "type": "ordering",
-      "question": "Arrange the steps in the correct order to run a Python program.",
-      "steps": [
-        "Open Python interpreter or IDE",
-        "Type print(\"Hello, World!\")",
-        "Press Enter/Run"
+      "type": "order",
+      "question": "Arrange the steps in the correct order for Python execution:",
+      "options": [
+        "Python code is written and saved in a .py file.",
+        "The interpreter reads and executes the code line-by-line.",
+        "The output is displayed on the screen."
       ],
-      "answer": [0, 1, 2],
-      "explanation": "This is the correct sequence for writing and running a Python program.",
-      "hints": ["First, you need an interpreter", "Code must be written before it can be executed"]
+      "correctOrder": [
+        "Python code is written and saved in a .py file.",
+        "The interpreter reads and executes the code line-by-line.",
+        "The output is displayed on the screen."
+      ],
+      "component": "OrderQuestion"
     },
     {
-      "id": 9,
       "type": "code-correction",
-      "question": "What is wrong with this Python code?",
-      "code": "print(Hello, World)",
+      "question": "What is wrong with this statement about Python?\n\nPython code is compiled into machine code before execution.",
       "options": [
-        "The string is not enclosed in quotes",
-        "The print function needs to be lowercase",
-        "The parentheses are incorrect"
+        "Python code is not compiled.",
+        "Python code is compiled into bytecode.",
+        "Python code is executed by an interpreter."
       ],
-      "answer": 0,
-      "explanation": "String literals in Python must be enclosed in quotes.",
-      "hints": ["Look at how the text is written", "Python needs to know what's text and what's code"]
+      "answer": "Python code is not compiled.",
+      "component": "CodeCorrectionQuestion"
     },
     {
-      "id": 10,
-      "type": "fill-blank",
-      "question": "Complete the code to display the following output:\n\nOutput: Python is fun!",
-      "code": "print(___)",
-      "answer": "print(\"Python is fun!\")",
-      "explanation": "Strings must be enclosed in quotes inside print().",
-      "hints": ["Enclose text in quotes", "print() needs parentheses"]
+      "type": "fill",
+      "question": "Complete the code to demonstrate Python's execution process.\n\nOutput: `Python is an interpreted language!`",
+      "answer": "print(\"Python is an interpreted language!\")",
+      "component": "FillInTheBlank"
     }
-  ],
-  "flashcards": [
-    {
-      "front": "What is the purpose of the print() function?",
-      "back": "The print() function outputs text to the console."
+  ]
+        },
+        {
+          "subtopic": "Python's interpreter vs. compiled languages",
+          "questionsData": [
+            {
+              "type": "multiple-choice",
+              "question": "What is the main difference between Python and compiled languages?",
+              "options": [
+                "Python code is executed line by line",
+                "Python code must be compiled first",
+                "Python code runs faster",
+                "Python code uses more memory"
+              ],
+              "answer": "Python code is executed line by line",
+              "component": "MultipleChoiceQuestion"
+            },
+            {
+              "type": "match",
+              "question": "Match the concepts with their descriptions:",
+              "options": [
+                { "term": "Interpreter", "match": "Executes code line by line" },
+                { "term": "Compiler", "match": "Converts entire code to machine language" }
+              ],
+              "component": "MatchQuestion"
+            }
+          ]
+        }
+      ]
     },
     {
-      "front": "What is the correct syntax for printing text?",
-      "back": "print(\"Hello, World!\") - using parentheses and quotes."
-    },
-    {
-      "front": "Why are quotes important in print statements?",
-      "back": "Quotes tell Python that the content is a text string, not code."
-    },
-    {
-      "front": "What is the key concept of print() in Python?",
-      "back": "print() is a built-in function used to display information."
-    },
-    {
-      "front": "What is a common mistake when using print()?",
-      "back": "Forgetting parentheses or quotes around the text."
-    },
-    {
-      "front": "Why is printing 'Hello, World!' often the first step in learning Python?",
-      "back": "It confirms that the Python setup is working correctly and introduces basic syntax."
+      "topic": "2. Basic Data Types and Variables",
+      "subtopics": [
+        {
+          "subtopic": "Numbers (integers, floats, complex)",
+          "questionsData": [
+            {
+              "type": "multiple-choice",
+              "question": "Which of these is a valid integer in Python?",
+              "options": [
+                "1.0",
+                "1,000",
+                "1_000",
+                "1.000"
+              ],
+              "answer": "1_000",
+              "component": "MultipleChoiceQuestion"
+            }
+          ]
+        },
+        {
+          "subtopic": "Strings",
+          "questionsData": [
+            {
+              "type": "fill",
+              "question": "What is the output of 'Python'[1:4]?",
+              "answer": "yth",
+              "component": "FillInTheBlank"
+            }
+          ]
+        },
+        {
+          "subtopic": "Booleans",
+          "questionsData": [
+            {
+              "type": "true-false",
+              "question": "The value True in Python is equal to 1.",
+              "answer": "True",
+              "component": "TrueFalseQuestion"
+            }
+          ]
+        },
+        {
+          "subtopic": "Type conversion (int to float, string to int, etc.)",
+          "questionsData": [
+            {
+              "type": "multiple-choice",
+              "question": "Which function converts a string to an integer?",
+              "options": [
+                "int()",
+                "str()",
+                "float()",
+                "bool()"
+              ],
+              "answer": "int()",
+              "component": "MultipleChoiceQuestion"
+            }
+          ]
+        },
+        {
+          "subtopic": "Variable naming conventions and dynamic typing",
+          "questionsData": [
+            {
+              "type": "multiple-selection",
+              "question": "Which of these are valid Python variable names?",
+              "options": [
+                "my_variable",
+                "1variable",
+                "_hidden",
+                "class"
+              ],
+              "answer": ["my_variable", "_hidden"],
+              "component": "MultipleSelectionQuestion"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
