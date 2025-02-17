@@ -9,7 +9,6 @@ import DailyChallenge from './DailyChallenge';
 import AchievementBadge from './gamification/AchievementBadge';
 import FloatingCompiler from './FloatingCompiler';
 import ProgrammingCourses from './courses/ProgrammingCourses';
-import InterviewBot from './interview/InterviewBot';
 
 const Dashboard = () => {
   const recentAchievements = [
