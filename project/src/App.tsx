@@ -9,6 +9,7 @@ import CompilerPage from './components/compiler/CompilerPage';
 import PythonFundamentals from './components/courses/PythonFundamentals';
 import CProgramming from './components/courses/CProgramming';
 import JavaProgramming from './components/courses/JavaProgramming';
+import ProgrammingCourses from './components/courses/ProgrammingCourses';
 import ChallengeCategories from './components/challenges/ChallengeCategories';
 import LanguageSelection from './components/challenges/LanguageSelection';
 import LevelSelection from './components/challenges/LevelSelection';
@@ -55,6 +56,14 @@ function App() {
           />
           
           {/* Courses */}
+          <Route 
+            path="/courses" 
+            element={
+              <ProtectedRoute>
+                <ProgrammingCourses />
+              </ProtectedRoute>
+            } 
+          />
           <Route 
             path="/courses/python-fundamentals" 
             element={
