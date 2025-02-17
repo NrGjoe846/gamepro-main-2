@@ -13,7 +13,10 @@ import ChallengeCategories from './components/challenges/ChallengeCategories';
 import LanguageSelection from './components/challenges/LanguageSelection';
 import LevelSelection from './components/challenges/LevelSelection';
 import DailyChallenge from './components/challenges/DailyChallenge';
-import JavaChallenge from './components/challenges/JavaChallenge.tsx';
+import JavaChallenge from './components/challenges/JavaChallenge';
+import MiniProjectPage from './components/miniproject/MiniProjectPage';
+import InterviewBot from './components/interview/InterviewBot';
+import AptitudeTest from './components/aptitude/AptitudeTest';
 import About from './components/About';
 
 function App() {
@@ -115,6 +118,36 @@ function App() {
             element={
               <ProtectedRoute>
                 <JavaChallenge />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Mini Projects */}
+          <Route 
+            path="/miniproject" 
+            element={
+              <ProtectedRoute>
+                <MiniProjectPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Interview Bot */}
+          <Route 
+            path="/interview-bot" 
+            element={
+              <ProtectedRoute>
+                <InterviewBot />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Aptitude Test */}
+          <Route 
+            path="/aptitude-test" 
+            element={
+              <ProtectedRoute>
+                <AptitudeTest />
               </ProtectedRoute>
             } 
           />
