@@ -17,6 +17,7 @@ import JavaChallenge from './components/challenges/JavaChallenge';
 import AptitudeTest from './components/aptitude/AptitudeTest';
 import InterviewBot from './components/interview/InterviewBot'; // Keep InterviewBot
 import MiniProjectPage from './components/miniproject/MiniProjectPage'; // Keep MiniProjectPage
+import About from './components/About';
 
 function App() {
   return (
