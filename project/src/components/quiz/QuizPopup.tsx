@@ -5,7 +5,6 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
-
 import DragDropQuestion from './DragDropQuestion';
 import MatchQuestion from './MatchQuestion';
 import FillQuestion from './FillQuestion';
@@ -16,8 +15,9 @@ import TranslateCodeQuestion from './TranslateCodeQuestion';
 import MultipleSelectionQuestion from './MultipleSelectionQuestion';
 import CodeCorrectionQuestion from './CodeCorrectionQuestion';
 import FillInTheBlank from './FillInTheBlank';
-import questionsData from "../../data/quizzes/pythonBasics.json";
+import questionsData from '../../data/quizzes/pythonBasics.json';
 
+// Map of question types to their respective components
 const componentMap = {
   'DragDropQuestion': DragDropQuestion,
   'MatchQuestion': MatchQuestion,
@@ -28,7 +28,7 @@ const componentMap = {
   'TranslateCodeQuestion': TranslateCodeQuestion,
   'MultipleSelectionQuestion': MultipleSelectionQuestion,
   'CodeCorrectionQuestion': CodeCorrectionQuestion,
-  'FillInTheBlank': FillInTheBlank
+  'FillInTheBlank': FillInTheBlank,
 };
 
 interface QuizPopupProps {
@@ -47,11 +47,13 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   const { width, height } = useWindowSize();
 
   // Find the relevant questions for the current module
-  const findQuestionsForModule = () => {
-    for (const topic of questionsData.topics) {
-      for (const subtopic of topic.subtopics) {
-        if (subtopic.subtopic === moduleTitle && subtopic.questionsData) {
-          return subtopic.questionsData;
+  const findQuestionsForModule = (): any[] => {
+    for (const phase of questionsData) {
+      for (const topic of phase.topics) {
+        for (const subtopic of topic.subtopics) {
+          if (subtopic.subtopic === moduleTitle && subtopic.questionsData) {
+            return subtopic.questionsData;
+          }
         }
       }
     }
@@ -83,18 +85,21 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
     questions.forEach((q, index) => {
       if (Array.isArray(q.answer)) {
         const userAnswer = answers[index];
-        const isCorrect = Array.isArray(userAnswer) && 
-          userAnswer.length === q.answer.length && 
-          userAnswer.every((ans, i) => ans === q.answer[i]);
+        const isCorrect =
+          Array.isArray(userAnswer) &&
+          userAnswer.length === q.answer.length &&
+          userAnswer.every((ans: any, i: number) => ans === q.answer[i]);
         if (isCorrect) correctAnswers++;
       } else {
         if (answers[index] === q.answer) correctAnswers++;
       }
     });
+
     const finalScore = Math.round((correctAnswers / questions.length) * 100);
     setScore(finalScore);
     setShowResults(true);
     setShowConfetti(true);
+
     setTimeout(() => setShowConfetti(false), 3000);
     onComplete(finalScore);
   };
@@ -108,16 +113,16 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   // Show message if no questions are available
   if (!questions || questions.length === 0) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        exit={{ opacity: 0 }} 
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
       >
         <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4">
           <div className="text-center">
             <p className="text-xl mb-4">No questions available for this module yet.</p>
-            <button 
+            <button
               onClick={onClose}
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
             >
@@ -133,17 +138,17 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   const QuestionComponent = componentMap[currentQuestion.component];
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }} 
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
     >
       <DndProvider backend={HTML5Backend}>
         {showConfetti && <Confetti width={width} height={height} />}
         <motion.div className="relative w-full max-w-4xl bg-[#1a1a2e] rounded-2xl shadow-2xl p-6 m-4 max-h-[90vh] overflow-y-auto">
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-all"
           >
             <X className="w-6 h-6" />
@@ -157,15 +162,10 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
                   Question {currentQuestionIndex + 1} of {questions.length}
                 </p>
               </div>
-
               {QuestionComponent && (
-                <QuestionComponent 
-                  question={currentQuestion} 
-                  onAnswer={handleAnswer}
-                />
+                <QuestionComponent question={currentQuestion} onAnswer={handleAnswer} />
               )}
-
-              <button 
+              <button
                 onClick={handleNext}
                 className="mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors w-full"
               >
