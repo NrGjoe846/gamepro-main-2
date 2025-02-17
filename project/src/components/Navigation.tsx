@@ -11,7 +11,7 @@ const Navigation = () => {
 
   const menuItems = [
  { icon: <Compass className="w-5 h-5" />, label: 'Explore', path: '/About' },
-    { icon: <Compass className="w-5 h-5" />, label: 'Explore', path: '/Explore' },
+  
     { icon: <BookOpen className="w-5 h-5" />, label: 'My Courses', path: '/dashboard' },
     { icon: <Trophy className="w-5 h-5" />, label: 'Achievements', path: '/achievements' },
     { icon: <Gift className="w-5 h-5" />, label: 'Rewards', path: '/rewards' },
