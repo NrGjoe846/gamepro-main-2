@@ -14,10 +14,11 @@ import LanguageSelection from './components/challenges/LanguageSelection';
 import LevelSelection from './components/challenges/LevelSelection';
 import DailyChallenge from './components/challenges/DailyChallenge';
 import JavaChallenge from './components/challenges/JavaChallenge';
+import About from './components/About';
 import AptitudeTest from './components/aptitude/AptitudeTest';
 import InterviewBot from './components/interview/InterviewBot'; // Keep InterviewBot
 import MiniProjectPage from './components/miniproject/MiniProjectPage'; // Keep MiniProjectPage
-import About from './components/About';
+
 
 function App() {
   return (
