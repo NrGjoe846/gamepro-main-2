@@ -10,7 +10,7 @@ const Navigation = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const menuItems = [
-    { icon: <Compass className="w-5 h-5" />, label: 'Explore', path: '/explore' },
+    { icon: <Compass className="w-5 h-5" />, label: 'Explore', path: '/about' },
     { icon: <BookOpen className="w-5 h-5" />, label: 'My Courses', path: '/dashboard' },
     { icon: <Trophy className="w-5 h-5" />, label: 'Achievements', path: '/achievements' },
     { icon: <Gift className="w-5 h-5" />, label: 'Rewards', path: '/rewards' },
