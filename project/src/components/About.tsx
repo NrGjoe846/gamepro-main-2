@@ -147,15 +147,17 @@ const About = () => {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes twinkle {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.2; }
-        }
-        .animate-twinkle {
-          animation: twinkle 3s ease-in-out infinite;
-        }
-      `}</style>
+      <style>
+        {`
+          @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+          }
+          .animate-twinkle {
+            animation: twinkle 3s ease-in-out infinite;
+          }
+        `}
+      </style>
     </div>
   );
 };
