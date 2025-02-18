@@ -15,7 +15,9 @@ import TranslateCodeQuestion from './TranslateCodeQuestion';
 import MultipleSelectionQuestion from './MultipleSelectionQuestion';
 import CodeCorrectionQuestion from './CodeCorrectionQuestion';
 import FillInTheBlank from './FillInTheBlank';
-import questionsData from '../../data/quizzes/pythonBasics.json';
+import pythonQuestions from '../../data/quizzes/pythonBasics.json';
+import javaQuestions from '../../data/quizzes/javaBasics.json';
+import cQuestions from '../../data/quizzes/cBasics.json'; // Import C quiz data
 
 // Map of question types to their respective components
 const componentMap = {
@@ -36,9 +38,16 @@ interface QuizPopupProps {
   onClose: () => void;
   onComplete: (score: number) => void;
   moduleTitle: string;
+  language?: 'python' | 'java' | 'c'; // Add 'c' as a valid language
 }
 
-const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, moduleTitle }) => {
+const QuizPopup: React.FC<QuizPopupProps> = ({
+  isOpen,
+  onClose,
+  onComplete,
+  moduleTitle,
+  language = 'python', // Default to Python
+}) => {
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -46,21 +55,41 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   const [answers, setAnswers] = useState<Record<number, any>>({});
   const { width, height } = useWindowSize();
 
-  // Find the relevant questions for the current module
-  const findQuestionsForModule = (): any[] => {
-    for (const phase of questionsData) {
+  // Function to load questions based on language
+  const loadQuestions = () => {
+    const quizData = {
+      python: pythonQuestions,
+      java: javaQuestions,
+      c: cQuestions, // Add C language quiz data
+    };
+
+    // Use the selected language or default to Python
+    const selectedQuizData = quizData[language] || pythonQuestions;
+    console.log('Selected Quiz Data:', selectedQuizData);
+
+    if (!selectedQuizData) {
+      console.error(`No quiz data found for language: ${language}`);
+      return [];
+    }
+
+    // Find the relevant questions for the current module
+    for (const phase of selectedQuizData) {
       for (const topic of phase.topics) {
         for (const subtopic of topic.subtopics) {
+          console.log('Checking Subtopic:', subtopic.subtopic);
           if (subtopic.subtopic === moduleTitle && subtopic.questionsData) {
+            console.log('Found Questions:', subtopic.questionsData);
             return subtopic.questionsData;
           }
         }
       }
     }
+
+    console.warn(`No questions found for moduleTitle: ${moduleTitle} in language: ${language}`);
     return [];
   };
 
-  const questions = findQuestionsForModule();
+  const questions = loadQuestions();
 
   useEffect(() => {
     if (!isOpen) {
@@ -94,12 +123,10 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
         if (answers[index] === q.answer) correctAnswers++;
       }
     });
-
     const finalScore = Math.round((correctAnswers / questions.length) * 100);
     setScore(finalScore);
     setShowResults(true);
     setShowConfetti(true);
-
     setTimeout(() => setShowConfetti(false), 3000);
     onComplete(finalScore);
   };
@@ -153,7 +180,6 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
           >
             <X className="w-6 h-6" />
           </button>
-
           {!showResults ? (
             <>
               <div className="mb-6">
