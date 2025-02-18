@@ -2,6 +2,7 @@ import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import BackButton from './BackButton';
+import styled from 'styled-components';
 
 const About = () => {
   const socialLinks = [
@@ -17,35 +18,35 @@ const About = () => {
       )
     },
     { 
-      name: 'Twitter',
-      url: 'https://twitter.com/@UnaiTech',
+      name: 'Facebook',
+      url: 'https://facebook.com/unai.tech',
       color: 'text-blue-400',
       bgColor: 'bg-blue-400',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current">
-          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height={24} className="w-8 h-8 fill-current">
+          <path d="M9.19795 21.5H13.198V13.4901H16.8021L17.198 9.50977H13.198V7.5C13.198 6.94772 13.6457 6.5 14.198 6.5H17.198V2.5H14.198C11.4365 2.5 9.19795 4.73858 9.19795 7.5V9.50977H7.19795L6.80206 13.4901H9.19795V21.5Z" />
         </svg>
       )
     },
     { 
-      name: 'GitHub',
-      url: 'https://github.com/unai-tech',
-      color: 'text-gray-900',
-      bgColor: 'bg-gray-900',
+      name: 'WhatsApp',
+      url: 'https://wa.me/your-number',
+      color: 'text-green-500',
+      bgColor: 'bg-green-500',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current">
-          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+        <svg width={30} height={30} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 fill-current">
+          <path d="M19.001 4.908A9.817 9.817 0 0 0 11.992 2C6.534 2 2.085 6.448 2.08 11.908c0 1.748.458 3.45 1.321 4.956L2 22l5.255-1.377a9.916 9.916 0 0 0 4.737 1.206h.005c5.46 0 9.908-4.448 9.913-9.913A9.872 9.872 0 0 0 19 4.908h.001ZM11.992 20.15A8.216 8.216 0 0 1 7.797 19l-.3-.18-3.117.818.833-3.041-.196-.314a8.2 8.2 0 0 1-1.258-4.381c0-4.533 3.696-8.23 8.239-8.23a8.2 8.2 0 0 1 5.825 2.413 8.196 8.196 0 0 1 2.41 5.825c-.006 4.55-3.702 8.24-8.24 8.24Zm4.52-6.167c-.247-.124-1.463-.723-1.692-.808-.228-.08-.394-.123-.556.124-.166.246-.641.808-.784.969-.143.166-.29.185-.537.062-.247-.125-1.045-.385-1.99-1.23-.738-.657-1.232-1.47-1.38-1.716-.142-.247-.013-.38.11-.504.11-.11.247-.29.37-.432.126-.143.167-.248.248-.413.082-.167.043-.31-.018-.433-.063-.124-.557-1.345-.765-1.838-.2-.486-.404-.419-.557-.425-.142-.009-.309-.009-.475-.009a.911.911 0 0 0-.661.31c-.228.247-.864.845-.864 2.067 0 1.22.888 2.395 1.013 2.56.122.167 1.742 2.666 4.229 3.74.587.257 1.05.408 1.41.523.595.19 1.13.162 1.558.1.475-.072 1.464-.6 1.673-1.178.205-.58.205-1.075.142-1.18-.061-.104-.227-.165-.475-.29Z" />
         </svg>
       )
     },
     { 
-      name: 'Discord',
-      url: 'https://discord.gg/unai-tech',
-      color: 'text-indigo-500',
-      bgColor: 'bg-indigo-500',
+      name: 'Gmail',
+      url: 'mailto:your-email@gmail.com',
+      color: 'text-red-500',
+      bgColor: 'bg-red-500',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current">
-          <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3847-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height={24} className="w-8 h-8 fill-current">
+          <path d="M6 12C6 15.3137 8.68629 18 12 18C14.6124 18 16.8349 16.3304 17.6586 14H12V10H21.8047V14H21.8C20.8734 18.5645 16.8379 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C15.445 2 18.4831 3.742 20.2815 6.39318L17.0039 8.68815C15.9296 7.06812 14.0895 6 12 6C8.68629 6 6 8.68629 6 12Z" />
         </svg>
       )
     }
@@ -76,50 +77,163 @@ const About = () => {
           </motion.p>
         </div>
 
-        <div className="relative max-w-[600px] aspect-square mx-auto">
-          {/* Circle Background */}
-          <div className="absolute inset-0 rounded-full border-4 border-white/10" />
-          
-          {/* Dividing Lines */}
-          <div className="absolute inset-0">
-            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/10 transform -translate-y-1/2" />
-            <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-white/10 transform -translate-x-1/2" />
-          </div>
-
-          {/* Social Links */}
-          {socialLinks.map((link, index) => {
-            const positions = [
-              'top-0 left-0',
-              'top-0 right-0',
-              'bottom-0 left-0',
-              'bottom-0 right-0'
-            ];
-
-            return (
+        <StyledWrapper>
+          <div className="main mx-auto">
+            <div className="up">
               <motion.a
-                key={link.name}
-                href={link.url}
+                href={socialLinks[0].url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`absolute ${positions[index]} w-[calc(50%-2px)] h-[calc(50%-2px)] group`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                className="card1"
               >
-                <div className={`w-full h-full ${index === 0 ? 'rounded-tl-full' : index === 1 ? 'rounded-tr-full' : index === 2 ? 'rounded-bl-full' : 'rounded-br-full'} bg-white/10 backdrop-blur-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white/20`}>
-                  <div className={`${link.color} transition-transform duration-300 group-hover:scale-110 ${index === 0 ? 'translate-x-4 translate-y-4' : index === 1 ? '-translate-x-4 translate-y-4' : index === 2 ? 'translate-x-4 -translate-y-4' : '-translate-x-4 -translate-y-4'}`}>
-                    {link.icon}
-                  </div>
-                </div>
+                {socialLinks[0].icon}
               </motion.a>
-            );
-          })}
-        </div>
+              <motion.a
+                href={socialLinks[1].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="card2"
+              >
+                {socialLinks[1].icon}
+              </motion.a>
+            </div>
+            <div className="down">
+              <motion.a
+                href={socialLinks[2].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="card3"
+              >
+                {socialLinks[2].icon}
+              </motion.a>
+              <motion.a
+                href={socialLinks[3].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="card4"
+              >
+                {socialLinks[3].icon}
+              </motion.a>
+            </div>
+          </div>
+        </StyledWrapper>
       </div>
     </div>
   );
 };
+
+const StyledWrapper = styled.div`
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    max-width: 400px;
+  }
+
+  .up {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+  }
+
+  .down {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+  }
+
+  .card1, .card2, .card3, .card4 {
+    width: 90px;
+    height: 90px;
+    outline: none;
+    border: none;
+    background: white;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    transition: .2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card1 {
+    border-radius: 90px 5px 5px 5px;
+  }
+
+  .card2 {
+    border-radius: 5px 90px 5px 5px;
+  }
+
+  .card3 {
+    border-radius: 5px 5px 5px 90px;
+  }
+
+  .card4 {
+    border-radius: 5px 5px 90px 5px;
+  }
+
+  .instagram {
+    fill: #cc39a4;
+  }
+
+  .facebook {
+    fill: #03A9F4;
+  }
+
+  .whatsapp {
+    fill: #00ff00;
+  }
+
+  .gmail {
+    fill: #f14336;
+  }
+
+  .card1:hover {
+    cursor: pointer;
+    scale: 1.1;
+    background-color: #cc39a4;
+  }
+
+  .card1:hover .instagram {
+    fill: white;
+  }
+
+  .card2:hover {
+    cursor: pointer;
+    scale: 1.1;
+    background-color: #1877f2;
+  }
+
+  .card2:hover .facebook {
+    fill: white;
+  }
+
+  .card3:hover {
+    cursor: pointer;
+    scale: 1.1;
+    background-color: #00ff00;
+  }
+
+  .card3:hover .whatsapp {
+    fill: white;
+  }
+
+  .card4:hover {
+    cursor: pointer;
+    scale: 1.1;
+    background-color: #FF0004;
+  }
+
+  .card4:hover .gmail {
+    fill: white;
+  }
+`;
 
 export default About;
