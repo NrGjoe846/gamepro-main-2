@@ -21,11 +21,11 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#0B0B15] text-white overflow-x-hidden">
       <Navigation />
       
-      {/* Hero Section with Space Theme */}
+      {/* Hero Section with Enhanced Space Theme */}
       <div className="relative min-h-[90vh] pt-20">
-        {/* Animated Space Background */}
+        {/* Animated Space Background with Enhanced Effects */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Stars */}
+          {/* Stars with Enhanced Twinkling */}
           <div className="absolute inset-0">
             {[...Array(200)].map((_, i) => (
               <div
@@ -35,15 +35,39 @@ const Dashboard = () => {
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 5}s`,
-                  opacity: Math.random()
+                  opacity: Math.random(),
+                  transform: `scale(${Math.random() * 0.5 + 0.5})`
                 }}
               />
             ))}
           </div>
 
-          {/* Planets */}
-          <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 blur-lg animate-float" />
-          <div className="absolute bottom-40 left-[15%] w-24 h-24 rounded-full bg-gradient-to-br from-red-500/30 to-orange-500/30 blur-lg animate-float-delayed" />
+          {/* Animated Rockets */}
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-rocket"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `-50px`,
+                animationDelay: `${i * 2}s`,
+                animationDuration: `${Math.random() * 5 + 10}s`
+              }}
+            >
+              <div className="relative">
+                <span className="text-2xl">🚀</span>
+                <div className="absolute -left-4 top-1/2 w-8 h-2 bg-gradient-to-l from-blue-500/50 to-transparent rounded-full blur-sm animate-pulse" />
+              </div>
+            </div>
+          ))}
+
+          {/* Floating Planets with Enhanced Glow */}
+          <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 blur-lg animate-float-slow">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+          </div>
+          <div className="absolute bottom-40 left-[15%] w-24 h-24 rounded-full bg-gradient-to-br from-red-500/30 to-orange-500/30 blur-lg animate-float">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full animate-pulse" />
+          </div>
         </div>
 
         {/* Main Content */}
@@ -119,27 +143,39 @@ const Dashboard = () => {
       {/* Floating Compiler Button */}
       <FloatingCompiler />
 
-      {/* Add space-themed animations */}
+      {/* Add enhanced space-themed animations */}
       <style>
         {`
           @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.8); }
           }
 
           @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-          }
-
-          @keyframes float-delayed {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
           }
 
           @keyframes float-slow {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-30px) rotate(5deg); }
+          }
+
+          @keyframes rocket {
+            0% { 
+              transform: translateX(-100px) translateY(0) rotate(0deg);
+              opacity: 0;
+            }
+            10% {
+              opacity: 1;
+            }
+            90% {
+              opacity: 1;
+            }
+            100% { 
+              transform: translateX(calc(100vw + 100px)) translateY(-100px) rotate(15deg);
+              opacity: 0;
+            }
           }
 
           @keyframes gradient {
@@ -156,12 +192,12 @@ const Dashboard = () => {
             animation: float 6s ease-in-out infinite;
           }
 
-          .animate-float-delayed {
-            animation: float-delayed 8s ease-in-out infinite;
-          }
-
           .animate-float-slow {
             animation: float-slow 10s ease-in-out infinite;
+          }
+
+          .animate-rocket {
+            animation: rocket 15s linear infinite;
           }
 
           .animate-gradient {
