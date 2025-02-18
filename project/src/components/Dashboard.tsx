@@ -23,57 +23,46 @@ const Dashboard = () => {
       
       {/* Hero Section with Enhanced Space Theme */}
       <div className="relative min-h-[90vh] pt-20">
-        {/* Animated Space Background with Enhanced Effects */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Stars with Enhanced Twinkling */}
-          <div className="absolute inset-0">
-            {[...Array(200)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 5}s`,
-                  opacity: Math.random(),
-                  transform: `scale(${Math.random() * 0.5 + 0.5})`
-                }}
-              />
-            ))}
-          </div>
+        {/* Cosmic Background */}
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+             style={{
+               backgroundImage: 'url("https://i.pinimg.com/474x/ea/77/22/ea7722b706b0f3e840fd1825495efb97.jpg")',
+               backgroundBlendMode: 'overlay'
+             }}>
+          {/* Overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B15]/80 via-[#0B0B15]/50 to-[#0B0B15]"></div>
+        </div>
 
-          {/* Animated Rockets */}
-          {[...Array(5)].map((_, i) => (
+        {/* Animated Space Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Stars */}
+          {[...Array(200)].map((_, i) => (
             <div
               key={i}
-              className="absolute animate-rocket"
+              className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
               style={{
                 top: `${Math.random() * 100}%`,
-                left: `-50px`,
-                animationDelay: `${i * 2}s`,
-                animationDuration: `${Math.random() * 5 + 10}s`
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                opacity: Math.random(),
+                transform: `scale(${Math.random() * 0.5 + 0.5})`
               }}
-            >
-              <div className="relative">
-                <span className="text-2xl">🚀</span>
-                <div className="absolute -left-4 top-1/2 w-8 h-2 bg-gradient-to-l from-blue-500/50 to-transparent rounded-full blur-sm animate-pulse" />
-              </div>
-            </div>
+            />
           ))}
 
-          {/* Floating Planets with Enhanced Glow */}
-          <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 blur-lg animate-float-slow">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full animate-pulse" />
+          {/* Floating Planets */}
+          <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-lg animate-float-slow">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full animate-pulse" />
           </div>
-          <div className="absolute bottom-40 left-[15%] w-24 h-24 rounded-full bg-gradient-to-br from-red-500/30 to-orange-500/30 blur-lg animate-float">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full animate-pulse" />
+          <div className="absolute bottom-40 left-[15%] w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 blur-lg animate-float">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full animate-pulse" />
           </div>
         </div>
 
         {/* Main Content */}
         <div className="container mx-auto px-4 z-10 relative">
           <div className="text-center mb-12">
-            <h1 className="text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-gradient">
+            <h1 className="text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 animate-gradient">
               UNAI Verse
             </h1>
             <p className="text-2xl text-gray-300 mb-8 animate-fade-in">
@@ -89,7 +78,7 @@ const Dashboard = () => {
           {/* Recent Achievements */}
           <div className="mb-12 animate-slide-up-delayed">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-yellow-400" />
+              <Trophy className="w-6 h-6 text-purple-400" />
               Recent Achievements
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -143,7 +132,7 @@ const Dashboard = () => {
       {/* Floating Compiler Button */}
       <FloatingCompiler />
 
-      {/* Add enhanced space-themed animations */}
+      {/* Enhanced space-themed animations */}
       <style>
         {`
           @keyframes twinkle {
@@ -159,23 +148,6 @@ const Dashboard = () => {
           @keyframes float-slow {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-30px) rotate(5deg); }
-          }
-
-          @keyframes rocket {
-            0% { 
-              transform: translateX(-100px) translateY(0) rotate(0deg);
-              opacity: 0;
-            }
-            10% {
-              opacity: 1;
-            }
-            90% {
-              opacity: 1;
-            }
-            100% { 
-              transform: translateX(calc(100vw + 100px)) translateY(-100px) rotate(15deg);
-              opacity: 0;
-            }
           }
 
           @keyframes gradient {
@@ -194,10 +166,6 @@ const Dashboard = () => {
 
           .animate-float-slow {
             animation: float-slow 10s ease-in-out infinite;
-          }
-
-          .animate-rocket {
-            animation: rocket 15s linear infinite;
           }
 
           .animate-gradient {
