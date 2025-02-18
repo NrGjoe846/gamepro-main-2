@@ -1,1 +1,17 @@
-
+[
+  {
+    "phase": "Phase 1: Java Basics and Core Concepts",
+    "topics": [
+      {
+        "topic": "1. Introduction to Java Programming",
+        "subtopics": [
+          {
+            "subtopic": "Writing your first Java program: Hello, World!",
+            "questionsData": []
+          },
+        ]
+      }
+    ]
+  }
+]
+          
