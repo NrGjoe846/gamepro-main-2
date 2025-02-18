@@ -44,15 +44,6 @@ const Dashboard = () => {
           {/* Planets */}
           <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 blur-lg animate-float" />
           <div className="absolute bottom-40 left-[15%] w-24 h-24 rounded-full bg-gradient-to-br from-red-500/30 to-orange-500/30 blur-lg animate-float-delayed" />
-          
-          {/* Floating Astronaut */}
-          <div className="absolute top-[20%] right-[15%] w-64 h-64 animate-float-slow">
-            <img
-              src="https://cdn3d.iconscout.com/3d/premium/thumb/astronaut-3026542-2526909.png"
-              alt="Floating Astronaut"
-              className="w-full h-full object-contain"
-            />
-          </div>
         </div>
 
         {/* Main Content */}
