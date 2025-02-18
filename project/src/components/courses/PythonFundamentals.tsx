@@ -182,71 +182,72 @@ const PythonFundamentals = () => {
     }
   };
 
-  const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
-    console.log("Starting quiz for Topic:", topicTitle, "Subtopic:", subtopicTitle);
-    setCurrentQuizTopic(topicTitle);
-    setCurrentQuizSubtopic(subtopicTitle);
-    setShowQuiz(true);
-  };
+ const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
+  console.log('Starting quiz for:', { topicTitle, subtopicTitle });
+  setCurrentQuizTopic(topicTitle);
+  setCurrentQuizSubtopic(subtopicTitle);
+  setShowQuiz(true);
+};
 
-  const handleQuizComplete = (score: number) => {
-    setShowQuiz(false);
-    setShowConfetti(true);
+const handleQuizComplete = (score: number) => {
+  console.log('Quiz completed with score:', score);
+  setShowQuiz(false);
+  setShowConfetti(true);
 
-    if (selectedTopic) {
-      const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
-      const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
-      
-      if (topic && topic.subtopics) {
-        const subtopic = topic.subtopics.find(s => s.title === currentQuizSubtopic);
-        if (subtopic) {
-          const newCompletedSubtopics = {
-            ...userProgress.completedSubtopics,
-            [selectedTopic.topicId]: [
-              ...(userProgress.completedSubtopics[selectedTopic.topicId] || []),
-              subtopic.id
-            ]
-          };
+  if (selectedTopic) {
+    const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
+    const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
 
-          const baseXP = 50; // Base XP for completing a subtopic
-          const bonusXP = Math.floor(score * baseXP / 100);
-          const totalXP = baseXP + bonusXP;
+    if (topic && topic.subtopics) {
+      const subtopic = topic.subtopics.find(s => s.title === currentQuizSubtopic);
+      if (subtopic) {
+        const newCompletedSubtopics = {
+          ...userProgress.completedSubtopics,
+          [selectedTopic.topicId]: [
+            ...(userProgress.completedSubtopics[selectedTopic.topicId] || []),
+            subtopic.id
+          ]
+        };
 
-          const today = new Date().toDateString();
-          const streakBonus = userProgress.lastCompletedDate === new Date(Date.now() - 86400000).toDateString()
-            ? userProgress.streak + 1
-            : 1;
+        const baseXP = 50;
+        const bonusXP = Math.floor(score * baseXP / 100);
+        const totalXP = baseXP + bonusXP;
 
-          const newXP = userProgress.xp + totalXP;
-          const newLevel = Math.floor(newXP / 1000) + 1;
+        const today = new Date().toDateString();
+        const streakBonus = userProgress.lastCompletedDate === new Date(Date.now() - 86400000).toDateString()
+          ? userProgress.streak + 1
+          : 1;
 
+        const newXP = userProgress.xp + totalXP;
+        const newLevel = Math.floor(newXP / 1000) + 1;
+
+        setUserProgress(prev => ({
+          ...prev,
+          completedSubtopics: newCompletedSubtopics,
+          xp: newXP,
+          level: newLevel,
+          streak: streakBonus,
+          lastCompletedDate: today
+        }));
+
+        const allSubtopicsCompleted = topic.subtopics.every(s =>
+          newCompletedSubtopics[selectedTopic.topicId]?.includes(s.id)
+        );
+
+        if (allSubtopicsCompleted) {
           setUserProgress(prev => ({
             ...prev,
-            completedSubtopics: newCompletedSubtopics,
-            xp: newXP,
-            level: newLevel,
-            streak: streakBonus,
-            lastCompletedDate: today
+            completedTopics: [...prev.completedTopics, topic.id]
           }));
-
-          const allSubtopicsCompleted = topic.subtopics.every(s => 
-            newCompletedSubtopics[selectedTopic.topicId]?.includes(s.id)
-          );
-
-          if (allSubtopicsCompleted) {
-            setUserProgress(prev => ({
-              ...prev,
-              completedTopics: [...prev.completedTopics, topic.id]
-            }));
-          }
         }
       }
     }
+  }
 
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 5000);
-  };
+  setTimeout(() => {
+    setShowConfetti(false);
+  }, 5000);
+};
 
   const selectedPhaseAndTopic = selectedTopic ? {
     phase: coursePhases.find(p => p.id === selectedTopic.phaseId),
@@ -536,13 +537,13 @@ const PythonFundamentals = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <QuizPopup
-          isOpen={showQuiz}
-          onClose={() => setShowQuiz(false)}
-          onComplete={handleQuizComplete}
-          moduleTitle={currentQuizSubtopic}
-        />
+<QuizPopup
+  isOpen={showQuiz}
+  onClose={() => setShowQuiz(false)}
+  onComplete={handleQuizComplete}
+  moduleTitle={currentQuizSubtopic}
+  language="python" // Explicitly set the language to 'python'
+/>
       </div>
     </div>
   );
