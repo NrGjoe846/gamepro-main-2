@@ -15,7 +15,11 @@ import TranslateCodeQuestion from './TranslateCodeQuestion';
 import MultipleSelectionQuestion from './MultipleSelectionQuestion';
 import CodeCorrectionQuestion from './CodeCorrectionQuestion';
 import FillInTheBlank from './FillInTheBlank';
-import questionsData from '../../data/quizzes/pythonBasics.json';
+
+// Import JSON files for all courses
+import pythonQuestionsData from '../../data/quizzes/pythonBasics.json';
+import javaQuestionsData from '../../data/quizzes/javaBasics.json';
+import cQuestionsData from '../../data/quizzes/cBasics.json';
 
 // Map of question types to their respective components
 const componentMap = {
@@ -35,10 +39,10 @@ interface QuizPopupProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: (score: number) => void;
-  moduleTitle: string;
+  language: 'python' | 'java' | 'c'; // Course name
 }
 
-const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, moduleTitle }) => {
+const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, language }) => {
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -46,21 +50,39 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
   const [answers, setAnswers] = useState<Record<number, any>>({});
   const { width, height } = useWindowSize();
 
-  // Find the relevant questions for the current module
-  const findQuestionsForModule = (): any[] => {
-    for (const phase of questionsData) {
-      for (const topic of phase.topics) {
-        for (const subtopic of topic.subtopics) {
-          if (subtopic.subtopic === moduleTitle && subtopic.questionsData) {
-            return subtopic.questionsData;
+  // Dynamically select the JSON file based on the course prop
+  const getQuestionsData = () => {
+    switch (language) {
+      case 'python':
+        return pythonQuestionsData;
+      case 'java':
+        return javaQuestionsData;
+      case 'c':
+        return cQuestionsData;
+      default:
+        return [];
+    }
+  };
+
+  // Find all questions across all phases, topics, and subtopics
+  const findAllQuestions = (): any[] => {
+    const questionsData = getQuestionsData();
+    const allQuestions: any[] = [];
+
+    for (const phaseData of questionsData) {
+      for (const topicData of phaseData.topics) {
+        for (const subtopicData of topicData.subtopics) {
+          if (subtopicData.questionsData) {
+            allQuestions.push(...subtopicData.questionsData);
           }
         }
       }
     }
-    return [];
+
+    return allQuestions;
   };
 
-  const questions = findQuestionsForModule();
+  const questions = findAllQuestions();
 
   useEffect(() => {
     if (!isOpen) {
@@ -94,12 +116,10 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
         if (answers[index] === q.answer) correctAnswers++;
       }
     });
-
     const finalScore = Math.round((correctAnswers / questions.length) * 100);
     setScore(finalScore);
     setShowResults(true);
     setShowConfetti(true);
-
     setTimeout(() => setShowConfetti(false), 3000);
     onComplete(finalScore);
   };
@@ -121,7 +141,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
       >
         <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4">
           <div className="text-center">
-            <p className="text-xl mb-4">No questions available for this module yet.</p>
+            <p className="text-xl mb-4">No questions available for this course yet.</p>
             <button
               onClick={onClose}
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
@@ -153,11 +173,10 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, modu
           >
             <X className="w-6 h-6" />
           </button>
-
           {!showResults ? (
             <>
               <div className="mb-6">
-                <h2 className="text-xl font-bold">{moduleTitle}</h2>
+                <h2 className="text-xl font-bold">{language.toUpperCase()} Quiz</h2>
                 <p className="text-sm text-gray-400">
                   Question {currentQuestionIndex + 1} of {questions.length}
                 </p>
