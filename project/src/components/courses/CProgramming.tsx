@@ -540,9 +540,8 @@ const CProgramming = () => {
 <QuizPopup
   isOpen={showQuiz}
   onClose={() => setShowQuiz(false)}
-  onComplete={handleQuizComplete}
-  moduleTitle={currentQuizSubtopic}
-  language="c" // Explicitly set the language to 'c'
+  onComplete={(score) => console.log(`Quiz completed with score: ${score}`)}
+  language="c" // Covers all phases, topics, and subtopics for C
 />
       </div>
     </div>
