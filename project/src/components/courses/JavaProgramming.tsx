@@ -540,9 +540,8 @@ const handleQuizComplete = (score: number) => {
 <QuizPopup
   isOpen={showQuiz}
   onClose={() => setShowQuiz(false)}
-  onComplete={handleQuizComplete}
-  moduleTitle={currentQuizSubtopic}
-  language="java" // Explicitly set the language to 'java'
+  onComplete={(score) => console.log(`Quiz completed with score: ${score}`)}
+  language="java" // Covers all phases, topics, and subtopics for Java
 />
       </div>
     </div>
