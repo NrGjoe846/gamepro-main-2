@@ -23,18 +23,24 @@ const Dashboard = () => {
       
       {/* Hero Section with Enhanced Space Theme */}
       <div className="relative min-h-[90vh] pt-20">
-        {/* Cosmic Background */}
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-             style={{
-               backgroundImage: 'url("https://i.pinimg.com/474x/ea/77/22/ea7722b706b0f3e840fd1825495efb97.jpg")',
-               backgroundBlendMode: 'overlay'
-             }}>
+        {/* Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            {/* Add your video link here */}
+            <source src="https://v1.pinimg.com/videos/mc/720p/b1/ad/40/b1ad40468f438149cb44ac205b2ff3ec.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B15]/80 via-[#0B0B15]/50 to-[#0B0B15]"></div>
         </div>
-
         {/* Animated Space Elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden z-10">
           {/* Stars */}
           {[...Array(200)].map((_, i) => (
             <div
@@ -49,7 +55,6 @@ const Dashboard = () => {
               }}
             />
           ))}
-
           {/* Floating Planets */}
           <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-lg animate-float-slow">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full animate-pulse" />
@@ -58,7 +63,6 @@ const Dashboard = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full animate-pulse" />
           </div>
         </div>
-
         {/* Main Content */}
         <div className="container mx-auto px-4 z-10 relative">
           <div className="text-center mb-12">
@@ -69,12 +73,10 @@ const Dashboard = () => {
               Your Journey Through The Code Galaxy Begins Here
             </p>
           </div>
-
           {/* Daily Challenge Section */}
           <div className="mb-12 animate-slide-up">
             <DailyChallenge />
           </div>
-
           {/* Recent Achievements */}
           <div className="mb-12 animate-slide-up-delayed">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -87,12 +89,10 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-
           {/* Programming Courses Section */}
           <div className="mb-12 animate-slide-up-delayed-2">
             <ProgrammingCourses />
           </div>
-
           {/* Learning Paths Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 animate-slide-up-delayed-3">
             <Link to="/miniproject">
@@ -120,7 +120,6 @@ const Dashboard = () => {
               />
             </Link>
           </div>
-
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 animate-slide-up-delayed-4">
             <ProgressCard />
@@ -128,10 +127,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
       {/* Floating Compiler Button */}
       <FloatingCompiler />
-
       {/* Enhanced space-themed animations */}
       <style>
         {`
@@ -139,69 +136,54 @@ const Dashboard = () => {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.2; transform: scale(0.8); }
           }
-
           @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(3deg); }
           }
-
           @keyframes float-slow {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-30px) rotate(5deg); }
           }
-
           @keyframes gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
           }
-
           .animate-twinkle {
             animation: twinkle 3s ease-in-out infinite;
           }
-
           .animate-float {
             animation: float 6s ease-in-out infinite;
           }
-
           .animate-float-slow {
             animation: float-slow 10s ease-in-out infinite;
           }
-
           .animate-gradient {
             background-size: 200% 200%;
             animation: gradient 8s linear infinite;
           }
-
           .animate-fade-in {
             animation: fadeIn 1s ease-out;
           }
-
           .animate-slide-up {
             animation: slideUp 0.8s ease-out;
           }
-
           .animate-slide-up-delayed {
             animation: slideUp 0.8s ease-out 0.2s backwards;
           }
-
           .animate-slide-up-delayed-2 {
             animation: slideUp 0.8s ease-out 0.4s backwards;
           }
-
           .animate-slide-up-delayed-3 {
             animation: slideUp 0.8s ease-out 0.6s backwards;
           }
-
           .animate-slide-up-delayed-4 {
             animation: slideUp 0.8s ease-out 0.8s backwards;
           }
-
           @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
           }
-
           @keyframes slideUp {
             from { 
               opacity: 0;
