@@ -44,15 +44,15 @@ const JavaFlashCards: React.FC<JavaFlashCardsProps> = ({ onComplete }) => {
 
   return (
     <div className="max-w-2xl mx-auto p-8">
+      {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold">Java Fundamentals</h Continuing with the JavaFlashCards.tsx file content from where we left off:
-
         <h2 className="text-2xl font-bold">Java Fundamentals</h2>
         <div className="text-sm text-gray-400">
           {currentIndex + 1} / {javaFlashCards.length}
         </div>
       </div>
 
+      {/* Flashcard */}
       <div className="relative perspective-1000 h-96 mb-8">
         <motion.div
           className="absolute inset-0 preserve-3d cursor-pointer"
@@ -60,6 +60,7 @@ const JavaFlashCards: React.FC<JavaFlashCardsProps> = ({ onComplete }) => {
           transition={{ duration: 0.6 }}
           onClick={() => setIsFlipped(!isFlipped)}
         >
+          {/* Front Side */}
           <div className={`absolute inset-0 backface-hidden ${isFlipped ? 'opacity-0' : 'opacity-100'}`}>
             <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
               <div className="flex flex-col items-center justify-center h-full text-center">
@@ -70,6 +71,7 @@ const JavaFlashCards: React.FC<JavaFlashCardsProps> = ({ onComplete }) => {
             </div>
           </div>
 
+          {/* Back Side */}
           <div className={`absolute inset-0 backface-hidden rotate-y-180 ${isFlipped ? 'opacity-100' : 'opacity-0'}`}>
             <div className="h-full backdrop-blur-xl bg-white/10 rounded-2xl p-8 border border-white/20">
               <div className="flex flex-col justify-center h-full text-center">
@@ -83,6 +85,7 @@ const JavaFlashCards: React.FC<JavaFlashCardsProps> = ({ onComplete }) => {
         </motion.div>
       </div>
 
+      {/* Navigation Button */}
       <div className="flex justify-center">
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -95,7 +98,6 @@ const JavaFlashCards: React.FC<JavaFlashCardsProps> = ({ onComplete }) => {
         </motion.button>
       </div>
     </div>
-  )
   );
 };
 
