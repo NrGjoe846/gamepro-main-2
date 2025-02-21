@@ -17,13 +17,13 @@ interface GlowingButtonProps {
 const GlowingButton: React.FC<GlowingButtonProps> = ({
   onClick,
   children,
-  className = '',
   disabled = false,
   variant = 'primary',
   size = 'md',
   fullWidth = false,
   loading = false,
   icon,
+  className: customClassName = '',
 }) => {
   const baseStyles = "relative group rounded-lg transition-all duration-300 flex items-center justify-center gap-2 font-medium";
   
@@ -39,20 +39,20 @@ const GlowingButton: React.FC<GlowingButtonProps> = ({
     lg: "px-8 py-3 text-lg"
   };
 
-  const className = twMerge(
+  const buttonClassName = twMerge(
     baseStyles,
     variants[variant],
     sizes[size],
     fullWidth ? "w-full" : "",
     disabled ? "opacity-50 cursor-not-allowed" : "",
-    className
+    customClassName
   );
 
   return (
     <motion.button
       onClick={onClick}
       disabled={disabled || loading}
-      className={className}
+      className={buttonClassName}
       whileHover={{ scale: disabled ? 1 : 1.02 }}
       whileTap={{ scale: disabled ? 1 : 0.98 }}
     >
