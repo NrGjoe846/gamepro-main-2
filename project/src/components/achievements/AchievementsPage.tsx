@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Star, Medal, Crown, Lock, Sparkles, Award, Zap } from 'lucide-react';
+import { useAchievementStore, Achievement } from '../../store/achievementStore';
 import BackButton from '../BackButton';
-import AchievementCard from './AchievementCard';
-import { Achievement, AchievementCategory } from './types';
+import AchievementBadge from './AchievementBadge';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
 
-const achievementCategories: AchievementCategory[] = [
+const achievementCategories = [
   {
     id: 'beginner',
     name: 'Beginner',
@@ -43,230 +45,40 @@ const achievementCategories: AchievementCategory[] = [
   }
 ];
 
-const achievements: Achievement[] = [
-  // Beginner Level Achievements
-  {
-    id: 'first-steps',
-    title: 'First Steps',
-    description: 'Complete your first lesson',
-    category: 'beginner',
-    xpReward: 100,
-    icon: '🎯',
-    progress: 0,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'curious-mind',
-    title: 'Curious Mind',
-    description: 'Answer your first question',
-    category: 'beginner',
-    xpReward: 50,
-    icon: '🤔',
-    progress: 0,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'daily-streak-starter',
-    title: 'Daily Streak Starter',
-    description: 'Complete lessons for 3 days in a row',
-    category: 'beginner',
-    xpReward: 150,
-    icon: '🔥',
-    progress: 0,
-    maxProgress: 3,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'problem-solver',
-    title: 'Problem Solver',
-    description: 'Solve your first coding challenge',
-    category: 'beginner',
-    xpReward: 100,
-    icon: '💡',
-    progress: 0,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'beginner-coder',
-    title: 'Beginner Coder',
-    description: 'Submit 5 correct answers in the coding section',
-    category: 'beginner',
-    xpReward: 200,
-    icon: '👨‍💻',
-    progress: 0,
-    maxProgress: 5,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'explorer',
-    title: 'Explorer',
-    description: 'Try out 3 different learning modules',
-    category: 'beginner',
-    xpReward: 150,
-    icon: '🗺️',
-    progress: 0,
-    maxProgress: 3,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'ai-enthusiast',
-    title: 'AI Enthusiast',
-    description: 'Complete all beginner-level lessons',
-    category: 'beginner',
-    xpReward: 300,
-    icon: '🤖',
-    progress: 0,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  
-  // Intermediate Level Achievements
-  {
-    id: 'halfway-there',
-    title: 'Halfway There',
-    description: 'Complete 50% of the course',
-    category: 'intermediate',
-    xpReward: 500,
-    icon: '📊',
-    progress: 0,
-    maxProgress: 100,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'streak-master',
-    title: 'Streak Master',
-    description: 'Maintain a 7-day learning streak',
-    category: 'intermediate',
-    xpReward: 400,
-    icon: '🔥',
-    progress: 0,
-    maxProgress: 7,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'bug-hunter',
-    title: 'Bug Hunter',
-    description: 'Debug and fix an incorrect code submission',
-    category: 'intermediate',
-    xpReward: 300,
-    icon: '🐛',
-    progress: 0,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  
-  // Advanced Level Achievements
-  {
-    id: 'ai-expert',
-    title: 'AI Expert',
-    description: 'Complete all lessons in the advanced section',
-    category: 'advanced',
-    xpReward: 1000,
-    icon: '🧠',
-    progress: 0,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'challenge-conqueror',
-    title: 'Challenge Conqueror',
-    description: 'Solve 25 advanced coding challenges',
-    category: 'advanced',
-    xpReward: 800,
-    icon: '⚔️',
-    progress: 0,
-    maxProgress: 25,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  
-  // Social & Community Achievements
-  {
-    id: 'friendly-coder',
-    title: 'Friendly Coder',
-    description: 'Add 5 friends in the app',
-    category: 'social',
-    xpReward: 200,
-    icon: '👥',
-    progress: 0,
-    maxProgress: 5,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  {
-    id: 'helping-hand',
-    title: 'Helping Hand',
-    description: 'Answer a question in the discussion forum',
-    category: 'social',
-    xpReward: 100,
-    icon: '🤝',
-    progress: 0,
-    isUnlocked: false,
-    unlockedAt: null
-  },
-  
-  // Special & Hidden Achievements
-  {
-    id: 'night-owl',
-    title: '???',
-    description: 'Complete a secret challenge',
-    category: 'special',
-    xpReward: 500,
-    icon: '🦉',
-    progress: 0,
-    isUnlocked: false,
-    isHidden: true,
-    unlockedAt: null
-  },
-  {
-    id: 'early-bird',
-    title: '???',
-    description: 'Complete another secret challenge',
-    category: 'special',
-    xpReward: 500,
-    icon: '🌅',
-    progress: 0,
-    isUnlocked: false,
-    isHidden: true,
-    unlockedAt: null
-  }
-];
-
 const AchievementsPage = () => {
+  const { achievements, totalXP, level, streak } = useAchievementStore();
   const [selectedCategory, setSelectedCategory] = useState<string>('beginner');
-  const [userAchievements, setUserAchievements] = useState<Achievement[]>(() => {
-    const saved = localStorage.getItem('achievements');
-    return saved ? JSON.parse(saved) : achievements;
-  });
   const [showUnlockAnimation, setShowUnlockAnimation] = useState(false);
   const [recentlyUnlocked, setRecentlyUnlocked] = useState<Achievement | null>(null);
+  const { width, height } = useWindowSize();
 
-  useEffect(() => {
-    localStorage.setItem('achievements', JSON.stringify(userAchievements));
-  }, [userAchievements]);
-
-  const filteredAchievements = userAchievements.filter(
+  const filteredAchievements = achievements.filter(
     achievement => achievement.category === selectedCategory
   );
 
-  const unlockedCount = userAchievements.filter(a => a.isUnlocked).length;
-  const totalAchievements = userAchievements.length;
+  const unlockedCount = achievements.filter(a => a.isUnlocked).length;
+  const totalAchievements = achievements.length;
   const completionPercentage = Math.round((unlockedCount / totalAchievements) * 100);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
   };
 
+  const handleAchievementClick = (achievement: Achievement) => {
+    if (achievement.isUnlocked) {
+      setRecentlyUnlocked(achievement);
+      setShowUnlockAnimation(true);
+      setTimeout(() => {
+        setShowUnlockAnimation(false);
+        setRecentlyUnlocked(null);
+      }, 3000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white p-8">
+      {showUnlockAnimation && <Confetti width={width} height={height} />}
+      
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <BackButton />
@@ -337,7 +149,10 @@ const AchievementsPage = () => {
                 exit={{ opacity: 0, y: -20 }}
                 layout
               >
-                <AchievementCard achievement={achievement} />
+                <AchievementBadge 
+                  achievement={achievement}
+                  onClick={() => handleAchievementClick(achievement)}
+                />
               </motion.div>
             ))}
           </AnimatePresence>
