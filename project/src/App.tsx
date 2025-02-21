@@ -19,6 +19,7 @@ import MiniProjectPage from './components/miniproject/MiniProjectPage';
 import InterviewBot from './components/interview/InterviewBot';
 import AptitudeTest from './components/aptitude/AptitudeTest';
 import About from './components/About';
+import AchievementsPage from './components/achievements/AchievementsPage';
 
 function App() {
   return (
@@ -51,6 +52,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <CompilerPage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Achievements */}
+          <Route 
+            path="/achievements" 
+            element={
+              <ProtectedRoute>
+                <AchievementsPage />
               </ProtectedRoute>
             } 
           />
