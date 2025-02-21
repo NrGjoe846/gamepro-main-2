@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      colors: {
+        border: 'hsl(var(--border))',
+      },
       screens: {
         'xs': '475px',
         'sm': '640px',
