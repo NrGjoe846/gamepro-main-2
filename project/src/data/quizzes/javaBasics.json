@@ -1,0 +1,56 @@
+[
+  {
+    "phase": "Phase 1: Java Basics and Core Concepts",
+    "topics": [
+      {
+        "topic": "1. Introduction to Java Programming",
+        "subtopics": [
+          {
+            "subtopic": "Understanding the Java Virtual Machine (JVM)",
+            "questionsData": [
+              {
+                "type": "fill",
+                "question": "Java is a __________ programming language, meaning it needs to be compiled before execution.",
+                "answer": "compiled",
+                "component": "FillInTheBlank"
+              },
+              {
+                "type": "multiple-choice",
+                "question": "Which of the following is true about Java?",
+                "options": [
+                  "Java code is interpreted directly",
+                  "Java code is compiled to bytecode first",
+                  "Java doesn't need compilation"
+                ],
+                "answer": "Java code is compiled to bytecode first",
+                "component": "MultipleChoiceQuestion"
+              },
+              {
+                "type": "true-false",
+                "question": "Java programs can run directly without compilation.",
+                "answer": "False",
+                "component": "TrueFalseQuestion"
+              },
+              {
+                "type": "unscramble",
+                "question": "Unscramble the words to form a correct statement about Java:",
+                "options": ["bytecode", "compiled", "Java", "is", "code", "to", "then", "executed"],
+                "answer": ["Java", "code", "is", "compiled", "to", "bytecode", "then", "executed"],
+                "component": "DragDropQuestion"
+              },
+              {
+                "type": "match",
+                "question": "Match the terms with their descriptions:",
+                "options": [
+                  { "term": "JVM", "match": "Java Virtual Machine" },
+                  { "term": "JDK", "match": "Java Development Kit" }
+                ],
+                "component": "MatchQuestion"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
