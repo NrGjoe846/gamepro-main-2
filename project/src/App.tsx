@@ -15,6 +15,7 @@ import LevelSelection from './components/challenges/LevelSelection';
 import DailyChallenge from './components/challenges/DailyChallenge';
 import JavaChallenge from './components/challenges/JavaChallenge.tsx';
 import About from './components/About';
+import Store from './components/Store';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/auth" element={<AuthSystem />} />
           <Route path="/about" element={<About />} />
+          <Route path="/store" element={<Store />} />
 
           {/* Protected Routes */}
           <Route 
