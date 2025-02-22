@@ -1,52 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { 
-  Trophy, Star, Code, Book, Timer, Target, Award, GitBranch, Zap, 
-  Activity, Wallet, ChevronRight, Users, Sword, Shield, Crown,
-  Gamepad, Gift, Sparkles, Map
-} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import BackButton from '../BackButton';
 import { useSpring, animated } from 'react-spring';
+import { useWindowSize } from 'react-use';
+import {
+  Trophy, Star, Code, Book, Timer, Target, Award, GitBranch, Zap,
+  Activity, Wallet, ChevronRight, Users, Sword, Shield, Crown,
+  Gamepad, Gift, Sparkles, Map, Brain, Cpu, Globe, Hexagon
+} from 'lucide-react';
+import BackButton from '../BackButton';
 
 const ProfileDashboard = () => {
-  const { user } = useAuth();
   const [showAvatarCustomization, setShowAvatarCustomization] = useState(false);
   const [selectedQuest, setSelectedQuest] = useState(null);
+  const { width, height } = useWindowSize();
 
-  // Game stats
+  // Game stats with animated values
   const gameStats = {
-    rank: 'Gold',
-    title: 'Code Warrior',
+    rank: 'Cosmic Explorer',
+    title: 'Neural Navigator',
     powerLevel: 1250,
     questsCompleted: 47,
     bossesDefeated: 12,
-    specialItems: 8
+    specialItems: 8,
+    energyLevel: 85,
+    neuralCapacity: 92,
+    quantumTokens: 3750
   };
 
-  // Virtual economy
-  const virtualEconomy = {
-    balance: 1250,
-    inventory: [
-      { id: 1, name: 'Premium Course Access', quantity: 2 },
-      { id: 2, name: 'Challenge Tokens', quantity: 5 },
-      { id: 3, name: 'Special Badges', quantity: 3 },
-    ],
-    recentTransactions: [
-      { id: 1, type: 'earned', amount: 100, description: 'Completed Python Challenge' },
-      { id: 2, type: 'spent', amount: 50, description: 'Purchased Course Access' },
-      { id: 3, type: 'earned', amount: 75, description: 'Daily Streak Bonus' },
-    ]
-  };
-
-  // Leaderboard data
-  const leaderboard = [
-    { rank: 1, name: 'Alex M.', points: 15420, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex' },
-    { rank: 2, name: 'Sarah K.', points: 14250, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah' },
-    { rank: 3, name: 'John D.', points: 13890, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John' },
-  ];
-
-  // Animation for power level
+  // Animated stats using react-spring
   const { powerLevel } = useSpring({
     from: { powerLevel: 0 },
     to: { powerLevel: gameStats.powerLevel },
@@ -54,19 +35,59 @@ const ProfileDashboard = () => {
     config: { mass: 1, tension: 20, friction: 10 }
   });
 
-  // Animation for balance
-  const { number } = useSpring({
-    from: { number: 0 },
-    to: { number: virtualEconomy.balance },
-    delay: 200,
+  const { energyLevel } = useSpring({
+    from: { energyLevel: 0 },
+    to: { energyLevel: gameStats.energyLevel },
+    delay: 300,
     config: { mass: 1, tension: 20, friction: 10 }
   });
 
+  // Leaderboard data
+  const leaderboard = [
+    { rank: 1, name: 'NeuroCoder', points: 15420, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex', specialty: 'Quantum Computing' },
+    { rank: 2, name: 'ByteMaster', points: 14250, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah', specialty: 'Neural Networks' },
+    { rank: 3, name: 'CyberPilot', points: 13890, avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John', specialty: 'AI Systems' },
+  ];
+
+  // Achievements and badges
+  const achievements = [
+    { id: 1, name: 'Neural Pioneer', icon: '🧠', rarity: 'Legendary', xp: 5000 },
+    { id: 2, name: 'Quantum Sage', icon: '⚡', rarity: 'Epic', xp: 3000 },
+    { id: 3, name: 'Code Architect', icon: '🏗️', rarity: 'Rare', xp: 2000 },
+  ];
+
+  // Active quests
+  const activeQuests = [
+    { id: 1, title: 'Neural Network Mastery', progress: 75, reward: '500 QT' },
+    { id: 2, title: 'Quantum Algorithm Challenge', progress: 45, reward: '750 QT' },
+    { id: 3, title: 'Cybersecurity Mission', progress: 90, reward: '1000 QT' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#0B0B15] text-white p-8">
-      {/* Circuit Board Background Pattern */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat" />
+    <div className="min-h-screen bg-[#0B0B15] text-white p-8 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+        
+        {/* Animated Stars */}
+        {Array.from({ length: 50 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-blue-400 rounded-full animate-twinkle"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${Math.random() * 3 + 2}s`
+            }}
+          />
+        ))}
+
+        {/* Energy Waves */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 animate-pulse" />
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -77,75 +98,74 @@ const ProfileDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Card */}
           <div className="space-y-8">
-            {/* Profile Card */}
+            {/* Profile Card with Glowing Avatar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-8 border border-white/10"
+              className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-8 border border-white/10 overflow-hidden"
             >
-              {/* Power Level Ring */}
-              <div className="absolute top-4 right-4 flex items-center gap-2">
-                <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full text-sm font-bold">
-                  {gameStats.rank}
-                </div>
+              {/* Animated Background Glow */}
+              <div className="absolute inset-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
+                <div className="absolute inset-0 bg-[url('/circuit.svg')] opacity-5" />
               </div>
 
-              {/* Avatar with Customization */}
+              {/* Avatar with Power Ring */}
               <div className="relative flex flex-col items-center">
                 <div className="relative w-40 h-40">
-                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                  {/* Power Ring Animation */}
+                  <svg className="absolute inset-0 w-full h-full -rotate-90">
                     <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
+                      cx="80"
+                      cy="80"
+                      r="70"
                       fill="none"
-                      stroke="rgba(59, 130, 246, 0.2)"
-                      strokeWidth="5"
-                    />
-                    <motion.circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="url(#gradient)"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: gameStats.powerLevel / 2000 }}
-                      transition={{ duration: 2, ease: "easeOut" }}
+                      stroke="url(#power-gradient)"
+                      strokeWidth="4"
+                      strokeDasharray="439.8"
+                      strokeDashoffset={440 - (440 * gameStats.powerLevel) / 2000}
+                      className="transition-all duration-1000"
                     />
                     <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <linearGradient id="power-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#3B82F6" />
-                        <stop offset="100%" stopColor="#8B5CF6" />
+                        <stop offset="50%" stopColor="#8B5CF6" />
+                        <stop offset="100%" stopColor="#EC4899" />
                       </linearGradient>
                     </defs>
                   </svg>
 
+                  {/* Avatar Image */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
-                    className="relative w-32 h-32 mx-auto"
+                    className="relative w-32 h-32 mx-auto mt-4"
                   >
                     <img
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
+                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=cosmic"
                       alt="Profile Avatar"
                       className="w-full h-full rounded-full border-4 border-white/20"
                     />
+                    {/* Customization Button */}
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => setShowAvatarCustomization(true)}
-                      className="absolute -bottom-2 -right-2 p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg"
+                      className="absolute -bottom-2 -right-2 p-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full shadow-lg"
                     >
                       <Sparkles className="w-5 h-5" />
                     </motion.button>
                   </motion.div>
                 </div>
 
-                <div className="text-center mt-4">
-                  <h2 className="text-2xl font-bold">{user?.name || 'Code Warrior'}</h2>
-                  <p className="text-blue-400">{gameStats.title}</p>
-                  <div className="mt-2 flex items-center justify-center gap-2">
+                {/* User Info */}
+                <div className="text-center mt-4 space-y-2">
+                  <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                    Neural Navigator
+                  </h2>
+                  <p className="text-blue-400">Level {Math.floor(gameStats.powerLevel / 100)}</p>
+                  
+                  {/* Power Level */}
+                  <div className="flex items-center justify-center gap-2">
                     <Zap className="w-5 h-5 text-yellow-400" />
                     <animated.span className="font-bold">
                       {powerLevel.to(n => `Power Level: ${n.toFixed(0)}`)}
@@ -153,25 +173,30 @@ const ProfileDashboard = () => {
                   </div>
                 </div>
 
-                {/* Quick Stats */}
+                {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4 mt-6 w-full">
-                  <div className="text-center p-3 bg-white/5 rounded-lg">
+                  <div className="relative p-4 bg-white/5 rounded-lg overflow-hidden group hover:bg-white/10 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <Brain className="w-6 h-6 text-blue-400 mb-2" />
                     <div className="text-2xl font-bold text-blue-400">
-                      {gameStats.questsCompleted}
+                      {gameStats.neuralCapacity}%
                     </div>
-                    <div className="text-sm text-gray-400">Quests</div>
+                    <div className="text-sm text-gray-400">Neural Capacity</div>
                   </div>
-                  <div className="text-center p-3 bg-white/5 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-400">
-                      {gameStats.bossesDefeated}
-                    </div>
-                    <div className="text-sm text-gray-400">Bosses</div>
+                  
+                  <div className="relative p-4 bg-white/5 rounded-lg overflow-hidden group hover:bg-white/10 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <Cpu className="w-6 h-6 text-purple-400 mb-2" />
+                    <animated.div className="text-2xl font-bold text-purple-400">
+                      {energyLevel.to(n => `${n.toFixed(0)}%`)}
+                    </animated.div>
+                    <div className="text-sm text-gray-400">Energy Level</div>
                   </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Virtual Currency */}
+            {/* Achievements Showcase */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -179,36 +204,35 @@ const ProfileDashboard = () => {
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <Wallet className="w-6 h-6 text-blue-400" />
-                  <h2 className="text-xl font-bold">Virtual Currency</h2>
+                  <Trophy className="w-6 h-6 text-yellow-400" />
+                  <h2 className="text-xl font-bold">Achievements</h2>
                 </div>
-                <animated.div className="text-2xl font-bold text-yellow-400">
-                  {number.to(n => `${n.toFixed(0)} 💰`)}
-                </animated.div>
+                <span className="text-sm text-gray-400">{achievements.length} Unlocked</span>
               </div>
 
               <div className="space-y-4">
-                {virtualEconomy.recentTransactions.map(transaction => (
-                  <div
-                    key={transaction.id}
-                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                {achievements.map((achievement) => (
+                  <motion.div
+                    key={achievement.id}
+                    whileHover={{ scale: 1.02 }}
+                    className="relative p-4 bg-white/5 rounded-lg border border-white/10 overflow-hidden group"
                   >
-                    <div>
-                      <p className="font-medium">{transaction.description}</p>
-                      <p className={`text-sm ${
-                        transaction.type === 'earned' ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        {transaction.type === 'earned' ? '+' : '-'}{transaction.amount} 💰
-                      </p>
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                    <div className="relative flex items-center gap-4">
+                      <div className="text-4xl">{achievement.icon}</div>
+                      <div>
+                        <h3 className="font-bold">{achievement.name}</h3>
+                        <p className="text-sm text-gray-400">{achievement.rarity}</p>
+                      </div>
+                      <div className="ml-auto text-yellow-400">+{achievement.xp} XP</div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
           </div>
 
-          {/* Middle Column - Achievements and Progress */}
+          {/* Middle Column - Active Quests and Progress */}
           <div className="space-y-8">
             {/* Active Quests */}
             <motion.div
@@ -227,29 +251,38 @@ const ProfileDashboard = () => {
               </div>
 
               <div className="space-y-4">
-                {[
-                  { title: 'Complete Python Challenge', progress: 60 },
-                  { title: 'Earn 1000 XP', progress: 75 },
-                  { title: 'Defeat Boss Level', progress: 30 }
-                ].map((quest, index) => (
-                  <div key={index} className="p-4 bg-white/5 rounded-lg">
-                    <div className="flex justify-between mb-2">
-                      <span>{quest.title}</span>
-                      <span>{quest.progress}%</span>
+                {activeQuests.map((quest, index) => (
+                  <motion.div
+                    key={quest.id}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="relative p-4 bg-white/5 rounded-lg border border-white/10 overflow-hidden group"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                    <div className="relative">
+                      <div className="flex justify-between mb-2">
+                        <h3 className="font-medium">{quest.title}</h3>
+                        <span className="text-yellow-400">{quest.reward}</span>
+                      </div>
+                      <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${quest.progress}%` }}
+                          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+                        />
+                      </div>
+                      <div className="flex justify-between mt-2 text-sm">
+                        <span className="text-gray-400">Progress</span>
+                        <span>{quest.progress}%</span>
+                      </div>
                     </div>
-                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${quest.progress}%` }}
-                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
-                      />
-                    </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
 
-            {/* Game Stats */}
+            {/* Stats and Metrics */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -257,24 +290,33 @@ const ProfileDashboard = () => {
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <Gamepad className="w-6 h-6 text-blue-400" />
-                  <h2 className="text-xl font-bold">Game Stats</h2>
+                  <Activity className="w-6 h-6 text-blue-400" />
+                  <h2 className="text-xl font-bold">Performance Metrics</h2>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                {Object.entries(gameStats).map(([key, value], index) => (
+                {[
+                  { icon: <Globe className="w-6 h-6" />, label: 'Global Rank', value: '#42' },
+                  { icon: <Trophy className="w-6 h-6" />, label: 'Achievements', value: '24/50' },
+                  { icon: <Target className="w-6 h-6" />, label: 'Accuracy', value: '94%' },
+                  { icon: <Shield className="w-6 h-6" />, label: 'Defense', value: '850' },
+                ].map((stat, index) => (
                   <motion.div
-                    key={key}
+                    key={index}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="p-4 bg-white/5 rounded-lg"
+                    className="relative p-4 bg-white/5 rounded-lg border border-white/10 overflow-hidden group"
                   >
-                    <div className="text-sm text-gray-400 capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                    <div className="relative flex items-center gap-3">
+                      <div className="text-blue-400">{stat.icon}</div>
+                      <div>
+                        <div className="text-sm text-gray-400">{stat.label}</div>
+                        <div className="text-xl font-bold">{stat.value}</div>
+                      </div>
                     </div>
-                    <div className="text-xl font-bold">{value}</div>
                   </motion.div>
                 ))}
               </div>
@@ -291,8 +333,8 @@ const ProfileDashboard = () => {
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <Users className="w-6 h-6 text-blue-400" />
-                  <h2 className="text-xl font-bold">Leaderboard</h2>
+                  <Crown className="w-6 h-6 text-yellow-400" />
+                  <h2 className="text-xl font-bold">Neural Elite</h2>
                 </div>
                 <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
                   View All
@@ -301,11 +343,15 @@ const ProfileDashboard = () => {
 
               <div className="space-y-4">
                 {leaderboard.map((user, index) => (
-                  <div
+                  <motion.div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="relative p-4 bg-white/5 rounded-lg border border-white/10 overflow-hidden group"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                    <div className="relative flex items-center gap-4">
                       <div className="w-8 h-8 flex items-center justify-center font-bold">
                         #{user.rank}
                       </div>
@@ -316,13 +362,11 @@ const ProfileDashboard = () => {
                       />
                       <div>
                         <div className="font-medium">{user.name}</div>
-                        <div className="text-sm text-gray-400">{user.points.toLocaleString()} XP</div>
+                        <div className="text-sm text-gray-400">{user.specialty}</div>
                       </div>
+                      <div className="ml-auto text-yellow-400">{user.points.toLocaleString()} XP</div>
                     </div>
-                    {index === 0 && (
-                      <Trophy className="w-5 h-5 text-yellow-400" />
-                    )}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -335,32 +379,35 @@ const ProfileDashboard = () => {
             >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <Shield className="w-6 h-6 text-blue-400" />
-                  <h2 className="text-xl font-bold">Inventory</h2>
+                  <Hexagon className="w-6 h-6 text-purple-400" />
+                  <h2 className="text-xl font-bold">Neural Artifacts</h2>
                 </div>
                 <span className="text-sm text-gray-400">
-                  {virtualEconomy.inventory.length} items
+                  {gameStats.specialItems} Items
                 </span>
               </div>
 
               <div className="space-y-4">
-                {virtualEconomy.inventory.map((item, index) => (
+                {[
+                  { name: 'Quantum Core', rarity: 'Legendary', power: 2500 },
+                  { name: 'Neural Amplifier', rarity: 'Epic', power: 1800 },
+                  { name: 'Synapse Enhancer', rarity: 'Rare', power: 1200 }
+                ].map((item, index) => (
                   <motion.div
                     key={index}
                     whileHover={{ scale: 1.02 }}
-                    className="p-4 bg-white/5 rounded-lg border border-white/10"
+                    className="relative p-4 bg-white/5 rounded-lg border border-white/10 overflow-hidden group"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                    <div className="relative flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Gift className="w-5 h-5 text-purple-400" />
                         <div>
                           <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
+                          <p className="text-sm text-gray-400">{item.rarity}</p>
                         </div>
                       </div>
-                      <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
+                      <div className="text-blue-400">{item.power} PWR</div>
                     </div>
                   </motion.div>
                 ))}
@@ -369,6 +416,18 @@ const ProfileDashboard = () => {
           </div>
         </div>
       </div>
+
+      <style>
+        {`
+          @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.8); }
+          }
+          .animate-twinkle {
+            animation: twinkle 3s ease-in-out infinite;
+          }
+        `}
+      </style>
     </div>
   );
 };
