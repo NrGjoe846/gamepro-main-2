@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GraduationCap, User, Settings, Bell, Menu, X, Gift, Compass, BookOpen, Trophy } from 'lucide-react';
+import { GraduationCap, User, Settings, Bell, Menu, X, Gift, Compass, BookOpen, Trophy, Store } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import NotificationsPanel from './notifications/NotificationsPanel';
@@ -15,6 +15,7 @@ const Navigation = () => {
     { icon: <BookOpen className="w-5 h-5" />, label: 'My Courses', path: '/dashboard' },
     { icon: <Trophy className="w-5 h-5" />, label: 'Achievements', path: '/achievements' },
     { icon: <Gift className="w-5 h-5" />, label: 'Rewards', path: '/rewards' },
+    { icon: <Store className="w-5 h-5" />, label: 'Store', path: '/store' }
   ];
 
   return (
