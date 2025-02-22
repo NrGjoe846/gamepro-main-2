@@ -20,6 +20,7 @@ import InterviewBot from './components/interview/InterviewBot';
 import AptitudeTest from './components/aptitude/AptitudeTest';
 import About from './components/About';
 import AchievementsPage from './components/achievements/AchievementsPage';
+import RewardsPage from './components/rewards/RewardsPage';
 
 function App() {
   return (
@@ -62,6 +63,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <AchievementsPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Rewards */}
+          <Route 
+            path="/rewards" 
+            element={
+              <ProtectedRoute>
+                <RewardsPage />
               </ProtectedRoute>
             } 
           />
