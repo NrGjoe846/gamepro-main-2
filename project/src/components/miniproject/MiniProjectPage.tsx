@@ -4,16 +4,21 @@ import { Code2, Play, ArrowRight, ArrowLeft, AlertCircle, RefreshCw, BookOpen, Z
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import BackButton from '../BackButton';
 
-const API_KEY = 'AIzaSyCW3F1qklqeJ06T9j_b_ofwoKNdBBsJYws';
+const API_KEY = 'AIzaSyDFujDavmC63MeyvGc9vgchx_HL6vMdjm4';
 
 interface Project {
   name: string;
   description: string;
   code: string;
   language: string;
+  output?: string;
 }
 
-const CALCULATOR_CODE = `# Simple Calculator Program
+const beginnerProjects = [
+  {
+    name: "Calculator Program",
+    description: "A simple calculator that performs basic arithmetic operations",
+    code: `# Simple Calculator Program
 
 # Function to perform addition
 def add(x, y):
@@ -62,9 +67,13 @@ while True:
             result = divide(num1, num2)
             print(f"{num1} / {num2} = {result}")
     else:
-        print("Invalid input")`;
-
-const NUMBER_GUESSING_CODE = `# Number Guessing Game
+        print("Invalid input")`,
+    language: "python"
+  },
+  {
+    name: "Number Guessing Game",
+    description: "Guess a number between 1 and 100 with helpful feedback",
+    code: `# Number Guessing Game
 import random
 
 # Generate a random number between 1 and 100
@@ -99,109 +108,127 @@ while attempts < max_attempts:
         print("Please enter a valid number.")
         
 if attempts == max_attempts and guess != number:
-    print(f"Game Over! The number was {number}.")`;
-
-const UNIT_CONVERTER_CODE = `# Kilometers to Miles Converter
-
-def km_to_miles(kilometers):
-    # Conversion factor: 1 kilometer = 0.621371 miles
-    miles = kilometers * 0.621371
-    return miles
-
-while True:
-    try:
-        # Get input from user
-        kilometers = float(input("Enter distance in kilometers (or 0 to exit): "))
-        
-        # Check if user wants to exit
-        if kilometers == 0:
-            print("Goodbye!")
-            break
-            
-        # Convert and display result
-        miles = km_to_miles(kilometers)
-        print(f"{kilometers} kilometers is equal to {miles:.2f} miles")
-        
-    except ValueError:
-        print("Please enter a valid number.")`;
-
-const ROCK_PAPER_SCISSORS_CODE = `# Rock, Paper, Scissors Game
-import random
-
-def get_computer_choice():
-    choices = ['rock', 'paper', 'scissors']
-    return random.choice(choices)
-
-def determine_winner(player_choice, computer_choice):
-    if player_choice == computer_choice:
-        return "It's a tie!"
-    
-    if player_choice == 'rock':
-        if computer_choice == 'scissors':
-            return "You win!"
-        return "Computer wins!"
-    
-    if player_choice == 'paper':
-        if computer_choice == 'rock':
-            return "You win!"
-        return "Computer wins!"
-    
-    if player_choice == 'scissors':
-        if computer_choice == 'paper':
-            return "You win!"
-        return "Computer wins!"
-
-# Main game loop
-while True:
-    print("\nRock, Paper, Scissors - Let's play!")
-    print("Enter your choice (rock/paper/scissors) or 'quit' to exit:")
-    
-    # Get player's choice
-    player_choice = input().lower()
-    
-    if player_choice == 'quit':
-        print("Thanks for playing!")
-        break
-        
-    if player_choice not in ['rock', 'paper', 'scissors']:
-        print("Invalid choice. Please try again.")
-        continue
-    
-    # Get computer's choice
-    computer_choice = get_computer_choice()
-    
-    # Show choices
-    print(f"\nYou chose: {player_choice}")
-    print(f"Computer chose: {computer_choice}")
-    
-    # Determine and show winner
-    result = determine_winner(player_choice, computer_choice)
-    print(result)`;
-
-const beginnerProjects = [
-  {
-    name: "Calculator Program",
-    description: "A simple calculator that performs basic arithmetic operations",
-    code: CALCULATOR_CODE,
+    print(f"Game Over! The number was {number}.")`,
     language: "python"
+  }
+];
+
+const intermediateProjects = [
+  {
+    name: "File Organizer",
+    description: "A program that organizes files in a directory based on their extensions",
+    code: `import os
+import shutil
+
+def organize_files(directory):
+    for filename in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, filename)):
+            file_extension = filename.split('.')[-1]
+            folder_path = os.path.join(directory, file_extension)
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+            shutil.move(os.path.join(directory, filename), os.path.join(folder_path, filename))
+    print("Files organized successfully!")
+
+directory_path = "./test_files"  # Replace with your directory path
+organize_files(directory_path)`,
+    language: "python",
+    output: `Files organized into folders based on file type.
+Example structure:
+- test_files/
+  - pdf/
+    - resume.pdf
+  - jpg/
+    - photo.jpg
+  - txt/
+    - notes.txt
+Files organized successfully!`
   },
   {
-    name: "Number Guessing Game",
-    description: "Guess a number between 1 and 100 with helpful feedback",
-    code: NUMBER_GUESSING_CODE,
-    language: "python"
+    name: "Expense Tracker",
+    description: "A simple expense tracker for managing and categorizing expenses",
+    code: `class ExpenseTracker:
+    def __init__(self):
+        self.expenses = []
+
+    def add_expense(self, category, amount):
+        self.expenses.append({"category": category, "amount": amount})
+        print(f"Added {category}: ${amount}")
+
+    def total_expenses(self):
+        return sum(expense['amount'] for expense in self.expenses)
+
+    def view_expenses(self):
+        print("\\n--- Expenses ---")
+        for expense in self.expenses:
+            print(f"{expense['category']}: ${expense['amount']}")
+        print("----------------")
+
+tracker = ExpenseTracker()
+tracker.add_expense("Food", 50)
+tracker.add_expense("Transport", 20)
+tracker.add_expense("Entertainment", 30)
+tracker.view_expenses()
+print(f"Total Expenses: ${tracker.total_expenses()}")`,
+    language: "python",
+    output: `Added Food: $50
+Added Transport: $20
+Added Entertainment: $30
+
+--- Expenses ---
+Food: $50
+Transport: $20
+Entertainment: $30
+----------------
+Total Expenses: $100`
   },
   {
-    name: "Unit Converter",
-    description: "Convert kilometers to miles with user input",
-    code: UNIT_CONVERTER_CODE,
-    language: "python"
+    name: "Web Scraper",
+    description: "A program that scrapes quotes from a website and saves them to a file",
+    code: `import requests
+from bs4 import BeautifulSoup
+
+def scrape_quotes(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    quotes = []
+    for quote in soup.find_all('div', class_='quote'):
+        text = quote.find('span', class_='text').get_text()
+        author = quote.find('small', class_='author').get_text()
+        quotes.append(f'"{text}" - {author}')
+    with open('quotes.txt', 'w') as file:
+        for q in quotes:
+            file.write(q + '\\n')
+    print("Quotes saved to quotes.txt")
+
+scrape_quotes("http://quotes.toscrape.com")`,
+    language: "python",
+    output: `Quotes saved to quotes.txt
+Example file content:
+"The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking." - Albert Einstein
+"It is our choices, Harry, that show what we truly are, far more than our abilities." - J.K. Rowling`
   },
   {
-    name: "Rock, Paper, Scissors Game",
-    description: "Play the classic game against the computer",
-    code: ROCK_PAPER_SCISSORS_CODE,
-    language: "python"
+    name: "Password Generator",
+    description: "Generate strong random passwords with customizable criteria",
+    code: `import random
+import string
+
+def generate_password(length=12, use_symbols=True):
+    characters = string.ascii_letters + string.digits
+    if use_symbols:
+        characters += string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+password_length = int(input("Enter password length: "))
+include_symbols = input("Include symbols? (yes/no): ").lower() == 'yes'
+generated_password = generate_password(password_length, include_symbols)
+print(f"Generated Password: {generated_password}")`,
+    language: "python",
+    output: `If the user inputs:
+- Length: 12, Symbols: Yes → Password example: 7p$&mX@!yP2d
+- Length: 8, Symbols: No → Password example: xY4zP8qR`
   }
 ];
 
@@ -218,7 +245,7 @@ const difficultyLevels = [
     description: "For coders with some experience under their belt",
     icon: <Zap className="w-6 h-6" />,
     color: "from-blue-500/20 to-indigo-500/20",
-    projects: []
+    projects: intermediateProjects
   },
   {
     title: "Advanced",
@@ -540,6 +567,16 @@ const MiniProjectPage = () => {
                   />
                 </div>
               </div>
+
+              {/* Output Panel */}
+              {selectedProject.output && (
+                <div className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 p-6">
+                  <h2 className="text-xl font-bold mb-4">Expected Output</h2>
+                  <pre className="whitespace-pre-wrap text-sm text-gray-300">
+                    {selectedProject.output}
+                  </pre>
+                </div>
+              )}
             </div>
           </div>
         )}
