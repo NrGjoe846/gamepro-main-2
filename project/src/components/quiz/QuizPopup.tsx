@@ -39,7 +39,7 @@ interface QuizPopupProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete: (score: number) => void;
-  language: 'python' | 'java' | 'c'; // Course name
+  language: 'python' | 'java' | 'c';
 }
 
 const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, language }) => {
@@ -48,9 +48,25 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
   const [showConfetti, setShowConfetti] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
+  const [questions, setQuestions] = useState<any[]>([]);
   const { width, height } = useWindowSize();
 
-  // Dynamically select the JSON file based on the course prop
+  useEffect(() => {
+    if (isOpen) {
+      const questionsData = getQuestionsData();
+      const allQuestions = findAllQuestions(questionsData);
+      // Shuffle questions randomly
+      const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
+      // Take first 10 questions or all if less than 10
+      setQuestions(shuffledQuestions.slice(0, 10));
+      setCurrentQuestionIndex(0);
+      setAnswers({});
+      setShowResults(false);
+      setScore(0);
+      setShowConfetti(false);
+    }
+  }, [isOpen, language]);
+
   const getQuestionsData = () => {
     switch (language) {
       case 'python':
@@ -64,39 +80,29 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
     }
   };
 
-  // Find all questions across all phases, topics, and subtopics
-  const findAllQuestions = (): any[] => {
-    const questionsData = getQuestionsData();
+  const findAllQuestions = (questionsData: any[]): any[] => {
     const allQuestions: any[] = [];
-
     for (const phaseData of questionsData) {
       for (const topicData of phaseData.topics) {
         for (const subtopicData of topicData.subtopics) {
           if (subtopicData.questionsData) {
-            allQuestions.push(...subtopicData.questionsData);
+            // Add topic and subtopic context to each question
+            const questionsWithContext = subtopicData.questionsData.map(question => ({
+              ...question,
+              topic: topicData.topic,
+              subtopic: subtopicData.subtopic
+            }));
+            allQuestions.push(...questionsWithContext);
           }
         }
       }
     }
-
     return allQuestions;
   };
 
-  const questions = findAllQuestions();
-
-  useEffect(() => {
-    if (!isOpen) {
-      setShowResults(false);
-      setScore(0);
-      setShowConfetti(false);
-      setCurrentQuestionIndex(0);
-      setAnswers({});
-    }
-  }, [isOpen]);
-
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     } else {
       handleQuizComplete();
     }
@@ -125,12 +131,11 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
   };
 
   const handleAnswer = (answer: any) => {
-    setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: answer }));
+    setAnswers(prev => ({ ...prev, [currentQuestionIndex]: answer }));
   };
 
   if (!isOpen) return null;
 
-  // Show message if no questions are available
   if (!questions || questions.length === 0) {
     return (
       <motion.div
@@ -141,7 +146,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
       >
         <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4">
           <div className="text-center">
-            <p className="text-xl mb-4">No questions available for this course yet.</p>
+            <p className="text-xl mb-4">No questions available for {language.toUpperCase()} yet.</p>
             <button
               onClick={onClose}
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
@@ -177,6 +182,9 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
             <>
               <div className="mb-6">
                 <h2 className="text-xl font-bold">{language.toUpperCase()} Quiz</h2>
+                <p className="text-sm text-gray-400 mt-1">
+                  Topic: {currentQuestion.topic}
+                </p>
                 <p className="text-sm text-gray-400">
                   Question {currentQuestionIndex + 1} of {questions.length}
                 </p>
