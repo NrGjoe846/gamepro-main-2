@@ -40,9 +40,18 @@ interface QuizPopupProps {
   onClose: () => void;
   onComplete: (score: number) => void;
   language: 'python' | 'java' | 'c';
+  currentTopic?: string;
+  currentSubtopic?: string;
 }
 
-const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, language }) => {
+const QuizPopup: React.FC<QuizPopupProps> = ({ 
+  isOpen, 
+  onClose, 
+  onComplete, 
+  language,
+  currentTopic,
+  currentSubtopic 
+}) => {
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -54,18 +63,18 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
   useEffect(() => {
     if (isOpen) {
       const questionsData = getQuestionsData();
-      const allQuestions = findAllQuestions(questionsData);
+      const relevantQuestions = findRelevantQuestions(questionsData);
       // Shuffle questions randomly
-      const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
-      // Take first 10 questions or all if less than 10
-      setQuestions(shuffledQuestions.slice(0, 10));
+      const shuffledQuestions = relevantQuestions.sort(() => Math.random() - 0.5);
+      // Take first 5 questions or all if less than 5
+      setQuestions(shuffledQuestions.slice(0, 5));
       setCurrentQuestionIndex(0);
       setAnswers({});
       setShowResults(false);
       setScore(0);
       setShowConfetti(false);
     }
-  }, [isOpen, language]);
+  }, [isOpen, language, currentTopic, currentSubtopic]);
 
   const getQuestionsData = () => {
     switch (language) {
@@ -80,24 +89,26 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
     }
   };
 
-  const findAllQuestions = (questionsData: any[]): any[] => {
-    const allQuestions: any[] = [];
+  const findRelevantQuestions = (questionsData: any[]): any[] => {
+    if (!currentTopic || !currentSubtopic) return [];
+
     for (const phaseData of questionsData) {
       for (const topicData of phaseData.topics) {
-        for (const subtopicData of topicData.subtopics) {
-          if (subtopicData.questionsData) {
-            // Add topic and subtopic context to each question
-            const questionsWithContext = subtopicData.questionsData.map(question => ({
-              ...question,
-              topic: topicData.topic,
-              subtopic: subtopicData.subtopic
-            }));
-            allQuestions.push(...questionsWithContext);
+        if (topicData.topic.includes(currentTopic)) {
+          for (const subtopicData of topicData.subtopics) {
+            if (subtopicData.subtopic.includes(currentSubtopic) && subtopicData.questionsData) {
+              // Add topic and subtopic context to each question
+              return subtopicData.questionsData.map(question => ({
+                ...question,
+                topic: topicData.topic,
+                subtopic: subtopicData.subtopic
+              }));
+            }
           }
         }
       }
     }
-    return allQuestions;
+    return [];
   };
 
   const handleNext = () => {
@@ -146,7 +157,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
       >
         <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4">
           <div className="text-center">
-            <p className="text-xl mb-4">No questions available for {language.toUpperCase()} yet.</p>
+            <p className="text-xl mb-4">No questions available for this topic yet.</p>
             <button
               onClick={onClose}
               className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
@@ -181,9 +192,9 @@ const QuizPopup: React.FC<QuizPopupProps> = ({ isOpen, onClose, onComplete, lang
           {!showResults ? (
             <>
               <div className="mb-6">
-                <h2 className="text-xl font-bold">{language.toUpperCase()} Quiz</h2>
+                <h2 className="text-xl font-bold">{currentTopic}</h2>
                 <p className="text-sm text-gray-400 mt-1">
-                  Topic: {currentQuestion.topic}
+                  {currentSubtopic}
                 </p>
                 <p className="text-sm text-gray-400">
                   Question {currentQuestionIndex + 1} of {questions.length}
