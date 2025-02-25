@@ -1,0 +1,42 @@
+[
+  {
+    "phase": "Phase 1: Python Basics and Core Concepts",
+    "topics": [
+      {
+        "topic": "1. Introduction to Python Programming",
+        "subtopics": [
+          {
+            "subtopic": "Writing your first Python program: print(\"Hello, World!\")",
+            "flashcards": [
+              {
+                "id": "1",
+                "front": "What is Python?",
+                "back": "Python is a high-level, interpreted programming language known for its simplicity and readability. It emphasizes code readability with its notable use of significant whitespace."
+              },
+              {
+                "id": "2",
+                "front": "How does Python execute code?",
+                "back": "Python code is executed line by line by the Python interpreter. The interpreter reads the code, converts it to bytecode, and then executes it."
+              },
+              {
+                "id": "3",
+                "front": "What is the basic syntax for printing in Python?",
+                "back": "In Python, you can print text or variables using the print() function. For example:\nprint(\"Hello, World!\")"
+              },
+              {
+                "id": "4",
+                "front": "What are Python's key features?",
+                "back": "- Easy to learn and read\n- Interpreted language\n- Dynamically typed\n- Object-oriented\n- Large standard library\n- Extensive third-party packages"
+              },
+              {
+                "id": "5",
+                "front": "What is indentation in Python?",
+                "back": "Indentation in Python is used to define blocks of code. It is typically 4 spaces and is crucial for proper code structure. Unlike other languages that use braces {}, Python uses indentation for code blocks."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
