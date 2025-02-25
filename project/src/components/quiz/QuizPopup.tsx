@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy } from 'lucide-react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import DragDropQuestion from './DragDropQuestion';
 import MatchQuestion from './MatchQuestion';
@@ -15,6 +14,7 @@ import TranslateCodeQuestion from './TranslateCodeQuestion';
 import MultipleSelectionQuestion from './MultipleSelectionQuestion';
 import CodeCorrectionQuestion from './CodeCorrectionQuestion';
 import FillInTheBlank from './FillInTheBlank';
+import ScoreCard from '../aptitude/ScoreCard';
 
 // Import JSON files for all courses
 import pythonQuestionsData from '../../data/quizzes/pythonBasics.json';
@@ -54,10 +54,10 @@ const QuizPopup: React.FC<QuizPopupProps> = ({
 }) => {
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
   const [questions, setQuestions] = useState<any[]>([]);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
   const { width, height } = useWindowSize();
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({
       setAnswers({});
       setShowResults(false);
       setScore(0);
-      setShowConfetti(false);
+      setCorrectAnswers(0);
     }
   }, [isOpen, language, currentTopic, currentSubtopic]);
 
@@ -120,7 +120,7 @@ const QuizPopup: React.FC<QuizPopupProps> = ({
   };
 
   const handleQuizComplete = () => {
-    let correctAnswers = 0;
+    let correct = 0;
     questions.forEach((q, index) => {
       if (Array.isArray(q.answer)) {
         const userAnswer = answers[index];
@@ -128,21 +128,24 @@ const QuizPopup: React.FC<QuizPopupProps> = ({
           Array.isArray(userAnswer) &&
           userAnswer.length === q.answer.length &&
           userAnswer.every((ans: any, i: number) => ans === q.answer[i]);
-        if (isCorrect) correctAnswers++;
+        if (isCorrect) correct++;
       } else {
-        if (answers[index] === q.answer) correctAnswers++;
+        if (answers[index] === q.answer) correct++;
       }
     });
-    const finalScore = Math.round((correctAnswers / questions.length) * 100);
+    setCorrectAnswers(correct);
+    const finalScore = Math.round((correct / questions.length) * 100);
     setScore(finalScore);
     setShowResults(true);
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000);
     onComplete(finalScore);
   };
 
   const handleAnswer = (answer: any) => {
     setAnswers(prev => ({ ...prev, [currentQuestionIndex]: answer }));
+  };
+
+  const handleCloseScoreCard = () => {
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -170,6 +173,16 @@ const QuizPopup: React.FC<QuizPopupProps> = ({
     );
   }
 
+  if (showResults) {
+    return (
+      <ScoreCard
+        totalQuestions={questions.length}
+        correctAnswers={correctAnswers}
+        onClose={handleCloseScoreCard}
+      />
+    );
+  }
+
   const currentQuestion = questions[currentQuestionIndex];
   const QuestionComponent = componentMap[currentQuestion.component];
 
@@ -181,7 +194,6 @@ const QuizPopup: React.FC<QuizPopupProps> = ({
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
     >
       <DndProvider backend={HTML5Backend}>
-        {showConfetti && <Confetti width={width} height={height} />}
         <motion.div className="relative w-full max-w-4xl bg-[#1a1a2e] rounded-2xl shadow-2xl p-6 m-4 max-h-[90vh] overflow-y-auto">
           <button
             onClick={onClose}
@@ -189,40 +201,24 @@ const QuizPopup: React.FC<QuizPopupProps> = ({
           >
             <X className="w-6 h-6" />
           </button>
-          {!showResults ? (
-            <>
-              <div className="mb-6">
-                <h2 className="text-xl font-bold">{currentTopic}</h2>
-                <p className="text-sm text-gray-400 mt-1">
-                  {currentSubtopic}
-                </p>
-                <p className="text-sm text-gray-400">
-                  Question {currentQuestionIndex + 1} of {questions.length}
-                </p>
-              </div>
-              {QuestionComponent && (
-                <QuestionComponent question={currentQuestion} onAnswer={handleAnswer} />
-              )}
-              <button
-                onClick={handleNext}
-                className="mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors w-full"
-              >
-                {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
-              </button>
-            </>
-          ) : (
-            <div className="text-center py-8">
-              <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
-              <p className="text-xl mb-6">Your score: {score}%</p>
-              <button
-                onClick={onClose}
-                className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
-              >
-                Close
-              </button>
-            </div>
+          <div className="mb-6">
+            <h2 className="text-xl font-bold">{currentTopic}</h2>
+            <p className="text-sm text-gray-400 mt-1">
+              {currentSubtopic}
+            </p>
+            <p className="text-sm text-gray-400">
+              Question {currentQuestionIndex + 1} of {questions.length}
+            </p>
+          </div>
+          {QuestionComponent && (
+            <QuestionComponent question={currentQuestion} onAnswer={handleAnswer} />
           )}
+          <button
+            onClick={handleNext}
+            className="mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors w-full"
+          >
+            {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
+          </button>
         </motion.div>
       </DndProvider>
     </motion.div>
