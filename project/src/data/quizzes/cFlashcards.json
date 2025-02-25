@@ -1,0 +1,42 @@
+[
+  {
+    "phase": "Phase 1: Introduction and Basic Concepts",
+    "topics": [
+      {
+        "topic": "1. Introduction to C Programming",
+        "subtopics": [
+          {
+            "subtopic": "What is C?",
+            "flashcards": [
+              {
+                "id": "1",
+                "front": "What is C programming language?",
+                "back": "C is a general-purpose, procedural programming language that provides low-level access to system memory. It was developed by Dennis Ritchie at Bell Labs in the early 1970s."
+              },
+              {
+                "id": "2",
+                "front": "What are the key features of C?",
+                "back": "- Structured programming\n- Fast and efficient\n- Low-level memory access\n- Portable (platform independent)\n- Extensive standard library\n- Middle-level language features"
+              },
+              {
+                "id": "3",
+                "front": "Why is C called a compiled language?",
+                "back": "C is a compiled language because the source code must be translated into machine code by a compiler before execution. This differs from interpreted languages where code is executed directly by an interpreter."
+              },
+              {
+                "id": "4",
+                "front": "What is the compilation process in C?",
+                "back": "1. Preprocessing (.c → .i)\n2. Compilation (.i → .s)\n3. Assembly (.s → .o)\n4. Linking (.o → executable)\nEach step transforms the code into a different format until it becomes executable machine code."
+              },
+              {
+                "id": "5",
+                "front": "What are header files in C?",
+                "back": "Header files (.h) contain function declarations and macro definitions. They allow you to:\n- Share declarations between source files\n- Include standard library functions\n- Organize code better\nExample: #include <stdio.h>"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
