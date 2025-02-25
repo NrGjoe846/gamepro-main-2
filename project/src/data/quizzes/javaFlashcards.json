@@ -1,0 +1,42 @@
+[
+  {
+    "phase": "Phase 1: Java Basics and Core Concepts",
+    "topics": [
+      {
+        "topic": "1. Introduction to Java Programming",
+        "subtopics": [
+          {
+            "subtopic": "Installing Java (JDK, JRE)",
+            "flashcards": [
+              {
+                "id": "1",
+                "front": "What is Java?",
+                "back": "Java is a high-level, class-based, object-oriented programming language designed to be platform-independent through the 'Write Once, Run Anywhere' principle."
+              },
+              {
+                "id": "2",
+                "front": "What is JDK?",
+                "back": "JDK (Java Development Kit) is a software development environment used for developing Java applications. It includes:\n- Java Runtime Environment (JRE)\n- Development tools\n- Java compiler (javac)\n- Documentation"
+              },
+              {
+                "id": "3",
+                "front": "What is JRE?",
+                "back": "JRE (Java Runtime Environment) is the runtime environment required to execute Java applications. It includes:\n- Java Virtual Machine (JVM)\n- Core classes\n- Supporting files"
+              },
+              {
+                "id": "4",
+                "front": "What is JVM?",
+                "back": "JVM (Java Virtual Machine) is an abstract computing machine that provides a runtime environment in which Java bytecode can be executed. It enables Java's platform independence by interpreting compiled Java binary code for different hardware platforms."
+              },
+              {
+                "id": "5",
+                "front": "What is the difference between JDK and JRE?",
+                "back": "JDK includes everything needed for Java development:\n- Compiler\n- Debugger\n- Documentation tools\n- JRE\n\nJRE only includes what's needed to run Java applications:\n- JVM\n- Core classes\n- Supporting files"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
