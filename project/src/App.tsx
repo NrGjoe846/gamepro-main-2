@@ -21,7 +21,7 @@ import About from './components/About';
 import AchievementsPage from './components/achievements/AchievementsPage';
 import RewardsPage from './components/rewards/RewardsPage';
 import Store from './components/Store';
-import MiniProjectPage from './components/miniproject/MiniProjectPage';
+
 
 function App() {
   return (
@@ -58,14 +58,7 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/miniproject" 
-            element={
-              <ProtectedRoute>
-                <MiniProjectPage />
-              </ProtectedRoute>
-            } 
-          />
+         
 
           {/* Achievements */}
           <Route 
