@@ -2584,15 +2584,127 @@
         "subtopics": [
           {
             "subtopic": "Implementing stacks using lists",
-            "flashcards": []
+            "flashcards": [
+              {
+  "id": "1",
+  "front": "What is a queue in Python?",
+  "back": "A queue is a data structure that operates on a 'First In, First Out' (FIFO) principle, meaning that the first element added is the first one to be removed."
+},
+{
+  "id": "2",
+  "front": "What are the basic operations of a queue?",
+  "back": "The basic operations of a queue are:\n  - **Enqueue**: Adding an element to the end of the queue using `append()`.\n  - **Dequeue**: Removing the front element using `popleft()`.\n  - **Peek**: Viewing the front element without removing it by indexing `[0]`."
+},
+{
+  "id": "3",
+  "front": "What is the syntax for enqueueing an element into a queue?",
+  "back": "The syntax for enqueueing an element into a queue is `queue.append(element)`."
+},
+{
+  "id": "4",
+  "front": "What is the syntax for dequeueing an element from a queue?",
+  "back": "The syntax for dequeueing an element from a queue is `queue.popleft()`."
+},
+{
+  "id": "5",
+  "front": "What is an example of queue operations in Python?",
+  "back": "Example:\n  ```python\n  from collections import deque\n  queue = deque()\n  queue.append(5)  # Enqueue 5 onto the queue\n  queue.append(10) # Enqueue 10 onto the queue\n  queue.popleft()  # Removes 5 (the front element)\n  ```"
+},
+{
+  "id": "6",
+  "front": "What is a common mistake when implementing queues using lists?",
+  "back": "A common mistake is using `pop(0)`, which is inefficient for large queues since it operates on the entire list, whereas `popleft()` from `deque` operates efficiently in O(1) time."
+},
+{
+  "id": "7",
+  "front": "What are common use cases for queues?",
+  "back": "Queues are widely used in scenarios like:\n  - Scheduling tasks\n  - Breadth-first search (BFS) in graphs\n  - Managing tasks in an operating system scheduler"
+}
+]
           },
           {
             "subtopic": "Implementing queues with deque from the collections module",
-            "flashcards": []
+            "flashcards": [{
+  "id": "1",
+  "front": "What is the purpose of list indexing, slicing, and iteration in Python?",
+  "back": "Indexing and slicing allow accessing specific elements or sublists, while iteration helps process all elements in a list efficiently."
+},
+{
+  "id": "2",
+  "front": "What is the syntax for accessing an element in a list?",
+  "back": "The syntax is `list[index]`. For example, `my_list[0]` retrieves the first element."
+},
+{
+  "id": "3",
+  "front": "What is the syntax for slicing a list?",
+  "back": "The syntax is `list[start:end]`. For example, `my_list[1:3]` retrieves elements from index 1 to 2."
+},
+{
+  "id": "4",
+  "front": "How do you iterate through a list?",
+  "back": "You can use a `for` loop: `for item in my_list:` to loop through all items."
+},
+{
+  "id": "5",
+  "front": "What are key concepts related to list indexing and slicing?",
+  "back": "- Lists use zero-based indexing.\n- Negative indices access elements from the end (e.g., `my_list[-1]`).\n- The slice `[start:end]` includes `start` but excludes `end`."
+},
+{
+  "id": "6",
+  "front": "What is a common mistake when working with list indexing?",
+  "back": "Using an index that is out of range, leading to an `IndexError`."
+},
+{
+  "id": "7",
+  "front": "What are common use cases for queues?",
+  "back": "Queues are widely used in scenarios like:\n  - Scheduling tasks\n  - Breadth-first search (BFS) in graphs\n  - Managing tasks in an operating system scheduler"
+}
+]
           },
           {
             "subtopic": "Simple linked lists (for understanding)",
-            "flashcards": []
+            "flashcards": [{
+  "title": "List Methods: append(), extend(), insert(), remove(), pop()",
+  "description": "These methods allow modification of lists by adding, inserting, and removing elements dynamically.",
+  "methods": [
+    {
+      "name": "append()",
+      "description": "Adds a single element to the end of the list.",
+      "syntax": "my_list.append(5)"
+    },
+    {
+      "name": "extend()",
+      "description": "Adds multiple elements to the list.",
+      "syntax": "my_list.extend([1, 2, 3])"
+    },
+    {
+      "name": "insert()",
+      "description": "Inserts an element at a specific index.",
+      "syntax": "my_list.insert(1, \"item\")"
+    },
+    {
+      "name": "remove()",
+      "description": "Removes the first occurrence of a specified value.",
+      "syntax": "my_list.remove(\"apple\")"
+    },
+    {
+      "name": "pop()",
+      "description": "Removes and returns an element (default is the last).",
+      "syntax": "my_list.pop()"
+    }
+  ],
+  "key_concepts": [
+    "append() vs. extend(): append() adds a single item, while extend() adds multiple items.",
+    "remove() only deletes the first matching element.",
+    "pop() can remove an item at a specific index."
+  ],
+  "common_mistakes": [
+    "Using append() instead of extend() when adding multiple elements.",
+    "Trying to remove an item that doesn’t exist in the list."
+  ],
+  "usage": "Useful for dynamically updating lists based on program logic, such as adding user input or processing data."
+}
+]
           }
         ]
       },
