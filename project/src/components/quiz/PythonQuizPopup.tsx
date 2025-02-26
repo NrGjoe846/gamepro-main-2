@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, Trophy } from 'lucide-react';
+import { X, Trophy, HelpCircle } from 'lucide-react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Confetti from 'react-confetti';
@@ -74,10 +74,10 @@ const PythonQuizPopup: React.FC<PythonQuizPopupProps> = ({ isOpen, onClose, onCo
   const questions = findQuestionsForModule();
   const currentQuestion = questions[currentQuestionIndex] || {};
   const QuestionComponent = componentMap[currentQuestion.component] || null;
+  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
-  // Define exception for Phase 1, Topic 1, Subtopics 1 and 2 (assuming titles for demonstration)
   const isVideoException = 
-    moduleTitle === "Installing Python (Anaconda, PyCharm, or basic Python)" || moduleTitle === "Setting up the IDE"; // Adjust titles based on your data
+    moduleTitle === "Installing Python (Anaconda, PyCharm, or basic Python)" || moduleTitle === "Setting up the IDE";
 
   useEffect(() => {
     if (!isOpen) {
@@ -123,9 +123,12 @@ const PythonQuizPopup: React.FC<PythonQuizPopupProps> = ({ isOpen, onClose, onCo
     setAnswers((prev) => ({ ...prev, [currentQuestionIndex]: answer }));
   };
 
+  const handleHint = () => {
+    // Add hint functionality here later
+  };
+
   if (!isOpen) return null;
 
-  // Handle video exception case
   if (isVideoException) {
     return (
       <motion.div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -177,16 +180,30 @@ const PythonQuizPopup: React.FC<PythonQuizPopupProps> = ({ isOpen, onClose, onCo
               <div className="mb-6">
                 <h2 className="text-xl font-bold text-white">{moduleTitle}</h2>
                 <p className="text-sm text-gray-400">Question {currentQuestionIndex + 1} of {questions.length}</p>
+                <div className="w-full bg-gray-700 rounded-full h-2.5 mt-2">
+                  <div
+                    className="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
               </div>
 
               {QuestionComponent && <QuestionComponent question={currentQuestion} onAnswer={handleAnswer} />}
 
-              <button
-                onClick={handleNext}
-                className="mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors w-full"
-              >
-                {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
-              </button>
+              <div className="mt-6 flex justify-between">
+                <button
+                  onClick={handleHint}
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <HelpCircle className="w-5 h-5" /> Hint
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+                >
+                  {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
+                </button>
+              </div>
             </>
           ) : (
             <div className="text-center py-8">
