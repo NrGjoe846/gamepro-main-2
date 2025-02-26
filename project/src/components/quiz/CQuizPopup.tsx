@@ -74,6 +74,10 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
   const currentQuestion = questions[currentQuestionIndex] || {};
   const QuestionComponent = componentMap[currentQuestion.component] || null;
 
+  // Define exception for Phase 1, Topic 1, Subtopics 1 and 2 (assumed titles)
+  const isVideoException = 
+    moduleTitle === "What is C?" || moduleTitle === "Setting up the C Environment (GCC, Code::Blocks, VS Code)"; // Adjust based on actual data
+
   useEffect(() => {
     if (!isOpen) {
       setShowResults(false);
@@ -120,12 +124,36 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
 
   if (!isOpen) return null;
 
+  // Handle video exception case
+  if (isVideoException) {
+    return (
+      <motion.div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4 text-center">
+          <p className="text-xl mb-4 text-white">
+            This section is covered by a video. Please watch it in the main course interface.
+          </p>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
+
   if (!questions || questions.length === 0) {
     return (
       <motion.div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
         <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4 text-center">
-          <p className="text-xl mb-4">No questions available for this module yet.</p>
-          <button onClick={onClose} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors">Close</button>
+          <p className="text-xl mb-4 text-white">No questions available for this module yet.</p>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+          >
+            Close
+          </button>
         </div>
       </motion.div>
     );
@@ -136,29 +164,40 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
       <DndProvider backend={HTML5Backend}>
         {showConfetti && <Confetti width={width} height={height} />}
         <motion.div className="relative w-full max-w-4xl bg-[#1a1a2e] rounded-2xl shadow-2xl p-6 m-4 max-h-[90vh] overflow-y-auto">
-          <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-all">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-all"
+          >
             <X className="w-6 h-6" />
           </button>
 
           {!showResults ? (
             <>
               <div className="mb-6">
-                <h2 className="text-xl font-bold">{moduleTitle}</h2>
+                <h2 className="text-xl font-bold text-white">{moduleTitle}</h2>
                 <p className="text-sm text-gray-400">Question {currentQuestionIndex + 1} of {questions.length}</p>
               </div>
 
               {QuestionComponent && <QuestionComponent question={currentQuestion} onAnswer={handleAnswer} />}
 
-              <button onClick={handleNext} className="mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors w-full">
+              <button
+                onClick={handleNext}
+                className="mt-6 px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors w-full"
+              >
                 {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
               </button>
             </>
           ) : (
             <div className="text-center py-8">
               <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
-              <p className="text-xl mb-6">Your score: {score}%</p>
-              <button onClick={onClose} className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors">Close</button>
+              <h2 className="text-2xl font-bold mb-4 text-white">Quiz Completed!</h2>
+              <p className="text-xl mb-6 text-white">Your score: {score}%</p>
+              <button
+                onClick={onClose}
+                className="px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+              >
+                Close
+              </button>
             </div>
           )}
         </motion.div>
