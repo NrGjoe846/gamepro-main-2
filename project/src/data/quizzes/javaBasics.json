@@ -99,25 +99,903 @@
       "component": "FillInTheBlank"
     }] },
           { "subtopic": "Setting up the IDE (IntelliJ IDEA, Eclipse, or VS Code)", "questionsData": [] },
-          { "subtopic": "Writing your first Java program: Hello, World!", "questionsData": [] },
-          { "subtopic": "Java syntax, keywords, and comments", "questionsData": [] },
-          { "subtopic": "Understanding the Java Virtual Machine (JVM)", "questionsData": [] }
+          { "subtopic": "Writing your first Java program: Hello, World!", "questionsData": [
+    {
+      "type": "fill",
+      "question": "The entry point of a Java program is the __________ method, which must be defined inside a class.",
+      "answer": "main",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What is the correct syntax for the main method in a Java program?",
+      "options": [
+        "public void main(String args)",
+        "public static void main(String[] args)",
+        "void main(String[] args)"
+      ],
+      "answer": "public static void main(String[] args)",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "In Java, every program must have at least one class.",
+      "answer": "True",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the words to form a correct Java Hello, World! program:",
+      "options": ["void", "public", "main", "String[]", "static", "args", "System.out.println(\"Hello, World!\");"],
+      "answer": ["public", "static", "void", "main", "String[]", "args", "System.out.println(\"Hello, World!\");"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java code do?\n\nSystem.out.println(\"Hello, World!\");",
+      "options": [
+        "Prints \"Hello, World!\" to the console.",
+        "Takes input from the user.",
+        "Displays an error."
+      ],
+      "answer": "Prints \"Hello, World!\" to the console.",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the Java code with its correct output:",
+      "options": [
+        { "term": "System.out.println(\"Welcome to Java!\");", "match": "Welcome to Java!" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following statements about Java are true? (Select all that apply)",
+      "options": [
+        "Java programs must be compiled before execution.",
+        "Java runs directly on the operating system without an interpreter.",
+        "Java code runs on the Java Virtual Machine (JVM)."
+      ],
+      "answer": ["Java programs must be compiled before execution.", "Java code runs on the Java Virtual Machine (JVM)."],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the steps in the correct order for executing a Java program:",
+      "options": [
+        "Write the Java program in a .java file.",
+        "Compile the program using javac.",
+        "Run the program using java."
+      ],
+      "correctOrder": [
+        "Write the Java program in a .java file.",
+        "Compile the program using javac.",
+        "Run the program using java."
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with this Java program?\n\nclass HelloWorld {\n    public void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+      "options": [
+        "The main method should be static.",
+        "The main method should return an integer.",
+        "Java does not use class keywords."
+      ],
+      "answer": "The main method should be static.",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "Complete the Java code to print \"Hello, World!\".\n\npublic class HelloWorld {\n    public static void main(String[] args) {\n        System.out.____(\"Hello, World!\");\n    }\n}",
+      "answer": "println",
+      "component": "FillInTheBlank"
+    }
+] },
+          { "subtopic": "Java syntax, keywords, and comments", "questionsData": [
+    {
+      "type": "fill",
+      "question": "In Java, every statement must end with a __________.",
+      "answer": "semicolon",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "Which of the following is a valid Java keyword?",
+      "options": [
+        "function",
+        "static",
+        "method"
+      ],
+      "answer": "static",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "Java is a case-sensitive language, meaning Variable and variable are considered different identifiers.",
+      "answer": "True",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the words to form a valid Java statement:",
+      "options": ["int", "=", "number", "10", ";"],
+      "answer": ["int", "number", "=", "10", ";"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java code do?\n\n// This is a single-line comment",
+      "options": [
+        "Executes a command",
+        "Adds a comment that is ignored by the compiler",
+        "Declares a variable"
+      ],
+      "answer": "Adds a comment that is ignored by the compiler",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the Java comment type to its correct syntax:",
+      "options": [
+        { "term": "Single-line comment", "match": "// This is a comment" },
+        { "term": "Multi-line comment", "match": "/* This is a multi-line comment */" },
+        { "term": "Documentation comment", "match": "/** This is a documentation comment */" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following are Java keywords? (Select all that apply)",
+      "options": [
+        "public",
+        "class",
+        "define"
+      ],
+      "answer": ["public", "class"],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the following Java keywords in a correct class declaration:",
+      "options": [
+        "public",
+        "class",
+        "Main",
+        "{ }"
+      ],
+      "correctOrder": [
+        "public",
+        "class",
+        "Main",
+        "{ }"
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with this Java statement?\n\nint number = 10",
+      "options": [
+        "Missing semicolon (;) at the end",
+        "int should be Integer",
+        "number is a reserved keyword"
+      ],
+      "answer": "Missing semicolon (;) at the end",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "Complete the Java program to correctly print \"Hello, Java!\".\n\npublic class HelloJava {\n    public static void main(String[] args) {\n        System.out.____(\"Hello, Java!\");\n    }\n}",
+      "answer": "println",
+      "component": "FillInTheBlank"
+    }
+] },
+          { "subtopic": "Understanding the Java Virtual Machine (JVM)", "questionsData": [
+    {
+      "type": "fill",
+      "question": "The Java Virtual Machine (JVM) is responsible for converting __________ into machine code for execution.",
+      "answer": "bytecode",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What is the primary function of the JVM in Java?",
+      "options": [
+        "Converts Java source code directly into machine code",
+        "Interprets and executes Java bytecode",
+        "Compiles Java code into an executable file"
+      ],
+      "answer": "Interprets and executes Java bytecode",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "The JVM is platform-independent, meaning the same Java program can run on different operating systems without modification.",
+      "answer": "True",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the words to form a correct statement about the JVM:\n\nJava, executed, bytecode, JVM, is, by",
+      "options": ["Java", "executed", "bytecode", "JVM", "is", "by"],
+      "answer": ["Java", "bytecode", "is", "executed", "by", "JVM"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java command do?\n\njava MyProgram",
+      "options": [
+        "Compiles the Java program",
+        "Runs the compiled Java program on the JVM",
+        "Converts Java code into bytecode"
+      ],
+      "answer": "Runs the compiled Java program on the JVM",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the JVM process with its correct description:",
+      "options": [
+        { "term": "Compilation", "match": "Translates Java source code into bytecode" },
+        { "term": "Interpretation", "match": "Converts bytecode into machine code at runtime" },
+        { "term": "Garbage Collection", "match": "Reclaims memory used by unused objects" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following statements about the JVM are true? (Select all that apply)",
+      "options": [
+        "JVM converts Java source code directly into machine code.",
+        "JVM executes Java bytecode.",
+        "JVM provides memory management through garbage collection."
+      ],
+      "answer": [
+        "JVM executes Java bytecode.",
+        "JVM provides memory management through garbage collection."
+      ],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the steps in the correct order of Java program execution:",
+      "options": [
+        "Write Java code and save it as .java file",
+        "Compile using javac to generate .class file",
+        "Execute the .class file using JVM"
+      ],
+      "correctOrder": [
+        "Write Java code and save it as .java file",
+        "Compile using javac to generate .class file",
+        "Execute the .class file using JVM"
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with the following Java execution command?\n\njavac MyProgram",
+      "options": [
+        "Missing .java file extension",
+        "Incorrect command for running the program",
+        "javac is not required in Java execution"
+      ],
+      "answer": "Missing .java file extension",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "The __________ is a component of the JVM responsible for improving performance by converting bytecode into native machine code at runtime.",
+      "answer": "Just-In-Time (JIT) Compiler",
+      "component": "FillInTheBlank"
+    }
+] }
         ]
       },
       {
         "topic": "2. Basic Data Types and Variables",
         "subtopics": [
-          { "subtopic": "Primitive data types: int, double, char, boolean", "questionsData": [] },
-          { "subtopic": "Variables and constants (final keyword)", "questionsData": [] },
-          { "subtopic": "Type casting: implicit and explicit", "questionsData": [] },
-          { "subtopic": "Variable naming conventions", "questionsData": [] }
+          { "subtopic": "Primitive data types: int, double, char, boolean", "questionsData": [
+    {
+      "type": "fill",
+      "question": "The __________ data type in Java is used to store whole numbers without decimals.",
+      "answer": "int",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "Which data type is best for storing decimal values in Java?",
+      "options": [
+        "int",
+        "char",
+        "double",
+        "boolean"
+      ],
+      "answer": "double",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "The char data type in Java can store multiple characters at once.",
+      "answer": "False",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the words to form a correct statement about Java data types:\n\nused, numbers, double, decimal, for, is",
+      "options": ["used", "numbers", "double", "decimal", "for", "is"],
+      "answer": ["double", "is", "used", "for", "decimal", "numbers"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java code do?\n\nint x = 10;\ndouble y = 5.5;\nSystem.out.println(x + y);",
+      "options": [
+        "Prints 15.5 to the console",
+        "Throws a compilation error",
+        "Prints 105.5 as a string"
+      ],
+      "answer": "Prints 15.5 to the console",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the Java data type with an example value:",
+      "options": [
+        { "term": "int", "match": "100" },
+        { "term": "double", "match": "3.14" },
+        { "term": "char", "match": "'A'" },
+        { "term": "boolean", "match": "true" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following are valid primitive data types in Java? (Select all that apply)",
+      "options": [
+        "int",
+        "String",
+        "boolean",
+        "double"
+      ],
+      "answer": [
+        "int",
+        "boolean",
+        "double"
+      ],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the following Java statements in the correct order to declare and print a char variable:",
+      "options": [
+        "System.out.println(letter);",
+        "char letter = 'B';"
+      ],
+      "correctOrder": [
+        "char letter = 'B';",
+        "System.out.println(letter);"
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with the following Java declaration?\n\nboolean status = \"true\";",
+      "options": [
+        "boolean values must be enclosed in double quotes.",
+        "boolean can only store true or false without quotes.",
+        "The assignment operator = is incorrect."
+      ],
+      "answer": "boolean can only store true or false without quotes.",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "The __________ data type is used to store a single character, such as 'A' or 'Z'.",
+      "answer": "char",
+      "component": "FillInTheBlank"
+    }
+] },
+          { "subtopic": "Variables and constants (final keyword)", "questionsData": [
+    {
+      "type": "fill",
+      "question": "In Java, a variable that cannot be changed after being assigned is declared using the __________ keyword.",
+      "answer": "final",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What happens when you try to reassign a value to a final variable in Java?",
+      "options": [
+        "The value gets updated successfully.",
+        "The program compiles but throws a runtime error.",
+        "A compilation error occurs.",
+        "The variable becomes static."
+      ],
+      "answer": "A compilation error occurs.",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "In Java, all variables declared using the final keyword must be initialized at the time of declaration.",
+      "answer": "False",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the words to form a correct Java statement for declaring a constant variable:\n\n10, =, final, int, MAX_VALUE",
+      "options": ["10", "=", "final", "int", "MAX_VALUE"],
+      "answer": ["final", "int", "MAX_VALUE", "=", "10"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java code do?\n\nfinal double PI = 3.14159;\nSystem.out.println(PI);",
+      "options": [
+        "Declares a constant PI and prints its value.",
+        "Causes a compilation error due to incorrect syntax.",
+        "Assigns a new value to PI and prints it."
+      ],
+      "answer": "Declares a constant PI and prints its value.",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the Java code with its correct output:\n\nfinal int SPEED_LIMIT = 60;\nSystem.out.println(SPEED_LIMIT);",
+      "options": [
+        { "term": "final int SPEED_LIMIT = 60; System.out.println(SPEED_LIMIT);", "match": "60" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following statements about variables and constants in Java are true?",
+      "options": [
+        "Variables declared with final cannot be reassigned.",
+        "final variables must always be assigned a value when declared.",
+        "Constants in Java are typically written in uppercase letters.",
+        "Java allows modifying the value of a final variable after compilation."
+      ],
+      "answer": [
+        "Variables declared with final cannot be reassigned.",
+        "Constants in Java are typically written in uppercase letters."
+      ],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the steps in the correct order to declare and use a constant in Java:",
+      "options": [
+        "Declare a final variable.",
+        "Assign a value to the variable.",
+        "Use the variable in a print statement."
+      ],
+      "correctOrder": [
+        "Declare a final variable.",
+        "Assign a value to the variable.",
+        "Use the variable in a print statement."
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with the following Java code?\n\nfinal int number;\nnumber = 100;\nnumber = 200;\nSystem.out.println(number);",
+      "options": [
+        "The variable number should not be final.",
+        "The final variable is reassigned after initialization, causing an error.",
+        "The print statement is incorrect."
+      ],
+      "answer": "The final variable is reassigned after initialization, causing an error.",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "Complete the Java code to declare a constant representing the value of gravity:\n\npublic class Physics {\n    public static void main(String[] args) {\n        final double GRAVITY = _____;\n        System.out.println(GRAVITY);\n    }\n}",
+      "answer": "9.8",
+      "component": "FillInTheBlank"
+    }
+] },
+          { "subtopic": "Type casting: implicit and explicit", "questionsData": [
+    {
+      "type": "fill",
+      "question": "In Java, converting a smaller data type to a larger one automatically is called __________ type casting.",
+      "answer": "implicit",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "Which of the following is an example of explicit type casting in Java?",
+      "options": [
+        "int num = 10.5;",
+        "double d = 10;",
+        "int num = (int) 10.5;",
+        "float f = 5;"
+      ],
+      "answer": "int num = (int) 10.5;",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "Implicit type casting in Java may cause data loss.",
+      "answer": "False",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the words to form a correct Java statement for explicit type casting:\n\n(int), 3.14, double, =, num, ;, int",
+      "options": ["(int)", "3.14", "double", "=", "num", ";", "int"],
+      "answer": ["int", "num", "=", "(int)", "3.14", ";"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java code do?\n\ndouble d = 20.99;\nint num = (int) d;\nSystem.out.println(num);",
+      "options": [
+        "Prints 20.99 to the console.",
+        "Causes a compilation error.",
+        "Converts d to an integer and prints 20."
+      ],
+      "answer": "Converts d to an integer and prints 20.",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the Java code with its correct output:\n\nint num = 10;\ndouble d = num;\nSystem.out.println(d);",
+      "options": [
+        { "term": "int num = 10; double d = num; System.out.println(d);", "match": "10.0" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following statements about type casting in Java are true? (Select all that apply)",
+      "options": [
+        "Implicit casting happens when a smaller data type is assigned to a larger one.",
+        "Explicit casting is needed when converting from double to int.",
+        "Type casting allows Java to handle different data types efficiently.",
+        "Explicit type casting can be done without losing data."
+      ],
+      "answer": [
+        "Implicit casting happens when a smaller data type is assigned to a larger one.",
+        "Explicit casting is needed when converting from double to int.",
+        "Type casting allows Java to handle different data types efficiently."
+      ],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the following steps in the correct order for performing explicit type casting in Java:",
+      "options": [
+        "Declare a variable of a larger data type (e.g., double).",
+        "Use explicit casting by placing the target data type in parentheses.",
+        "Store the result in a variable of a smaller data type (e.g., int)."
+      ],
+      "correctOrder": [
+        "Declare a variable of a larger data type (e.g., double).",
+        "Use explicit casting by placing the target data type in parentheses.",
+        "Store the result in a variable of a smaller data type (e.g., int)."
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with the following Java code?\n\ndouble d = 5.99;\nint num = d;\nSystem.out.println(num);",
+      "options": [
+        "The variable num should be declared as double.",
+        "double cannot be assigned to int directly without explicit casting.",
+        "The print statement is incorrect."
+      ],
+      "answer": "double cannot be assigned to int directly without explicit casting.",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "Complete the Java code to perform implicit type casting:\n\nint num = 100;\ndouble d = _____;\nSystem.out.println(d);",
+      "answer": "num",
+      "component": "FillInTheBlank"
+    }
+] },
+          { "subtopic": "Variable naming conventions", "questionsData": [
+    {
+      "type": "fill",
+      "question": "In Java, a variable name cannot start with a __________.",
+      "answer": "number",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "Which of the following is a valid variable name in Java?",
+      "options": [
+        "2value",
+        "my_variable",
+        "class"
+      ],
+      "answer": "my_variable",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "Java variable names are case-sensitive.",
+      "answer": "True",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the words to form a valid Java variable name:\n\nage, _, user",
+      "options": ["age", "_", "user"],
+      "answer": ["user", "_", "age"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What is wrong with the following Java code?\n\nint 1stNumber = 10;",
+      "options": [
+        "Variable names cannot start with a number.",
+        "The semicolon is missing.",
+        "int is not a valid data type."
+      ],
+      "answer": "Variable names cannot start with a number.",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the variable declaration with its validity:",
+      "options": [
+        { "term": "int myVar = 10;", "match": "Valid" },
+        { "term": "double $amount = 25.50;", "match": "Valid" },
+        { "term": "String 1name = \"John\";", "match": "Invalid" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following are valid Java variable names? (Select all that apply)",
+      "options": [
+        "_totalAmount",
+        "break",
+        "value123"
+      ],
+      "answer": [
+        "_totalAmount",
+        "value123"
+      ],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the following variable naming rules in the correct order of priority:",
+      "options": [
+        "Cannot use Java reserved keywords.",
+        "Must begin with a letter, underscore (_), or dollar sign ($).",
+        "Cannot contain spaces or special characters except _ and $."
+      ],
+      "correctOrder": [
+        "Must begin with a letter, underscore (_), or dollar sign ($).",
+        "Cannot contain spaces or special characters except _ and $.",
+        "Cannot use Java reserved keywords."
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with this Java variable declaration?\n\nint double = 50;",
+      "options": [
+        "Variable names cannot start with a number.",
+        "double is a reserved keyword.",
+        "Variables must end with a semicolon."
+      ],
+      "answer": "double is a reserved keyword.",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "Complete the variable declaration in Java:\n\n______ myNumber = 25;",
+      "answer": "int",
+      "component": "FillInTheBlank"
+    }
+] }
         ]
       },
       {
         "topic": "3. Operators and Expressions",
         "subtopics": [
-          { "subtopic": "Arithmetic operators: +, -, *, /, %", "questionsData": [] },
-          { "subtopic": "Comparison operators: ==, !=, >, <, >=, <=", "questionsData": [] },
+          { "subtopic": "Arithmetic operators: +, -, *, /, %", "questionsData": [
+    {
+      "type": "fill",
+      "question": "The arithmetic operator used to find the remainder of a division operation in Java is __________.",
+      "answer": "%",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What will be the result of the following Java expression?\n\nint result = 10 / 3;\nSystem.out.println(result);",
+      "options": [
+        "3.33",
+        "3",
+        "4"
+      ],
+      "answer": "3",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "In Java, the / operator always returns an integer result when both operands are integers.",
+      "answer": "True",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the symbols to form a valid arithmetic expression:\n\n+, 5, *, 3, 2, -, 4",
+      "options": ["+", "5", "*", "3", "2", "-", "4"],
+      "answer": ["5", "+", "3", "*", "2", "-", "4"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java code output?\n\nSystem.out.println(15 % 4);",
+      "options": [
+        "3",
+        "4",
+        "1"
+      ],
+      "answer": "3",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the Java expressions with their correct output:",
+      "options": [
+        { "term": "10 + 5 * 2", "match": "20" },
+        { "term": "20 / 4 - 2", "match": "3" },
+        { "term": "15 % 4", "match": "3" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following arithmetic operations in Java will return 2? (Select all that apply)",
+      "options": [
+        "10 / 5",
+        "5 - 3",
+        "8 % 3"
+      ],
+      "answer": [
+        "10 / 5",
+        "5 - 3"
+      ],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the arithmetic operations in order of precedence (from highest to lowest priority):",
+      "options": [
+        "Multiplication (*), Division (/), Modulus (%)",
+        "Addition (+), Subtraction (-)"
+      ],
+      "correctOrder": [
+        "Multiplication (*), Division (/), Modulus (%)",
+        "Addition (+), Subtraction (-)"
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with this Java arithmetic expression?\n\nint result = 10 / 4.0;",
+      "options": [
+        "The division operator cannot be used in Java.",
+        "Mixing integer and floating-point values requires explicit type conversion.",
+        "The modulo operator should be used instead."
+      ],
+      "answer": "Mixing integer and floating-point values requires explicit type conversion.",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "Complete the Java code to store the result of multiplying 6 and 7 in a variable:\n\nint result = 6 _____ 7;",
+      "answer": "*",
+      "component": "FillInTheBlank"
+    }
+] },
+          { "subtopic": "Comparison operators: ==, !=, >, <, >=, <=", "questionsData": [
+    {
+      "type": "fill",
+      "question": "The comparison operator used to check if two values are not equal in Java is __________.",
+      "answer": "!=",
+      "component": "FillInTheBlank"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What will be the output of the following Java expression?\n\nSystem.out.println(10 > 5);",
+      "options": [
+        "true",
+        "false",
+        "error"
+      ],
+      "answer": "true",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "true-false",
+      "question": "The comparison operator == is used to compare two values for equality in Java.",
+      "answer": "True",
+      "component": "TrueFalseQuestion"
+    },
+    {
+      "type": "unscramble",
+      "question": "Unscramble the symbols to form valid comparison expressions:\n\n5, ==, 10, <, 7, >, 3",
+      "options": ["5", "==", "10", "<", "7", ">", "3"],
+      "answer": ["5", ">", "3"],
+      "component": "DragDropQuestion"
+    },
+    {
+      "type": "multiple-choice",
+      "question": "What does the following Java code output?\n\nSystem.out.println(20 <= 15);",
+      "options": [
+        "true",
+        "false",
+        "error"
+      ],
+      "answer": "false",
+      "component": "MultipleChoiceQuestion"
+    },
+    {
+      "type": "match",
+      "question": "Match the Java expressions with their correct output:",
+      "options": [
+        { "term": "8 == 8", "match": "true" },
+        { "term": "5 != 5", "match": "false" },
+        { "term": "10 > 2", "match": "true" },
+        { "term": "15 <= 10", "match": "false" }
+      ],
+      "component": "MatchQuestion"
+    },
+    {
+      "type": "multiple-selection",
+      "question": "Which of the following comparison operations in Java will return true?",
+      "options": [
+        "7 != 8",
+        "10 > 20",
+        "5 <= 5"
+      ],
+      "answer": [
+        "7 != 8",
+        "5 <= 5"
+      ],
+      "component": "MultipleSelectionQuestion"
+    },
+    {
+      "type": "order",
+      "question": "Arrange the following comparisons in increasing order of truth values (from false to true):",
+      "options": [
+        "10 < 5",
+        "20 >= 20",
+        "15 != 10"
+      ],
+      "correctOrder": [
+        "10 < 5",
+        "15 != 10",
+        "20 >= 20"
+      ],
+      "component": "OrderQuestion"
+    },
+    {
+      "type": "code-correction",
+      "question": "What is wrong with this Java comparison expression?\n\nif (a = 10) {\n    System.out.println(\"Equal to 10\");\n}",
+      "options": [
+        "= should be == for comparison.",
+        "if statements do not support conditions.",
+        "10 should be a variable."
+      ],
+      "answer": "= should be == for comparison.",
+      "component": "CodeCorrectionQuestion"
+    },
+    {
+      "type": "fill",
+      "question": "Complete the Java code to check if x is greater than y:\n\nif (x _____ y) {\n    System.out.println(\"x is greater\");\n}",
+      "answer": ">",
+      "component": "FillInTheBlank"
+    }
+] },
           { "subtopic": "Logical operators: &&, ||, !", "questionsData": [] },
           { "subtopic": "Assignment operators: =, +=, -=, *=, /=", "questionsData": [] },
           { "subtopic": "Ternary operator: ? :", "questionsData": [] }
