@@ -8,8 +8,7 @@ import BackButton from '../BackButton';
 import GlowingButton from '../ui/GlowingButton';
 import PythonQuizPopup from '../quiz/PythonQuizPopup';
 import PythonFlashcards from '../quiz/PythonFlashcards';
-import PythonVideo from '../quiz/PythonVideo'; // New import
-
+import PythonVideo from '../quiz/PythonVideo';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { coursePhases } from "./PythonCourseData";
@@ -47,7 +46,7 @@ const PythonFundamentals = () => {
   const [currentQuizSubtopic, setCurrentQuizSubtopic] = useState<string>('');
   const [showConfetti, setShowConfetti] = useState(false);
   const [showFlashcards, setShowFlashcards] = useState(false);
-  const [showVideo, setShowVideo] = useState(false); // New state for video
+  const [showVideo, setShowVideo] = useState(false);
   const [userProgress, setUserProgress] = useState(() => {
     const saved = localStorage.getItem('pythonProgress');
     return saved ? JSON.parse(saved) : {
@@ -84,11 +83,7 @@ const PythonFundamentals = () => {
       const containerWidth = container.offsetWidth;
       const phaseWidth = phaseElement.offsetWidth;
       const newScrollLeft = phaseElement.offsetLeft - (containerWidth / 2) + (phaseWidth / 2);
-      
-      container.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      });
+      container.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
     }
   };
 
@@ -112,7 +107,6 @@ const PythonFundamentals = () => {
   const handleMouseUp = () => {
     if (!isDragging || !phasesContainerRef.current) return;
     setIsDragging(false);
-    
     if (dragDistance > dragThreshold) {
       const container = phasesContainerRef.current;
       const phaseWidth = container.children[0].clientWidth;
@@ -141,7 +135,6 @@ const PythonFundamentals = () => {
   const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setSparklePhase(phaseId);
-    
     const sparkles = Array.from({ length: 8 }).map((_, i) => {
       const sparkle = document.createElement('div');
       sparkle.className = 'absolute w-2 h-2 bg-blue-400 rounded-full';
@@ -151,19 +144,11 @@ const PythonFundamentals = () => {
       sparkle.style.animation = `sparkle ${Math.random() * 0.5 + 0.5}s ease-in-out ${i * 0.1}s`;
       return sparkle;
     });
-
     const target = e.currentTarget as HTMLElement;
     sparkles.forEach(sparkle => target.appendChild(sparkle));
-
-    setTimeout(() => {
-      sparkles.forEach(sparkle => sparkle.remove());
-    }, 1000);
-
+    setTimeout(() => sparkles.forEach(sparkle => sparkle.remove()), 1000);
     setTimeout(() => setSparklePhase(null), 500);
-    
-    if (flippedPhase !== phaseId) {
-      setFlippedPhase(phaseId);
-    }
+    if (flippedPhase !== phaseId) setFlippedPhase(phaseId);
   };
 
   const handleFlipBack = (phaseId: string, e: React.MouseEvent) => {
@@ -173,17 +158,13 @@ const PythonFundamentals = () => {
 
   const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    
     if (selectedTopic?.topicId === topicId) {
       setExpandedTopic(null);
       setSelectedTopic(null);
     } else {
       setExpandedTopic(topicId);
       setSelectedTopic({ phaseId, topicId });
-
-      setTimeout(() => {
-        subtopicsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      setTimeout(() => subtopicsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     }
   };
 
@@ -192,16 +173,15 @@ const PythonFundamentals = () => {
     setCurrentQuizTopic(topicTitle);
     setCurrentQuizSubtopic(subtopicTitle);
 
-    // Check if this is Phase 1, Topic 1, Subtopic 1 or 2
     const isPhase1Topic1 = 
       coursePhases[0].topics[0].title === topicTitle &&
       (subtopicTitle === coursePhases[0].topics[0].subtopics?.[0].title ||
        subtopicTitle === coursePhases[0].topics[0].subtopics?.[1].title);
 
     if (isPhase1Topic1) {
-      setShowVideo(true); // Show video instead
+      setShowVideo(true);
     } else {
-      setShowFlashcards(true); // Default to flashcards
+      setShowFlashcards(true);
     }
   };
 
@@ -265,14 +245,15 @@ const PythonFundamentals = () => {
       }
     }
 
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 5000);
+    setTimeout(() => setShowConfetti(false), 5000);
+  };
+
+  const handleVideoClose = () => {
+    setShowVideo(false); // Just close, no completion
   };
 
   const handleVideoComplete = () => {
     setShowVideo(false);
-    // Optionally mark subtopic as completed here if watching the video counts as completion
     if (selectedTopic) {
       const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
       const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
@@ -287,7 +268,7 @@ const PythonFundamentals = () => {
               subtopic.id
             ]
           },
-          xp: prev.xp + 25, // Example XP for video completion
+          xp: prev.xp + 25 // Example XP for video completion
         }));
       }
     }
@@ -295,9 +276,7 @@ const PythonFundamentals = () => {
 
   const selectedPhaseAndTopic = selectedTopic ? {
     phase: coursePhases.find(p => p.id === selectedTopic.phaseId),
-    topic: coursePhases
-      .find(p => p.id === selectedTopic.phaseId)
-      ?.topics.find(t => t.id === selectedTopic.topicId)
+    topic: coursePhases.find(p => p.id === selectedTopic.phaseId)?.topics.find(t => t.id === selectedTopic.topicId)
   } : null;
 
   return (
@@ -307,18 +286,9 @@ const PythonFundamentals = () => {
       <style>
         {`
           @keyframes sparkle {
-            0% {
-              transform: scale(0) rotate(0deg);
-              opacity: 1;
-            }
-            50% {
-              transform: scale(1.5) rotate(180deg);
-              opacity: 0.8;
-            }
-            100% {
-              transform: scale(0) rotate(360deg);
-              opacity: 0;
-            }
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
           }
         `}
       </style>
@@ -344,11 +314,7 @@ const PythonFundamentals = () => {
         </div>
 
         <div className="flex justify-center mb-12">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="relative w-24 h-24 md:w-32 md:h-32"
-          >
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="relative w-24 h-24 md:w-32 md:h-32">
             <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
             <div className="relative w-full h-full rounded-full border-2 border-blue-400/50 flex items-center justify-center bg-gradient-to-b from-blue-500/10 to-blue-500/30">
               <span className="text-4xl md:text-5xl select-none">{coursePhases[currentPhaseIndex].icon}</span>
@@ -390,33 +356,20 @@ const PythonFundamentals = () => {
               <motion.div
                 key={phase.id}
                 initial={{ scale: 0.8, opacity: 0.6 }}
-                animate={{
-                  scale: index === currentPhaseIndex ? 1 : 0.8,
-                  opacity: index === currentPhaseIndex ? 1 : 0.6,
-                }}
+                animate={{ scale: index === currentPhaseIndex ? 1 : 0.8, opacity: index === currentPhaseIndex ? 1 : 0.6 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                whileHover={{ 
-                  scale: index === currentPhaseIndex ? 1.02 : 0.85,
-                  transition: { duration: 0.15 }
-                }}
-                whileTap={{ 
-                  scale: index === currentPhaseIndex ? 0.98 : 0.8,
-                  transition: { duration: 0.1 }
-                }}
-                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none
-                  ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
+                whileHover={{ scale: index === currentPhaseIndex ? 1.02 : 0.85, transition: { duration: 0.15 } }}
+                whileTap={{ scale: index === currentPhaseIndex ? 0.98 : 0.8, transition: { duration: 0.1 } }}
+                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none ${
+                  index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'
+                }`}
                 onClick={() => handlePhaseClick(index)}
                 style={{ scrollSnapAlign: 'center' }}
               >
                 <motion.div
                   className="relative w-full h-full transition-all preserve-3d"
-                  animate={{ 
-                    rotateY: flippedPhase === phase.id ? 180 : 0 
-                  }}
-                  transition={{ 
-                    duration: 0.2,
-                    ease: "easeOut"
-                  }}
+                  animate={{ rotateY: flippedPhase === phase.id ? 180 : 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                 >
                   <div 
                     className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
@@ -431,12 +384,10 @@ const PythonFundamentals = () => {
                   <div className="absolute inset-0 backface-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
                     <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-                    
                     <div className="relative h-full p-6 flex flex-col">
                       <div className="text-4xl mb-4 select-none">{phase.icon}</div>
                       <h3 className="text-xl font-bold mb-2 select-none">{phase.title}</h3>
                       <p className="text-sm text-gray-400 mb-4 select-none">{phase.description}</p>
-                      
                       {index === currentPhaseIndex && (
                         <motion.button
                           onClick={(e) => handlePhaseStart(phase.id, e)}
@@ -505,9 +456,7 @@ const PythonFundamentals = () => {
                 key={index}
                 onClick={() => setCurrentPhaseIndex(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentPhaseIndex 
-                    ? 'w-8 bg-blue-500' 
-                    : 'bg-white/20 hover:bg-white/40'
+                  index === currentPhaseIndex ? 'w-8 bg-blue-500' : 'bg-white/20 hover:bg-white/40'
                 }`}
               />
             ))}
@@ -525,10 +474,7 @@ const PythonFundamentals = () => {
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold">{selectedPhaseAndTopic.topic.title} Subtopics</h3>
-                <button 
-                  onClick={() => setSelectedTopic(null)}
-                  className="flex items-center gap-2"
-                >
+                <button onClick={() => setSelectedTopic(null)} className="flex items-center gap-2">
                   {expandedTopic === selectedPhaseAndTopic.topic.id ? (
                     <ChevronUp className="w-5 h-5" />
                   ) : (
@@ -568,10 +514,7 @@ const PythonFundamentals = () => {
                           disabled={userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id)}
                         >
                           <Play className="w-3 h-3" />
-                          {userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id) 
-                            ? 'Completed' 
-                            : 'Start'
-                          }
+                          {userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id) ? 'Completed' : 'Start'}
                         </motion.button>
                       </motion.div>
                     ))}
@@ -598,11 +541,9 @@ const PythonFundamentals = () => {
 
         <PythonVideo
           isOpen={showVideo}
-          onClose={handleVideoComplete}
+          onClose={handleVideoClose} // Close without completion
+          onComplete={handleVideoComplete} // Complete when video ends
           moduleTitle={currentQuizSubtopic}
-          videoUrl={currentQuizSubtopic === coursePhases[0].topics[0].subtopics?.[0].title 
-            ? 'https://example.com/what-is-python.mp4' // Replace with actual URL
-            : 'https://example.com/python-setup.mp4'} // Replace with actual URL
         />
       </div>
     </div>
