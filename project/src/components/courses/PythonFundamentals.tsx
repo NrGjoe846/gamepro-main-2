@@ -6,7 +6,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
 import GlowingButton from '../ui/GlowingButton';
-import QuizPopup from '../quiz/QuizPopup';
+import PythonQuizPopup from '../quiz/PythonQuizPopup';
+import PythonFlashcards from '../quiz/PythonFlashcards';
+
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { coursePhases } from "./PythonCourseData";
@@ -43,6 +45,7 @@ const PythonFundamentals = () => {
   const [currentQuizTopic, setCurrentQuizTopic] = useState<string>('');
   const [currentQuizSubtopic, setCurrentQuizSubtopic] = useState<string>('');
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showFlashcards, setShowFlashcards] = useState(false);
   const [userProgress, setUserProgress] = useState(() => {
     const saved = localStorage.getItem('pythonProgress');
     return saved ? JSON.parse(saved) : {
@@ -182,72 +185,77 @@ const PythonFundamentals = () => {
     }
   };
 
- const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
-  console.log('Starting quiz for:', { topicTitle, subtopicTitle });
-  setCurrentQuizTopic(topicTitle);
-  setCurrentQuizSubtopic(subtopicTitle);
-  setShowQuiz(true);
-};
+  const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
+    console.log('Starting flashcards for:', { topicTitle, subtopicTitle });
+    setCurrentQuizTopic(topicTitle);
+    setCurrentQuizSubtopic(subtopicTitle);
+    setShowFlashcards(true);
+  };
 
-const handleQuizComplete = (score: number) => {
-  console.log('Quiz completed with score:', score);
-  setShowQuiz(false);
-  setShowConfetti(true);
+  const handleStartQuiz = () => {
+    setShowFlashcards(false);
+    setShowQuiz(true);
+  };
 
-  if (selectedTopic) {
-    const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
-    const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
+  const handleQuizComplete = (score: number) => {
+    console.log('Quiz completed with score:', score);
+    setShowQuiz(false);
+    setShowConfetti(true);
 
-    if (topic && topic.subtopics) {
-      const subtopic = topic.subtopics.find(s => s.title === currentQuizSubtopic);
-      if (subtopic) {
-        const newCompletedSubtopics = {
-          ...userProgress.completedSubtopics,
-          [selectedTopic.topicId]: [
-            ...(userProgress.completedSubtopics[selectedTopic.topicId] || []),
-            subtopic.id
-          ]
-        };
+    if (selectedTopic) {
+      const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
+      const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
 
-        const baseXP = 50;
-        const bonusXP = Math.floor(score * baseXP / 100);
-        const totalXP = baseXP + bonusXP;
+      if (topic && topic.subtopics) {
+        const subtopic = topic.subtopics.find(s => s.title === currentQuizSubtopic);
+        if (subtopic) {
+          const newCompletedSubtopics = {
+            ...userProgress.completedSubtopics,
+            [selectedTopic.topicId]: [
+              ...(userProgress.completedSubtopics[selectedTopic.topicId] || []),
+              subtopic.id
+            ]
+          };
 
-        const today = new Date().toDateString();
-        const streakBonus = userProgress.lastCompletedDate === new Date(Date.now() - 86400000).toDateString()
-          ? userProgress.streak + 1
-          : 1;
+          const baseXP = 50;
+          const bonusXP = Math.floor(score * baseXP / 100);
+          const totalXP = baseXP + bonusXP;
 
-        const newXP = userProgress.xp + totalXP;
-        const newLevel = Math.floor(newXP / 1000) + 1;
+          const today = new Date().toDateString();
+          const streakBonus = userProgress.lastCompletedDate === new Date(Date.now() - 86400000).toDateString()
+            ? userProgress.streak + 1
+            : 1;
 
-        setUserProgress(prev => ({
-          ...prev,
-          completedSubtopics: newCompletedSubtopics,
-          xp: newXP,
-          level: newLevel,
-          streak: streakBonus,
-          lastCompletedDate: today
-        }));
+          const newXP = userProgress.xp + totalXP;
+          const newLevel = Math.floor(newXP / 1000) + 1;
 
-        const allSubtopicsCompleted = topic.subtopics.every(s =>
-          newCompletedSubtopics[selectedTopic.topicId]?.includes(s.id)
-        );
-
-        if (allSubtopicsCompleted) {
           setUserProgress(prev => ({
             ...prev,
-            completedTopics: [...prev.completedTopics, topic.id]
+            completedSubtopics: newCompletedSubtopics,
+            xp: newXP,
+            level: newLevel,
+            streak: streakBonus,
+            lastCompletedDate: today
           }));
+
+          const allSubtopicsCompleted = topic.subtopics.every(s =>
+            newCompletedSubtopics[selectedTopic.topicId]?.includes(s.id)
+          );
+
+          if (allSubtopicsCompleted) {
+            setUserProgress(prev => ({
+              ...prev,
+              completedTopics: [...prev.completedTopics, topic.id]
+            }));
+          }
         }
       }
     }
-  }
 
-  setTimeout(() => {
-    setShowConfetti(false);
-  }, 5000);
-};
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000);
+  };
 
   const selectedPhaseAndTopic = selectedTopic ? {
     phase: coursePhases.find(p => p.id === selectedTopic.phaseId),
@@ -374,15 +382,15 @@ const handleQuizComplete = (score: number) => {
                     ease: "easeOut"
                   }}
                 >
-<div 
-  className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
-  style={{
-    backgroundImage: `url(${phase.backgroundImage || '/placeholder-image.jpg'})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    opacity: 0.50
-  }}
-/>
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
+                    style={{
+                      backgroundImage: `url(${phase.backgroundImage || '/placeholder-image.jpg'})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      opacity: 0.50
+                    }}
+                  />
 
                   <div className="absolute inset-0 backface-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
@@ -537,12 +545,20 @@ const handleQuizComplete = (score: number) => {
             </motion.div>
           )}
         </AnimatePresence>
-<QuizPopup
-  isOpen={showQuiz}
-  onClose={() => setShowQuiz(false)}
-  onComplete={(score) => console.log(`Quiz completed with score: ${score}`)}
-  language="python" // Covers all phases, topics, and subtopics for Python
-/>
+
+        <PythonFlashcards
+          isOpen={showFlashcards}
+          onClose={() => setShowFlashcards(false)}
+          onStartQuiz={handleStartQuiz}
+          moduleTitle={currentQuizSubtopic}
+        />
+
+        <PythonQuizPopup
+          isOpen={showQuiz}
+          onClose={() => setShowQuiz(false)}
+          onComplete={handleQuizComplete}
+          moduleTitle={currentQuizSubtopic}
+        />
       </div>
     </div>
   );
