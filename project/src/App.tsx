@@ -14,14 +14,14 @@ import ChallengeCategories from './components/challenges/ChallengeCategories';
 import LanguageSelection from './components/challenges/LanguageSelection';
 import LevelSelection from './components/challenges/LevelSelection';
 import DailyChallenge from './components/challenges/DailyChallenge';
-import JavaChallenge from './components/challenges/JavaChallenge.tsx'; // Updated with .tsx extension
-
+import JavaChallenge from './components/challenges/JavaChallenge.tsx';
 import InterviewBot from './components/interview/InterviewBot';
 import AptitudeTest from './components/aptitude/AptitudeTest';
 import About from './components/About';
 import AchievementsPage from './components/achievements/AchievementsPage';
 import RewardsPage from './components/rewards/RewardsPage';
-import Store from './components/Store'; // Added import for Store
+import Store from './components/Store';
+import MiniProjectPage from './components/miniproject/MiniProjectPage';
 
 function App() {
   return (
@@ -31,7 +31,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/auth" element={<AuthSystem />} />
           <Route path="/about" element={<About />} />
-          <Route path="/store" element={<Store />} /> {/* Added /store route */}
+          <Route path="/store" element={<Store />} />
 
           {/* Protected Routes */}
           <Route 
@@ -55,6 +55,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CompilerPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/miniproject" 
+            element={
+              <ProtectedRoute>
+                <MiniProjectPage />
               </ProtectedRoute>
             } 
           />
@@ -154,7 +162,6 @@ function App() {
             } 
           />
 
-
           {/* Interview Bot */}
           <Route 
             path="/interview-bot" 
@@ -182,4 +189,5 @@ function App() {
     </AuthProvider>
   );
 }
+
 export default App;
