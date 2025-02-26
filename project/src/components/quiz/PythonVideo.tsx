@@ -1,80 +1,75 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, PlayCircle, PauseCircle, Maximize2 } from 'lucide-react';
-
-// Load YouTube Iframe API script dynamically
-const loadYouTubeAPI = () => {
-  if (!window['YT']) {
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode!.insertBefore(tag, firstScriptTag);
-  }
-};
+import { X, PlayCircle, PauseCircle, Maximize2, CheckCircle } from 'lucide-react';
 
 interface PythonVideoProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: () => void; // Called when closing without completion
+  onComplete?: () => void; // Called when marking as completed
   moduleTitle: string;
 }
 
-// Mapping subtopic titles to YouTube embed URLs
+// Mapping subtopic titles to OneDrive video URLs
 const videoUrlMap: Record<string, string> = {
-  "Installing Python (Anaconda, PyCharm, or basic Python)": "https://www.youtube.com/embed/YKSpANU8jPE", // Your provided URL
-  "Setting up the IDE": "https://www.youtube.com/embed/NES0LRUFMBE" , // Placeholder (replace with actual URL)
-  "default": "https://www.youtube.com/embed/dQw4w9WgXcQ" // Fallback placeholder
+  "Installing Python (Anaconda, PyCharm, or basic Python)": "https://r1tglg.sn.files.1drv.com/y4matulJUOKOv7Hmbh5nWurmHVPytrNhI6zlRhZ0L5aHEORPqZgqkLjwxzlp2ow0s-Sz7zICfZNvyDEEt8vm3t6dIIuaxQ4hEopvS79mZ35cuRTJ4_MHAgykJNmk1VdusfxkVtm7kYkyIhBJ3Z3bwwFPp2JM-X5aVWJNIKXx8ptaqVjZLvSL1Hlg1x98uiXbvm2ZAaBblYa2EAEltW7ZEF1zfjoCGv5bOhKsCXnNQr_lYI?AVOverride=1", // Your provided URL (needs conversion)
+  "Setting up the IDE": "https://onedrive.live.com/download?resid=YOUR_RESID2&authkey=YOUR_AUTHKEY2", // Replace with actual OneDrive URL
+  "default": "https://www.w3schools.com/html/mov_bbb.mp4" // Fallback placeholder
 };
 
-const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, moduleTitle }) => {
-  const playerRef = useRef<any>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  // Load YouTube API when component mounts
-  useEffect(() => {
-    loadYouTubeAPI();
-    window['onYouTubeIframeAPIReady'] = () => {
-      if (iframeRef.current) {
-        playerRef.current = new window['YT'].Player(iframeRef.current, {
-          events: {
-            onReady: () => console.log("YouTube Player Ready"),
-            onError: (e: any) => console.error("YouTube Player Error:", e.data),
-          },
-        });
-      }
-    };
-
-    // Cleanup to avoid multiple API calls
-    return () => {
-      delete window['onYouTubeIframeAPIReady'];
-    };
-  }, []);
+const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, onComplete, moduleTitle }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
 
   if (!isOpen) return null;
 
   const videoUrl = videoUrlMap[moduleTitle] || videoUrlMap["default"];
 
   const handlePlay = () => {
-    if (playerRef.current && playerRef.current.playVideo) {
-      playerRef.current.playVideo();
+    if (videoRef.current) {
+      videoRef.current.play();
+      setIsPlaying(true);
     }
   };
 
   const handlePause = () => {
-    if (playerRef.current && playerRef.current.pauseVideo) {
-      playerRef.current.pauseVideo();
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setIsPlaying(false);
     }
   };
 
   const handleFullscreen = () => {
-    if (iframeRef.current) {
+    if (videoRef.current) {
       if (!document.fullscreenElement) {
-        iframeRef.current.requestFullscreen().catch((err) => {
+        videoRef.current.requestFullscreen().catch((err) => {
           console.error("Error enabling fullscreen:", err);
         });
       } else {
         document.exitFullscreen();
       }
     }
+  };
+
+  const handleClose = () => {
+    if (videoRef.current) {
+      videoRef.current.pause(); // Pause video on close
+    }
+    setIsPlaying(false);
+    setVideoEnded(false); // Reset state
+    onClose(); // Close without marking completion
+  };
+
+  const handleVideoEnd = () => {
+    setIsPlaying(false);
+    setVideoEnded(true); // Show "Completed" button
+  };
+
+  const handleMarkComplete = () => {
+    if (onComplete) {
+      onComplete(); // Mark as completed and close
+    }
+    setVideoEnded(false); // Reset state
   };
 
   return (
@@ -86,7 +81,7 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, moduleTitle 
     >
       <motion.div className="relative w-full max-w-4xl bg-[#1a1a2e] rounded-2xl shadow-2xl p-6 m-4 max-h-[90vh] overflow-y-auto">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-all"
         >
           <X className="w-6 h-6 text-white" />
@@ -98,21 +93,22 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, moduleTitle 
         </div>
 
         <div className="relative w-full" style={{ paddingTop: '56.25%' /* 16:9 Aspect Ratio */ }}>
-          <iframe
-            ref={iframeRef}
+          <video
+            ref={videoRef}
             className="absolute top-0 left-0 w-full h-full rounded-lg"
-            src={`${videoUrl}?enablejsapi=1&controls=1&rel=0`}
-            title={moduleTitle}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+            src={videoUrl}
+            controls={false} // Custom controls below
+            onEnded={handleVideoEnd}
+          >
+            Your browser does not support the video tag.
+          </video>
         </div>
 
         <div className="mt-6 flex justify-center gap-4">
           <button
             onClick={handlePlay}
             className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-2"
+            disabled={isPlaying || videoEnded}
           >
             <PlayCircle className="w-5 h-5" />
             Play
@@ -120,6 +116,7 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, moduleTitle 
           <button
             onClick={handlePause}
             className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-2"
+            disabled={!isPlaying}
           >
             <PauseCircle className="w-5 h-5" />
             Pause
@@ -131,8 +128,17 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, moduleTitle 
             <Maximize2 className="w-5 h-5" />
             Fullscreen
           </button>
+          {videoEnded && (
+            <button
+              onClick={handleMarkComplete}
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <CheckCircle className="w-5 h-5" />
+              Completed
+            </button>
+          )}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
           >
             Close
