@@ -2,18 +2,22 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, PlayCircle, PauseCircle, Maximize2, CheckCircle } from 'lucide-react';
 
+// Import local video files from src/assets/videos/
+import whatIsCVideo from '../../assets/videos/what-is-c.mp4';
+import settingUpCEnvironmentVideo from '../../assets/videos/setting-up-c-environment.mp4';
+
 interface CVideoProps {
   isOpen: boolean;
-  onClose: () => void; // Called when closing without completion
-  onComplete?: () => void; // Called when marking as completed
+  onClose: () => void;
+  onComplete?: () => void;
   moduleTitle: string;
 }
 
-// Mapping subtopic titles to video URLs (replace with your actual C video URLs)
+// Mapping subtopic titles to local video files
 const videoUrlMap: Record<string, string> = {
-  "What is C?": "https://example.com/what-is-c.mp4", // Replace with direct MP4 link
-  "Setting up the C Environment (GCC, Code::Blocks, VS Code)": "https://example.com/c-setup.mp4", // Replace with direct MP4 link
-  "default": "https://www.w3schools.com/html/mov_bbb.mp4" // Fallback placeholder
+  "What is C?": whatIsCVideo,
+  "Setting up the C Environment (GCC, Code::Blocks, VS Code)": settingUpCEnvironmentVideo,
+  "default": "https://www.w3schools.com/html/mov_bbb.mp4" // Fallback
 };
 
 const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitle }) => {
@@ -23,11 +27,11 @@ const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitl
   const [error, setError] = useState<string | null>(null);
 
   const videoUrl = videoUrlMap[moduleTitle] || videoUrlMap["default"];
-  const isOneDrive = videoUrl.includes("1drv.ms") || videoUrl.includes("onedrive.live.com");
+  console.log(`Loading video for "${moduleTitle}": ${videoUrl}`); // Debug log
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.load(); // Reload video when URL changes
+      videoRef.current.load();
     }
   }, [videoUrl]);
 
@@ -39,8 +43,8 @@ const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitl
         .play()
         .then(() => setIsPlaying(true))
         .catch((err) => {
-          console.error("Error playing video:", err);
-          setError("Failed to play video. Ensure the URL is a direct video link (e.g., .mp4).");
+          console.error("Play error:", err);
+          setError(`Failed to play video: ${err.message}. Check src/assets/videos/ for ${moduleTitle}.`);
         });
     }
   };
@@ -56,7 +60,7 @@ const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitl
     if (videoRef.current) {
       if (!document.fullscreenElement) {
         videoRef.current.requestFullscreen().catch((err) => {
-          console.error("Error enabling fullscreen:", err);
+          console.error("Fullscreen error:", err);
           setError("Fullscreen not supported.");
         });
       } else {
@@ -67,7 +71,7 @@ const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitl
 
   const handleClose = () => {
     if (videoRef.current) {
-      videoRef.current.pause(); // Pause video on close
+      videoRef.current.pause();
     }
     setIsPlaying(false);
     setVideoEnded(false);
@@ -77,12 +81,12 @@ const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitl
 
   const handleVideoEnd = () => {
     setIsPlaying(false);
-    setVideoEnded(true); // Show "Completed" button
+    setVideoEnded(true);
   };
 
   const handleMarkComplete = () => {
     if (onComplete) {
-      onComplete(); // Mark as completed and close
+      onComplete();
     }
     setVideoEnded(false);
     setError(null);
@@ -107,11 +111,6 @@ const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitl
           <h2 className="text-xl font-bold text-white">{moduleTitle}</h2>
           <p className="text-sm text-gray-400">Watch the video to learn more!</p>
           {error && <p className="text-sm text-red-400">{error}</p>}
-          {isOneDrive && !error && (
-            <p className="text-sm text-yellow-400">
-              Note: OneDrive sharing links don’t work directly. Replace with a direct MP4 URL for playback.
-            </p>
-          )}
         </div>
 
         <div className="relative w-full" style={{ paddingTop: '56.25%' /* 16:9 Aspect Ratio */ }}>
@@ -119,11 +118,11 @@ const CVideo: React.FC<CVideoProps> = ({ isOpen, onClose, onComplete, moduleTitl
             ref={videoRef}
             className="absolute top-0 left-0 w-full h-full rounded-lg"
             src={videoUrl}
-            controls={false} // Custom controls below
+            controls={false}
             onEnded={handleVideoEnd}
-            onError={(e) => {
-              console.error("Video error:", e);
-              setError("Failed to load video. Use a direct MP4 URL instead of a sharing link.");
+            onError={(e: any) => {
+              console.error("Video load error:", e.nativeEvent);
+              setError(`Failed to load video: ${e.nativeEvent.message}. Verify src/assets/videos/${moduleTitle === "What is C?" ? "what-is-c.mp4" : "setting-up-c-environment.mp4"} exists.`);
             }}
           >
             Your browser does not support the video tag.
