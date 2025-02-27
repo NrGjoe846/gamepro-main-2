@@ -8,7 +8,7 @@ import BackButton from '../BackButton';
 import GlowingButton from '../ui/GlowingButton';
 import JavaQuizPopup from '../quiz/JavaQuizPopup';
 import JavaFlashcards from '../quiz/JavaFlashcards';
-import JavaVideo from '../quiz/JavaVideo'; // New import
+import JavaVideo from '../quiz/JavaVideo'; // Added import for JavaVideo
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { coursePhases } from "./JavaCourseData";
@@ -46,7 +46,7 @@ const JavaProgramming = () => {
   const [currentQuizSubtopic, setCurrentQuizSubtopic] = useState<string>('');
   const [showConfetti, setShowConfetti] = useState(false);
   const [showFlashcards, setShowFlashcards] = useState(false);
-  const [showVideo, setShowVideo] = useState(false); // New state for video
+  const [showVideo, setShowVideo] = useState(false); // Added state for video
   const [userProgress, setUserProgress] = useState(() => {
     const saved = localStorage.getItem('javaProgress');
     return saved ? JSON.parse(saved) : {
@@ -191,16 +191,16 @@ const JavaProgramming = () => {
     setCurrentQuizTopic(topicTitle);
     setCurrentQuizSubtopic(subtopicTitle);
 
-    // Check if this is Phase 1, Topic 1, Subtopic 1 or 2
+    // Check if it's Phase 1, Topic 1 (mirroring PythonFundamentals logic)
     const isPhase1Topic1 = 
       coursePhases[0].topics[0].title === topicTitle &&
       (subtopicTitle === coursePhases[0].topics[0].subtopics?.[0].title ||
        subtopicTitle === coursePhases[0].topics[0].subtopics?.[1].title);
 
     if (isPhase1Topic1) {
-      setShowVideo(true); // Show video instead
+      setShowVideo(true); // Trigger video for Phase 1, Topic 1 subtopics
     } else {
-      setShowFlashcards(true); // Default to flashcards
+      setShowFlashcards(true); // Otherwise, trigger flashcards
     }
   };
 
@@ -269,9 +269,13 @@ const JavaProgramming = () => {
     }, 5000);
   };
 
+  // Added video handlers
+  const handleVideoClose = () => {
+    setShowVideo(false); // Close without completion
+  };
+
   const handleVideoComplete = () => {
     setShowVideo(false);
-    // Optionally mark subtopic as completed here if watching the video counts as completion
     if (selectedTopic) {
       const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
       const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
@@ -286,7 +290,7 @@ const JavaProgramming = () => {
               subtopic.id
             ]
           },
-          xp: prev.xp + 25, // Example XP for video completion
+          xp: prev.xp + 25 // Example XP for video completion, matching Python
         }));
       }
     }
@@ -595,13 +599,12 @@ const JavaProgramming = () => {
           moduleTitle={currentQuizSubtopic}
         />
 
+        {/* Added JavaVideo component */}
         <JavaVideo
           isOpen={showVideo}
-          onClose={handleVideoComplete}
+          onClose={handleVideoClose}
+          onComplete={handleVideoComplete}
           moduleTitle={currentQuizSubtopic}
-          videoUrl={currentQuizSubtopic === coursePhases[0].topics[0].subtopics?.[0].title 
-            ? 'https://example.com/what-is-java.mp4' // Replace with actual URL
-            : 'https://example.com/java-setup.mp4'} // Replace with actual URL
         />
       </div>
     </div>
