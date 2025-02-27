@@ -8,7 +8,7 @@ import BackButton from '../BackButton';
 import GlowingButton from '../ui/GlowingButton';
 import CQuizPopup from '../quiz/CQuizPopup';
 import CFlashcards from '../quiz/CFlashcards';
-import CVideo from '../quiz/CVideo'; // New import
+import CVideo from '../quiz/CVideo';
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { coursePhases } from "./CCourseData";
@@ -43,7 +43,7 @@ const CProgramming = () => {
   const [selectedTopic, setSelectedTopic] = useState<{ phaseId: string; topicId: string } | null>(null);
   const [showQuiz, setShowQuiz] = useState(false);
   const [showFlashcards, setShowFlashcards] = useState(false);
-  const [showVideo, setShowVideo] = useState(false); // New state for video
+  const [showVideo, setShowVideo] = useState(false);
   const [currentQuizTopic, setCurrentQuizTopic] = useState<string>('');
   const [currentQuizSubtopic, setCurrentQuizSubtopic] = useState<string>('');
   const [showConfetti, setShowConfetti] = useState(false);
@@ -191,16 +191,15 @@ const CProgramming = () => {
     setCurrentQuizTopic(topicTitle);
     setCurrentQuizSubtopic(subtopicTitle);
 
-    // Check if this is Phase 1, Topic 1, Subtopic 1 or 2
     const isPhase1Topic1 = 
       coursePhases[0].topics[0].title === topicTitle &&
       (subtopicTitle === coursePhases[0].topics[0].subtopics?.[0].title ||
        subtopicTitle === coursePhases[0].topics[0].subtopics?.[1].title);
 
     if (isPhase1Topic1) {
-      setShowVideo(true); // Show video instead
+      setShowVideo(true);
     } else {
-      setShowFlashcards(true); // Default to flashcards
+      setShowFlashcards(true);
     }
   };
 
@@ -269,9 +268,12 @@ const CProgramming = () => {
     }, 5000);
   };
 
+  const handleVideoClose = () => {
+    setShowVideo(false); // Close without completion
+  };
+
   const handleVideoComplete = () => {
     setShowVideo(false);
-    // Optionally mark subtopic as completed here if watching the video counts as completion
     if (selectedTopic) {
       const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
       const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
@@ -286,7 +288,7 @@ const CProgramming = () => {
               subtopic.id
             ]
           },
-          xp: prev.xp + 25, // Example XP for video completion
+          xp: prev.xp + 25 // Example XP for video completion
         }));
       }
     }
@@ -597,11 +599,9 @@ const CProgramming = () => {
 
         <CVideo
           isOpen={showVideo}
-          onClose={handleVideoComplete}
+          onClose={handleVideoClose}
+          onComplete={handleVideoComplete}
           moduleTitle={currentQuizSubtopic}
-          videoUrl={currentQuizSubtopic === coursePhases[0].topics[0].subtopics?.[0].title 
-            ? 'https://example.com/what-is-c.mp4' // Replace with actual URL
-            : 'https://example.com/c-setup.mp4'} // Replace with actual URL
         />
       </div>
     </div>
