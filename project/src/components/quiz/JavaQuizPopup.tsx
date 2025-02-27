@@ -16,6 +16,7 @@ import TranslateCodeQuestion from './TranslateCodeQuestion';
 import MultipleSelectionQuestion from './MultipleSelectionQuestion';
 import CodeCorrectionQuestion from './CodeCorrectionQuestion';
 import FillInTheBlank from './FillInTheBlank';
+import JavaVideo from './JavaVideo'; // Added import
 import questionsData from "../../data/quizzes/javaBasics.json";
 
 const componentMap = {
@@ -44,6 +45,7 @@ const JavaQuizPopup: React.FC<JavaQuizPopupProps> = ({ isOpen, onClose, onComple
   const [showConfetti, setShowConfetti] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
+  const [showVideo, setShowVideo] = useState(false); // Added state for video
   const { width, height } = useWindowSize();
 
   const findQuestionsForModule = () => {
@@ -76,7 +78,8 @@ const JavaQuizPopup: React.FC<JavaQuizPopupProps> = ({ isOpen, onClose, onComple
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   const isVideoException = 
-    moduleTitle === "Installing Java (JDK, JRE)" || moduleTitle === "Setting up the IDE (IntelliJ IDEA, Eclipse, or VS Code)";
+    moduleTitle === "Installing Java (JDK, JRE)" || 
+    moduleTitle === "Setting up the IDE (IntelliJ IDEA, Eclipse, or VS Code)";
 
   useEffect(() => {
     if (!isOpen) {
@@ -85,8 +88,11 @@ const JavaQuizPopup: React.FC<JavaQuizPopupProps> = ({ isOpen, onClose, onComple
       setShowConfetti(false);
       setCurrentQuestionIndex(0);
       setAnswers({});
+      setShowVideo(false); // Reset video state
+    } else if (isVideoException) {
+      setShowVideo(true); // Show video immediately if exception
     }
-  }, [isOpen]);
+  }, [isOpen, isVideoException]);
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -126,25 +132,17 @@ const JavaQuizPopup: React.FC<JavaQuizPopupProps> = ({ isOpen, onClose, onComple
     // Add hint functionality here later
   };
 
-  if (!isOpen) return null;
+  const handleVideoClose = () => {
+    setShowVideo(false);
+    onClose(); // Close the quiz popup when video is closed
+  };
 
-  if (isVideoException) {
-    return (
-      <motion.div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4 text-center">
-          <p className="text-xl mb-4 text-white">
-            This section is covered by a video. Please watch it in the main course interface.
-          </p>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </motion.div>
-    );
-  }
+  const handleVideoComplete = () => {
+    setShowVideo(false);
+    onComplete(100); // Assume 100% score for video completion, adjust as needed
+  };
+
+  if (!isOpen) return null;
 
   if (!questions || questions.length === 0) {
     return (
@@ -174,7 +172,7 @@ const JavaQuizPopup: React.FC<JavaQuizPopupProps> = ({ isOpen, onClose, onComple
             <X className="w-6 h-6" />
           </button>
 
-          {!showResults ? (
+          {!showResults && !showVideo ? (
             <>
               <div className="mb-6">
                 <h2 className="text-xl font-bold text-white">{moduleTitle}</h2>
@@ -204,7 +202,7 @@ const JavaQuizPopup: React.FC<JavaQuizPopupProps> = ({ isOpen, onClose, onComple
                 </button>
               </div>
             </>
-          ) : (
+          ) : showResults ? (
             <div className="text-center py-8">
               <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-4 text-white">Quiz Completed!</h2>
@@ -216,8 +214,16 @@ const JavaQuizPopup: React.FC<JavaQuizPopupProps> = ({ isOpen, onClose, onComple
                 Close
               </button>
             </div>
-          )}
+          ) : null}
         </motion.div>
+
+        {/* Added JavaVideo component */}
+        <JavaVideo
+          isOpen={showVideo}
+          onClose={handleVideoClose}
+          onComplete={handleVideoComplete}
+          moduleTitle={moduleTitle}
+        />
       </DndProvider>
     </motion.div>
   );
