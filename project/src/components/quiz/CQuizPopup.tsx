@@ -16,6 +16,7 @@ import TranslateCodeQuestion from './TranslateCodeQuestion';
 import MultipleSelectionQuestion from './MultipleSelectionQuestion';
 import CodeCorrectionQuestion from './CodeCorrectionQuestion';
 import FillInTheBlank from './FillInTheBlank';
+import CVideo from './CVideo'; // Added import
 import questionsData from "../../data/quizzes/cBasics.json";
 
 const componentMap = {
@@ -44,6 +45,7 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
   const [showConfetti, setShowConfetti] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
+  const [showVideo, setShowVideo] = useState(false); // Added state for video
   const { width, height } = useWindowSize();
 
   const findQuestionsForModule = () => {
@@ -76,7 +78,8 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   const isVideoException = 
-    moduleTitle === "What is C?" || moduleTitle === "Setting up the C Environment (GCC, Code::Blocks, VS Code)";
+    moduleTitle === "What is C?" || 
+    moduleTitle === "Setting up the C Environment (GCC, Code::Blocks, VS Code)";
 
   useEffect(() => {
     if (!isOpen) {
@@ -85,8 +88,11 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
       setShowConfetti(false);
       setCurrentQuestionIndex(0);
       setAnswers({});
+      setShowVideo(false);
+    } else if (isVideoException) {
+      setShowVideo(true);
     }
-  }, [isOpen]);
+  }, [isOpen, isVideoException]);
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -126,25 +132,17 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
     // Add hint functionality here later
   };
 
-  if (!isOpen) return null;
+  const handleVideoClose = () => {
+    setShowVideo(false);
+    onClose();
+  };
 
-  if (isVideoException) {
-    return (
-      <motion.div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-[#1a1a2e] rounded-2xl p-6 max-w-md w-full m-4 text-center">
-          <p className="text-xl mb-4 text-white">
-            This section is covered by a video. Please watch it in the main course interface.
-          </p>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </motion.div>
-    );
-  }
+  const handleVideoComplete = () => {
+    setShowVideo(false);
+    onComplete(100); // Assume 100% score for video completion, adjust as needed
+  };
+
+  if (!isOpen) return null;
 
   if (!questions || questions.length === 0) {
     return (
@@ -174,7 +172,7 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
             <X className="w-6 h-6" />
           </button>
 
-          {!showResults ? (
+          {!showResults && !showVideo ? (
             <>
               <div className="mb-6">
                 <h2 className="text-xl font-bold text-white">{moduleTitle}</h2>
@@ -204,7 +202,7 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
                 </button>
               </div>
             </>
-          ) : (
+          ) : showResults ? (
             <div className="text-center py-8">
               <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-4 text-white">Quiz Completed!</h2>
@@ -216,8 +214,15 @@ const CQuizPopup: React.FC<CQuizPopupProps> = ({ isOpen, onClose, onComplete, mo
                 Close
               </button>
             </div>
-          )}
+          ) : null}
         </motion.div>
+
+        <CVideo
+          isOpen={showVideo}
+          onClose={handleVideoClose}
+          onComplete={handleVideoComplete}
+          moduleTitle={moduleTitle}
+        />
       </DndProvider>
     </motion.div>
   );
