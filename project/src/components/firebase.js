@@ -9,6 +9,7 @@ import {
   onAuthStateChanged,
   updateProfile,
   GoogleAuthProvider,
+  GithubAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail
 } from "firebase/auth";
@@ -30,6 +31,7 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 export {
   auth,
@@ -39,6 +41,7 @@ export {
   onAuthStateChanged,
   updateProfile,
   googleProvider,
+  githubProvider,
   signInWithPopup,
   sendPasswordResetEmail
 };
