@@ -6,7 +6,7 @@ interface Course {
   id: string;
   title: string;
   description: string;
-  level: 'Beginner' | 'Intermediate' | 'Advanced';
+  level: 'Beginner' | 'Beginner' | 'Beginner';
   duration: string;
   xp: number;
   progress: number;
@@ -62,7 +62,7 @@ const courses: Course[] = [
     id: 'java-mastery',
     title: 'Java Programming Mastery',
     description: 'Learn Java from ground up with object-oriented principles',
-    level: 'Intermediate',
+    level: 'Beginner',
     duration: '12 weeks',
     xp: 1500,
     progress: 25,
@@ -89,7 +89,7 @@ const courses: Course[] = [
     id: 'c-programming',
     title: 'C Programming Journey',
     description: 'Deep dive into system programming with C',
-    level: 'Advanced',
+    level: 'Beginner',
     duration: '10 weeks',
     xp: 2000,
     progress: 10,
