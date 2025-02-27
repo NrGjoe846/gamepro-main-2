@@ -2,6 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, PlayCircle, PauseCircle, Maximize2, CheckCircle } from 'lucide-react';
 
+// Import local video files from src/assets/videos/
+import installingPythonVideo from '../../assets/videos/installing-python.mp4';
+import settingUpIdeVideo from '../../assets/videos/setting-up-ide.mp4';
+
 interface PythonVideoProps {
   isOpen: boolean;
   onClose: () => void; // Called when closing without completion
@@ -9,11 +13,11 @@ interface PythonVideoProps {
   moduleTitle: string;
 }
 
-// Mapping subtopic titles to video URLs
+// Mapping subtopic titles to local video files
 const videoUrlMap: Record<string, string> = {
-  "Installing Python (Anaconda, PyCharm, or basic Python)": "https://my.microsoftpersonalcontent.com/personal/2f64c06e84212086/_layouts/15/download.aspx?UniqueId=950d3d79-e67d-4dc9-a46d-982e341359fe&Translate=false&tempauth=v1e.eyJzaXRlaWQiOiI4ZWE4N2E0MC03ZDdmLTQ3MWUtOWZlNi02MDIwNjg0NzMzODciLCJhcHBpZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDA0ODE3MTBhNCIsImF1ZCI6IjAwMDAwMDAzLTAwMDAtMGZmMS1jZTAwLTAwMDAwMDAwMDAwMC9teS5taWNyb3NvZnRwZXJzb25hbGNvbnRlbnQuY29tQDkxODgwNDBkLTZjNjctNGM1Yi1iMTEyLTM2YTMwNGI2NmRhZCIsImV4cCI6IjE3NDA2MzQyMTMifQ.rhWfaz53ZK98qXOd_i0nHkMtqJnhRXsxKzrnUGRvGz4PDkfvRXdgg4in1yGqLKu8W_6yWYwYASzta2gnoUfxnZ2Oc8sp5b0YaR6nqAmjuJS1hBkRolnQcOP7yEANzO4bnrHLRWDZ3Yycrw1fMyOt3339CzXjcmxzX_OycrTSsjnmXyOagNxvNuczEYnE7ze9QClp4ak31fdpneC5tQhquebvhOYitd_PyTfuZ-42xroIdCOeJuTF62VTyIiA_i5b1hJ1CS-fmejubSJEr3yhpsVGuBU_aB4JzfY2MsGyXDhSEn7tPeMYLg1byM2eKaYyoPORIJZSf13qh2ESwT3BDjer9Ak9z1q0oNpELv9KHhsMpWeWCzcgHPKx9xMUaTXqGV1ZG6N3r-W5b85vIxDKDoM6T3I0K-LLhAk1Yw8y9mg.sbnhFTeiToc3IQP68Sw06IngwBLb9dI8Mz6fg5_cc3g&ApiVersion=2.1", // Your new OneDrive link
-  "Setting up the IDE": "https://my.microsoftpersonalcontent.com/personal/2f64c06e84212086/_layouts/15/download.aspx?UniqueId=1b32c448-8d89-42d6-9c5c-2dd350fbc99b&Translate=false&tempauth=v1e.eyJzaXRlaWQiOiI4ZWE4N2E0MC03ZDdmLTQ3MWUtOWZlNi02MDIwNjg0NzMzODciLCJhcHBpZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDA0ODE3MTBhNCIsImF1ZCI6IjAwMDAwMDAzLTAwMDAtMGZmMS1jZTAwLTAwMDAwMDAwMDAwMC9teS5taWNyb3NvZnRwZXJzb25hbGNvbnRlbnQuY29tQDkxODgwNDBkLTZjNjctNGM1Yi1iMTEyLTM2YTMwNGI2NmRhZCIsImV4cCI6IjE3NDA2MzQ5MTIifQ.c2vTG0XGHceqRxqzgeBZ0xDwK4iSfUNkvx60ORnxLib7DZMyHNudBorimibei5bgE0_HG3Jo5QW44E20TDFKfOGVnZoMS4jcRFFFT_LGIriYbOz8z9SxEXbf8nnGD4be_H6Z3rbu0ZZgUQwQwzI6yXO-ZaNncI4980Ado9Ho1OpX1PBjdeMmKXYl_6PEzG2pNF5LzS9Ry8LYNZB2Xwh_KfmpIWFL2V-hXYg0TnyRFZDo8Irods8y7X5pE5SDpN2Z26zt1-sfx5bPRId-yzOk_5ZnkEM9-SStPOhxTXk-Sqm7LLWIMfpNVTibw-llAJ069oXn7HQHhhH9qmiMy8EU1-N5PM1S9trdNmbYuBUkBqYRfsz9MW4XFZPq-c6UMPVsA8LZn9Zxp_iZK-98dbRr97zGe8XxQZxbo5m_RWsCLgk.uG9mQ4M7QmQeovHrqGHQ6SfT4Je8xP3tilx9GoWcMlo&ApiVersion=2.0", // Replace with actual URL
-  "default": "https://www.w3schools.com/html/mov_bbb.mp4" // Fallback placeholder (direct MP4)
+  "Installing Python (Anaconda, PyCharm, or basic Python)": installingPythonVideo,
+  "Setting up the IDE": settingUpIdeVideo,
+  "default": "https://www.w3schools.com/html/mov_bbb.mp4" // Fallback placeholder (external URL)
 };
 
 const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, onComplete, moduleTitle }) => {
@@ -23,7 +27,6 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, onComplete, 
   const [error, setError] = useState<string | null>(null);
 
   const videoUrl = videoUrlMap[moduleTitle] || videoUrlMap["default"];
-  const isOneDrive = videoUrl.includes("1drv.ms") || videoUrl.includes("onedrive.live.com");
 
   useEffect(() => {
     if (videoRef.current) {
@@ -40,7 +43,7 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, onComplete, 
         .then(() => setIsPlaying(true))
         .catch((err) => {
           console.error("Error playing video:", err);
-          setError("Failed to play video. Ensure the URL is a direct video link (e.g., .mp4).");
+          setError("Failed to play video. Check if the video file is correctly placed in src/assets/videos/.");
         });
     }
   };
@@ -107,11 +110,6 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, onComplete, 
           <h2 className="text-xl font-bold text-white">{moduleTitle}</h2>
           <p className="text-sm text-gray-400">Watch the video to learn more!</p>
           {error && <p className="text-sm text-red-400">{error}</p>}
-          {isOneDrive && !error && (
-            <p className="text-sm text-yellow-400">
-              Note: OneDrive sharing links don’t work directly. Replace with a direct MP4 URL for playback.
-            </p>
-          )}
         </div>
 
         <div className="relative w-full" style={{ paddingTop: '56.25%' /* 16:9 Aspect Ratio */ }}>
@@ -123,7 +121,7 @@ const PythonVideo: React.FC<PythonVideoProps> = ({ isOpen, onClose, onComplete, 
             onEnded={handleVideoEnd}
             onError={(e) => {
               console.error("Video error:", e);
-              setError("Failed to load video. Use a direct MP4 URL instead of a sharing link.");
+              setError("Failed to load video. Ensure the video file exists in src/assets/videos/.");
             }}
           >
             Your browser does not support the video tag.
