@@ -11,20 +11,28 @@ import BackButton from '../BackButton';
 
 const ProfileDashboard = () => {
   const [showAvatarCustomization, setShowAvatarCustomization] = useState(false);
-  const [selectedQuest, setSelectedQuest] = useState(null);
+  const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [selectedChallenge, setSelectedChallenge] = useState(null);
   const { width, height } = useWindowSize();
+
+  // User profile state
+  const [userProfile, setUserProfile] = useState({
+    userId: 'CosmicTraveler42',
+    headline: 'Neural Navigator',
+    contentFocus: 'AI & Quantum Computing',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=cosmic',
+  });
 
   // Game stats with animated values
   const gameStats = {
     rank: 'Cosmic Explorer',
-    title: 'Neural Navigator',
     powerLevel: 1250,
-    questsCompleted: 47,
+    missionsCompleted: 47,
     bossesDefeated: 12,
     specialItems: 8,
     energyLevel: 85,
     neuralCapacity: 92,
-    quantumTokens: 3750
+    quantumTokens: 3750,
   };
 
   // Animated stats using react-spring
@@ -32,14 +40,14 @@ const ProfileDashboard = () => {
     from: { powerLevel: 0 },
     to: { powerLevel: gameStats.powerLevel },
     delay: 200,
-    config: { mass: 1, tension: 20, friction: 10 }
+    config: { mass: 1, tension: 20, friction: 10 },
   });
 
   const { energyLevel } = useSpring({
     from: { energyLevel: 0 },
     to: { energyLevel: gameStats.energyLevel },
     delay: 300,
-    config: { mass: 1, tension: 20, friction: 10 }
+    config: { mass: 1, tension: 20, friction: 10 },
   });
 
   // Leaderboard data
@@ -56,21 +64,53 @@ const ProfileDashboard = () => {
     { id: 3, name: 'Code Architect', icon: '🏗️', rarity: 'Rare', xp: 2000 },
   ];
 
-  // Active quests
-  const activeQuests = [
+  // Active challenge missions (renamed from active quests)
+  const activeMissions = [
     { id: 1, title: 'Neural Network Mastery', progress: 75, reward: '500 QT' },
     { id: 2, title: 'Quantum Algorithm Challenge', progress: 45, reward: '750 QT' },
     { id: 3, title: 'Cybersecurity Mission', progress: 90, reward: '1000 QT' },
   ];
 
+  // Avatar customization options
+  const avatarOptions = {
+    facialFeatures: ['Default', 'Sharp', 'Round', 'Soft'],
+    hairstyles: ['Short', 'Long', 'Curly', 'Bald'],
+    outfits: ['Casual', 'Tech', 'Cosmic', 'Formal'],
+    accessories: ['Glasses', 'Headset', 'None', 'Pendant'],
+  };
+
+  const [avatarConfig, setAvatarConfig] = useState({
+    facialFeature: 'Default',
+    hairstyle: 'Short',
+    outfit: 'Casual',
+    accessory: 'None',
+  });
+
+  // Handle profile edit submission
+  const handleProfileSave = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    setUserProfile({
+      ...userProfile,
+      userId: formData.get('userId'),
+      headline: formData.get('headline'),
+      contentFocus: formData.get('contentFocus'),
+    });
+    setShowProfileEdit(false);
+  };
+
+  // Handle avatar customization save
+  const handleAvatarSave = () => {
+    const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile.userId}&hair=${avatarConfig.hairstyle}&clothing=${avatarConfig.outfit}&accessories=${avatarConfig.accessory}`;
+    setUserProfile({ ...userProfile, avatar: newAvatarUrl });
+    setShowAvatarCustomization(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#0B0B15] text-white p-8 relative overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 pointer-events-none">
-        {/* Grid Pattern */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-        
-        {/* Animated Stars */}
         {Array.from({ length: 50 }).map((_, i) => (
           <div
             key={i}
@@ -79,12 +119,10 @@ const ProfileDashboard = () => {
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${Math.random() * 3 + 2}s`
+              animationDuration: `${Math.random() * 3 + 2}s`,
             }}
           />
         ))}
-
-        {/* Energy Waves */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 animate-pulse" />
         </div>
@@ -98,22 +136,18 @@ const ProfileDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Card */}
           <div className="space-y-8">
-            {/* Profile Card with Glowing Avatar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="relative backdrop-blur-xl bg-white/5 rounded-2xl p-8 border border-white/10 overflow-hidden"
             >
-              {/* Animated Background Glow */}
               <div className="absolute inset-0">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
                 <div className="absolute inset-0 bg-[url('/circuit.svg')] opacity-5" />
               </div>
 
-              {/* Avatar with Power Ring */}
               <div className="relative flex flex-col items-center">
                 <div className="relative w-40 h-40">
-                  {/* Power Ring Animation */}
                   <svg className="absolute inset-0 w-full h-full -rotate-90">
                     <circle
                       cx="80"
@@ -135,17 +169,16 @@ const ProfileDashboard = () => {
                     </defs>
                   </svg>
 
-                  {/* Avatar Image */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     className="relative w-32 h-32 mx-auto mt-4"
                   >
                     <img
-                      src="https://api.dicebear.com/7.x/avataaars/svg?seed=cosmic"
+                      src={userProfile.avatar}
                       alt="Profile Avatar"
                       className="w-full h-full rounded-full border-4 border-white/20"
+                      onError={(e) => (e.target.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=fallback')}
                     />
-                    {/* Customization Button */}
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
@@ -157,38 +190,39 @@ const ProfileDashboard = () => {
                   </motion.div>
                 </div>
 
-                {/* User Info */}
                 <div className="text-center mt-4 space-y-2">
                   <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                    Neural Navigator
+                    {userProfile.headline}
                   </h2>
                   <p className="text-blue-400">Level {Math.floor(gameStats.powerLevel / 100)}</p>
-                  
-                  {/* Power Level */}
+                  <p className="text-sm text-gray-400">{userProfile.contentFocus}</p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    onClick={() => setShowProfileEdit(true)}
+                    className="mt-2 px-4 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm"
+                  >
+                    Edit Profile
+                  </motion.button>
                   <div className="flex items-center justify-center gap-2">
                     <Zap className="w-5 h-5 text-yellow-400" />
                     <animated.span className="font-bold">
-                      {powerLevel.to(n => `Power Level: ${n.toFixed(0)}`)}
+                      {powerLevel.to((n) => `Power Level: ${n.toFixed(0)}`)}
                     </animated.span>
                   </div>
                 </div>
 
-                {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-4 mt-6 w-full">
                   <div className="relative p-4 bg-white/5 rounded-lg overflow-hidden group hover:bg-white/10 transition-all duration-300">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <Brain className="w-6 h-6 text-blue-400 mb-2" />
-                    <div className="text-2xl font-bold text-blue-400">
-                      {gameStats.neuralCapacity}%
-                    </div>
+                    <div className="text-2xl font-bold text-blue-400">{gameStats.neuralCapacity}%</div>
                     <div className="text-sm text-gray-400">Neural Capacity</div>
                   </div>
-                  
                   <div className="relative p-4 bg-white/5 rounded-lg overflow-hidden group hover:bg-white/10 transition-all duration-300">
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <Cpu className="w-6 h-6 text-purple-400 mb-2" />
                     <animated.div className="text-2xl font-bold text-purple-400">
-                      {energyLevel.to(n => `${n.toFixed(0)}%`)}
+                      {energyLevel.to((n) => `${n.toFixed(0)}%`)}
                     </animated.div>
                     <div className="text-sm text-gray-400">Energy Level</div>
                   </div>
@@ -209,7 +243,6 @@ const ProfileDashboard = () => {
                 </div>
                 <span className="text-sm text-gray-400">{achievements.length} Unlocked</span>
               </div>
-
               <div className="space-y-4">
                 {achievements.map((achievement) => (
                   <motion.div
@@ -232,9 +265,8 @@ const ProfileDashboard = () => {
             </motion.div>
           </div>
 
-          {/* Middle Column - Active Quests and Progress */}
+          {/* Middle Column - Challenge Missions and Progress */}
           <div className="space-y-8">
-            {/* Active Quests */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -243,17 +275,16 @@ const ProfileDashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <Map className="w-6 h-6 text-blue-400" />
-                  <h2 className="text-xl font-bold">Active Quests</h2>
+                  <h2 className="text-xl font-bold">Challenge Missions</h2>
                 </div>
                 <button className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
                   View All
                 </button>
               </div>
-
               <div className="space-y-4">
-                {activeQuests.map((quest, index) => (
+                {activeMissions.map((mission, index) => (
                   <motion.div
-                    key={quest.id}
+                    key={mission.id}
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
@@ -262,19 +293,19 @@ const ProfileDashboard = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-all duration-300" />
                     <div className="relative">
                       <div className="flex justify-between mb-2">
-                        <h3 className="font-medium">{quest.title}</h3>
-                        <span className="text-yellow-400">{quest.reward}</span>
+                        <h3 className="font-medium">{mission.title}</h3>
+                        <span className="text-yellow-400">{mission.reward}</span>
                       </div>
                       <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${quest.progress}%` }}
+                          animate={{ width: `${mission.progress}%` }}
                           className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
                         />
                       </div>
                       <div className="flex justify-between mt-2 text-sm">
                         <span className="text-gray-400">Progress</span>
-                        <span>{quest.progress}%</span>
+                        <span>{mission.progress}%</span>
                       </div>
                     </div>
                   </motion.div>
@@ -294,7 +325,6 @@ const ProfileDashboard = () => {
                   <h2 className="text-xl font-bold">Performance Metrics</h2>
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { icon: <Globe className="w-6 h-6" />, label: 'Global Rank', value: '#42' },
@@ -323,9 +353,8 @@ const ProfileDashboard = () => {
             </motion.div>
           </div>
 
-          {/* Right Column - Leaderboard and Inventory */}
+          {/* Right Column - Leaderboard and Reward Collection */}
           <div className="space-y-8">
-            {/* Leaderboard */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -334,13 +363,12 @@ const ProfileDashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <Crown className="w-6 h-6 text-yellow-400" />
-                  <h2 className="text-xl font-bold">Neural Elite</h2>
+                  <h2 className="text-xl font-bold">Leaderboard</h2>
                 </div>
                 <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
                   View All
                 </button>
               </div>
-
               <div className="space-y-4">
                 {leaderboard.map((user, index) => (
                   <motion.div
@@ -371,7 +399,7 @@ const ProfileDashboard = () => {
               </div>
             </motion.div>
 
-            {/* Inventory */}
+            {/* Reward Collection (renamed from Neural Artifacts) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -380,18 +408,15 @@ const ProfileDashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <Hexagon className="w-6 h-6 text-purple-400" />
-                  <h2 className="text-xl font-bold">Neural Artifacts</h2>
+                  <h2 className="text-xl font-bold">Reward Collection</h2>
                 </div>
-                <span className="text-sm text-gray-400">
-                  {gameStats.specialItems} Items
-                </span>
+                <span className="text-sm text-gray-400">{gameStats.specialItems} Items</span>
               </div>
-
               <div className="space-y-4">
                 {[
                   { name: 'Quantum Core', rarity: 'Legendary', power: 2500 },
                   { name: 'Neural Amplifier', rarity: 'Epic', power: 1800 },
-                  { name: 'Synapse Enhancer', rarity: 'Rare', power: 1200 }
+                  { name: 'Synapse Enhancer', rarity: 'Rare', power: 1200 },
                 ].map((item, index) => (
                   <motion.div
                     key={index}
@@ -415,6 +440,165 @@ const ProfileDashboard = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Profile Edit Modal */}
+        <AnimatePresence>
+          {showProfileEdit && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                className="bg-[#1A1A2E] p-6 rounded-2xl w-full max-w-md"
+              >
+                <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
+                <form onSubmit={handleProfileSave} className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-gray-400">User ID</label>
+                    <input
+                      type="text"
+                      name="userId"
+                      defaultValue={userProfile.userId}
+                      className="w-full p-2 bg-white/5 rounded-lg border border-white/10 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400">Headline</label>
+                    <input
+                      type="text"
+                      name="headline"
+                      defaultValue={userProfile.headline}
+                      className="w-full p-2 bg-white/5 rounded-lg border border-white/10 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400">Content Focus</label>
+                    <input
+                      type="text"
+                      name="contentFocus"
+                      defaultValue={userProfile.contentFocus}
+                      className="w-full p-2 bg-white/5 rounded-lg border border-white/10 text-white"
+                    />
+                  </div>
+                  <div className="flex gap-4">
+                    <button
+                      type="submit"
+                      className="flex-1 p-2 bg-blue-500 text-white rounded-lg"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowProfileEdit(false)}
+                      className="flex-1 p-2 bg-gray-500 text-white rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Avatar Customization Modal */}
+        <AnimatePresence>
+          {showAvatarCustomization && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            >
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                className="bg-[#1A1A2E] p-6 rounded-2xl w-full max-w-lg"
+              >
+                <h2 className="text-2xl font-bold mb-4">Customize Avatar</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <img
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userProfile.userId}&hair=${avatarConfig.hairstyle}&clothing=${avatarConfig.outfit}&accessories=${avatarConfig.accessory}`}
+                      alt="Avatar Preview"
+                      className="w-full rounded-lg"
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-400">Facial Features</label>
+                      <select
+                        value={avatarConfig.facialFeature}
+                        onChange={(e) => setAvatarConfig({ ...avatarConfig, facialFeature: e.target.value })}
+                        className="w-full p-2 bg-white/5 rounded-lg border border-white/10 text-white"
+                      >
+                        {avatarOptions.facialFeatures.map((option) => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400">Hairstyle</label>
+                      <select
+                        value={avatarConfig.hairstyle}
+                        onChange={(e) => setAvatarConfig({ ...avatarConfig, hairstyle: e.target.value })}
+                        className="w-full p-2 bg-white/5 rounded-lg border border-white/10 text-white"
+                      >
+                        {avatarOptions.hairstyles.map((option) => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400">Outfit</label>
+                      <select
+                        value={avatarConfig.outfit}
+                        onChange={(e) => setAvatarConfig({ ...avatarConfig, outfit: e.target.value })}
+                        className="w-full p-2 bg-white/5 rounded-lg border border-white/10 text-white"
+                      >
+                        {avatarOptions.outfits.map((option) => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400">Accessories</label>
+                      <select
+                        value={avatarConfig.accessory}
+                        onChange={(e) => setAvatarConfig({ ...avatarConfig, accessory: e.target.value })}
+                        className="w-full p-2 bg-white/5 rounded-lg border border-white/10 text-white"
+                      >
+                        {avatarOptions.accessories.map((option) => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-4 mt-6">
+                  <button
+                    onClick={handleAvatarSave}
+                    className="flex-1 p-2 bg-blue-500 text-white rounded-lg"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setShowAvatarCustomization(false)}
+                    className="flex-1 p-2 bg-gray-500 text-white rounded-lg"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <style>
