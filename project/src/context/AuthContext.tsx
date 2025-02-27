@@ -8,6 +8,7 @@ import {
   updateProfile,
   signInWithPopup,
   googleProvider,
+  githubProvider,
   sendPasswordResetEmail
 } from '../components/firebase';
 import { User, UserCredential } from 'firebase/auth';
@@ -20,6 +21,7 @@ interface AuthContextType {
   logIn: (email: string, password: string) => Promise<UserCredential>;
   logOut: () => Promise<void>;
   googleSignIn: () => Promise<UserCredential>;
+  githubSignIn: () => Promise<UserCredential>;
   resetPassword: (email: string) => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
   skipAuth: () => void;
@@ -53,6 +55,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Google sign in
   const googleSignIn = () => {
     return signInWithPopup(auth, googleProvider);
+  };
+
+  // GitHub sign in
+  const githubSignIn = () => {
+    return signInWithPopup(auth, githubProvider);
   };
 
   // Reset password
@@ -94,6 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logIn,
     logOut,
     googleSignIn,
+    githubSignIn,
     resetPassword,
     updateUserProfile,
     skipAuth
