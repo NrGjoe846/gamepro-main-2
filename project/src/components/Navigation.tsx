@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { GraduationCap, User, Settings, Bell, Menu, X, Gift, Compass, BookOpen, Trophy, Store } from 'lucide-react';
+import { User, Settings, Bell, Menu, X, Gift, Compass, BookOpen, Trophy, Store } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import NotificationsPanel from './notifications/NotificationsPanel';
 import SettingsPanel from './settings/SettingsPanel';
+import logoImage from '../assets/logo.png';  // Import logo from assets folder
 
 const Navigation = () => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -24,7 +25,12 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
             <Link to="/" className="flex items-center space-x-2">
-              <GraduationCap className="w-8 h-8 text-blue-400" />
+              {/* Using imported logo image */}
+              <img 
+                src={logoImage} 
+                alt="UNAI Verse Logo" 
+                className="w-8 h-8"
+              />
               <span className="text-xl font-bold">UNAI Verse</span>
             </Link>
 
