@@ -21,27 +21,18 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#0B0B15] text-white overflow-x-hidden">
       <Navigation />
       
-      {/* Hero Section with Enhanced Space Theme */}
-      <div className="relative min-h-[90vh] pt-20">
+      {/* Hero Section with Space Theme */}
+      <div className="relative min-h-[90vh] pt-20 pb-16">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-          >
-            {/* Add your video link here */}
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
             <source src="https://v1.pinimg.com/videos/mc/720p/b1/ad/40/b1ad40468f438149cb44ac205b2ff3ec.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B15]/80 via-[#0B0B15]/50 to-[#0B0B15]"></div>
         </div>
         {/* Animated Space Elements */}
         <div className="absolute inset-0 overflow-hidden z-10">
-          {/* Stars */}
           {[...Array(200)].map((_, i) => (
             <div
               key={i}
@@ -55,7 +46,6 @@ const Dashboard = () => {
               }}
             />
           ))}
-          {/* Floating Planets */}
           <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-lg animate-float-slow">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full animate-pulse" />
           </div>
@@ -63,73 +53,91 @@ const Dashboard = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full animate-pulse" />
           </div>
         </div>
+        
         {/* Main Content */}
-        <div className="container mx-auto px-4 z-10 relative">
+        <div className="container mx-auto px-6 z-10 relative">
+          {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 animate-gradient">
+            <h1 className="text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 animate-gradient">
               UNAI Verse
             </h1>
-            <p className="text-2xl text-gray-300 mb-8 animate-fade-in">
+            <p className="text-xl text-gray-300 animate-fade-in">
               Your Journey Through The Code Galaxy Begins Here
             </p>
           </div>
-          {/* Daily Challenge Section */}
-          <div className="mb-12 animate-slide-up">
-            <DailyChallenge />
+
+          {/* Primary Cards Section */}
+          <div className="space-y-8">
+            {/* Daily Challenge */}
+            <section className="animate-slide-up">
+              <DailyChallenge />
+            </section>
+
+            {/* Progress and Next Lesson Row */}
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up-delayed">
+              <ProgressCard />
+              <NextLessonCard />
+            </section>
           </div>
-          {/* Recent Achievements */}
-          <div className="mb-12 animate-slide-up-delayed">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <Trophy className="w-6 h-6 text-purple-400" />
-              Recent Achievements
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {recentAchievements.map((achievement) => (
-                <AchievementBadge key={achievement.id} {...achievement} />
-              ))}
-            </div>
-          </div>
-          {/* Programming Courses Section */}
-          <div className="mb-12 animate-slide-up-delayed-2">
-            <ProgrammingCourses />
-          </div>
-          {/* Learning Paths Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12 animate-slide-up-delayed-3">
-            <Link to="/miniproject">
-              <LearningPath 
-                icon={<Code2 className="w-8 h-8" />}
-                title="MiniProject.Diy"
-                description="Turn your Imagination into Reality"
-                progress={65}
-              />
-            </Link>
-            <Link to="/aptitude-test">
-              <LearningPath 
-                icon={<Atom className="w-8 h-8" />}
-                title="Aptitude test"
-                description="Test your self"
-                progress={42}
-              />
-            </Link>
-            <Link to="/interview-bot">
-              <LearningPath 
-                icon={<Activity className="w-8 h-8" />}
-                title="AI interview BOT"
-                description="Take an interview test from our interview expert"
-                progress={28}
-              />
-            </Link>
-          </div>
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 animate-slide-up-delayed-4">
-            <ProgressCard />
-            <NextLessonCard />
+
+          {/* Secondary Content */}
+          <div className="mt-12 space-y-12">
+            {/* Recent Achievements */}
+            <section className="animate-slide-up-delayed-2">
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                <Trophy className="w-6 h-6 text-purple-400" />
+                Recent Achievements
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {recentAchievements.map((achievement) => (
+                  <AchievementBadge key={achievement.id} {...achievement} />
+                ))}
+              </div>
+            </section>
+
+            {/* Programming Courses */}
+            <section className="animate-slide-up-delayed-3">
+              <ProgrammingCourses />
+            </section>
+
+            {/* Explore Learning Paths */}
+            <section className="animate-slide-up-delayed-4">
+              <h2 className="text-2xl font-bold mb-6 text-gray-200">Explore Learning Paths</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Link to="/miniproject">
+                  <LearningPath 
+                    icon={<Code2 className="w-8 h-8" />}
+                    title="MiniProject.Diy"
+                    description="Turn your Imagination into Reality"
+                    progress={65}
+                  />
+                </Link>
+                <Link to="/aptitude-test">
+                  <LearningPath 
+                    icon={<Atom className="w-8 h-8" />}
+                    title="Aptitude test"
+                    description="Test your self"
+                    progress={42}
+                  />
+                </Link>
+                <Link to="/interview-bot">
+                  <LearningPath 
+                    icon={<Activity className="w-8 h-8" />}
+                    title="AI interview BOT"
+                    description="Take an interview test from our interview expert"
+                    progress={28}
+                  />
+                </Link>
+              </div>
+            </section>
           </div>
         </div>
       </div>
-      {/* Floating Compiler Button */}
+
+      {/* Floating Compiler */}
       <FloatingCompiler />
-      {/* Enhanced space-themed animations */}
+
+      {/* Animations */}
       <style>
         {`
           @keyframes twinkle {
@@ -149,50 +157,26 @@ const Dashboard = () => {
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
           }
-          .animate-twinkle {
-            animation: twinkle 3s ease-in-out infinite;
-          }
-          .animate-float {
-            animation: float 6s ease-in-out infinite;
-          }
-          .animate-float-slow {
-            animation: float-slow 10s ease-in-out infinite;
-          }
+          .animate-twinkle { animation: twinkle 3s ease-in-out infinite; }
+          .animate-float { animation: float 6s ease-in-out infinite; }
+          .animate-float-slow { animation: float-slow 10s ease-in-out infinite; }
           .animate-gradient {
             background-size: 200% 200%;
             animation: gradient 8s linear infinite;
           }
-          .animate-fade-in {
-            animation: fadeIn 1s ease-out;
-          }
-          .animate-slide-up {
-            animation: slideUp 0.8s ease-out;
-          }
-          .animate-slide-up-delayed {
-            animation: slideUp 0.8s ease-out 0.2s backwards;
-          }
-          .animate-slide-up-delayed-2 {
-            animation: slideUp 0.8s ease-out 0.4s backwards;
-          }
-          .animate-slide-up-delayed-3 {
-            animation: slideUp 0.8s ease-out 0.6s backwards;
-          }
-          .animate-slide-up-delayed-4 {
-            animation: slideUp 0.8s ease-out 0.8s backwards;
-          }
+          .animate-fade-in { animation: fadeIn 1s ease-out; }
+          .animate-slide-up { animation: slideUp 0.8s ease-out; }
+          .animate-slide-up-delayed { animation: slideUp 0.8s ease-out 0.2s backwards; }
+          .animate-slide-up-delayed-2 { animation: slideUp 0.8s ease-out 0.4s backwards; }
+          .animate-slide-up-delayed-3 { animation: slideUp 0.8s ease-out 0.6s backwards; }
+          .animate-slide-up-delayed-4 { animation: slideUp 0.8s ease-out 0.8s backwards; }
           @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
           }
           @keyframes slideUp {
-            from { 
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
           }
         `}
       </style>
