@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Book, Code, Play, CheckCircle, Lock, ChevronDown, ChevronUp, 
-  AlertCircle, ChevronLeft, ChevronRight, Star, Trophy, Award
+  AlertCircle, ChevronLeft, ChevronRight, Star, Trophy, Flame
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '../BackButton';
@@ -76,6 +76,16 @@ const CProgramming = () => {
     localStorage.setItem('cProgress', JSON.stringify(userProgress));
   }, [userProgress]);
 
+  const getPhaseProgress = (phase: Phase) => {
+    const totalSubtopics = phase.topics.reduce((sum, topic) => 
+      sum + (topic.subtopics?.length || 0), 0);
+    const completedSubtopics = phase.topics.reduce((sum, topic) => {
+      const completed = userProgress.completedSubtopics[topic.id] || [];
+      return sum + completed.length;
+    }, 0);
+    return totalSubtopics > 0 ? (completedSubtopics / totalSubtopics) * 100 : 0;
+  };
+
   const scrollToCurrentPhase = () => {
     if (phasesContainerRef.current) {
       const container = phasesContainerRef.current;
@@ -83,11 +93,7 @@ const CProgramming = () => {
       const containerWidth = container.offsetWidth;
       const phaseWidth = phaseElement.offsetWidth;
       const newScrollLeft = phaseElement.offsetLeft - (containerWidth / 2) + (phaseWidth / 2);
-      
-      container.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      });
+      container.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
     }
   };
 
@@ -111,7 +117,6 @@ const CProgramming = () => {
   const handleMouseUp = () => {
     if (!isDragging || !phasesContainerRef.current) return;
     setIsDragging(false);
-    
     if (dragDistance > dragThreshold) {
       const container = phasesContainerRef.current;
       const phaseWidth = container.children[0].clientWidth;
@@ -140,7 +145,6 @@ const CProgramming = () => {
   const handlePhaseStart = (phaseId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setSparklePhase(phaseId);
-    
     const sparkles = Array.from({ length: 8 }).map((_, i) => {
       const sparkle = document.createElement('div');
       sparkle.className = 'absolute w-2 h-2 bg-blue-400 rounded-full';
@@ -150,19 +154,11 @@ const CProgramming = () => {
       sparkle.style.animation = `sparkle ${Math.random() * 0.5 + 0.5}s ease-in-out ${i * 0.1}s`;
       return sparkle;
     });
-
     const target = e.currentTarget as HTMLElement;
     sparkles.forEach(sparkle => target.appendChild(sparkle));
-
-    setTimeout(() => {
-      sparkles.forEach(sparkle => sparkle.remove());
-    }, 1000);
-
+    setTimeout(() => sparkles.forEach(sparkle => sparkle.remove()), 1000);
     setTimeout(() => setSparklePhase(null), 500);
-    
-    if (flippedPhase !== phaseId) {
-      setFlippedPhase(phaseId);
-    }
+    if (flippedPhase !== phaseId) setFlippedPhase(phaseId);
   };
 
   const handleFlipBack = (phaseId: string, e: React.MouseEvent) => {
@@ -172,21 +168,43 @@ const CProgramming = () => {
 
   const handleTopicStart = (phaseId: string, topicId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    
     if (selectedTopic?.topicId === topicId) {
       setExpandedTopic(null);
       setSelectedTopic(null);
     } else {
       setExpandedTopic(topicId);
       setSelectedTopic({ phaseId, topicId });
-
-      setTimeout(() => {
-        subtopicsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      setTimeout(() => subtopicsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     }
   };
 
+  const isSubtopicLocked = (phaseId: string, topicId: string, subtopicIndex: number) => {
+    const phase = coursePhases.find(p => p.id === phaseId);
+    const topic = phase?.topics.find(t => t.id === topicId);
+    
+    if (!topic?.subtopics || subtopicIndex === 0) {
+      return false;
+    }
+
+    const previousSubtopic = topic.subtopics[subtopicIndex - 1];
+    const completedSubtopics = userProgress.completedSubtopics[topicId] || [];
+    
+    return !completedSubtopics.includes(previousSubtopic.id);
+  };
+
   const handleSubtopicStart = (topicTitle: string, subtopicTitle: string) => {
+    if (!selectedTopic) return;
+
+    const phase = coursePhases.find(p => p.id === selectedTopic.phaseId);
+    const topic = phase?.topics.find(t => t.id === selectedTopic.topicId);
+    const subtopicIndex = topic?.subtopics?.findIndex(s => s.title === subtopicTitle);
+
+    if (subtopicIndex !== undefined && subtopicIndex >= 0 && 
+        isSubtopicLocked(selectedTopic.phaseId, selectedTopic.topicId, subtopicIndex)) {
+      console.log('Subtopic is locked. Complete previous subtopic first.');
+      return;
+    }
+
     console.log('Starting subtopic:', { topicTitle, subtopicTitle });
     setCurrentQuizTopic(topicTitle);
     setCurrentQuizSubtopic(subtopicTitle);
@@ -263,13 +281,11 @@ const CProgramming = () => {
       }
     }
 
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 5000);
+    setTimeout(() => setShowConfetti(false), 5000);
   };
 
   const handleVideoClose = () => {
-    setShowVideo(false); // Close without completion
+    setShowVideo(false);
   };
 
   const handleVideoComplete = () => {
@@ -288,7 +304,7 @@ const CProgramming = () => {
               subtopic.id
             ]
           },
-          xp: prev.xp + 25 // Example XP for video completion
+          xp: prev.xp + 25
         }));
       }
     }
@@ -296,9 +312,7 @@ const CProgramming = () => {
 
   const selectedPhaseAndTopic = selectedTopic ? {
     phase: coursePhases.find(p => p.id === selectedTopic.phaseId),
-    topic: coursePhases
-      .find(p => p.id === selectedTopic.phaseId)
-      ?.topics.find(t => t.id === selectedTopic.topicId)
+    topic: coursePhases.find(p => p.id === selectedTopic.phaseId)?.topics.find(t => t.id === selectedTopic.topicId)
   } : null;
 
   return (
@@ -308,48 +322,63 @@ const CProgramming = () => {
       <style>
         {`
           @keyframes sparkle {
-            0% {
-              transform: scale(0) rotate(0deg);
-              opacity: 1;
-            }
-            50% {
-              transform: scale(1.5) rotate(180deg);
-              opacity: 0.8;
-            }
-            100% {
-              transform: scale(0) rotate(360deg);
-              opacity: 0;
-            }
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+          }
+          @keyframes pulseGlow {
+            0% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.4); }
           }
         `}
       </style>
       
-      <div className="max-w-full mx-auto">
+      <div className="max-w-full mx-auto relative">
+        <div className="sticky top-0 z-50 bg-gradient-to-r from-[#1a1a2e]/95 via-[#16213e]/95 to-[#1a1a2e]/95 backdrop-blur-md p-4 rounded-b-xl shadow-lg border-b border-blue-500/20 mb-8">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
+            <div className="flex items-center gap-6">
+              <motion.div 
+                className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/30"
+                whileHover={{ scale: 1.05 }}
+              >
+                <Star className="w-5 h-5 text-blue-400 animate-pulse" />
+                <span className="font-bold text-blue-200">{userProgress.xp}</span>
+                <span className="text-sm text-blue-300/70">XP</span>
+              </motion.div>
+              <motion.div 
+                className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/30"
+                whileHover={{ scale: 1.05 }}
+              >
+                <Trophy className="w-5 h-5 text-blue-400" />
+                <span className="font-bold text-blue-200">Lv. {userProgress.level}</span>
+              </motion.div>
+              <motion.div 
+                className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/30"
+                whileHover={{ scale: 1.05 }}
+              >
+                <Flame className="w-5 h-5 text-blue-400 animate-[pulseGlow_2s_infinite]" />
+                <span className="font-bold text-blue-200">{userProgress.streak}</span>
+                <span className="text-sm text-blue-300/70">Streak</span>
+              </motion.div>
+            </div>
+            <div className="w-1/3 h-2 bg-gray-700/30 rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-blue-400 to-blue-600"
+                initial={{ width: 0 }}
+                animate={{ width: `${((userProgress.xp % 1000) / 1000) * 100}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="mb-8">
           <BackButton />
         </div>
 
-        <div className="fixed top-4 right-4 flex items-center gap-4 bg-black/50 backdrop-blur-sm p-3 rounded-lg">
-          <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-yellow-400" />
-            <span className="font-bold">{userProgress.xp} XP</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-blue-400" />
-            <span className="font-bold">Level {userProgress.level}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Award className="w-5 h-5 text-purple-400" />
-            <span className="font-bold">{userProgress.streak} Day Streak</span>
-          </div>
-        </div>
-
         <div className="flex justify-center mb-12">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="relative w-24 h-24 md:w-32 md:h-32"
-          >
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="relative w-24 h-24 md:w-32 md:h-32">
             <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
             <div className="relative w-full h-full rounded-full border-2 border-blue-400/50 flex items-center justify-center bg-gradient-to-b from-blue-500/10 to-blue-500/30">
               <span className="text-4xl md:text-5xl select-none">{coursePhases[currentPhaseIndex].icon}</span>
@@ -387,117 +416,121 @@ const CProgramming = () => {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            {coursePhases.map((phase, index) => (
-              <motion.div
-                key={phase.id}
-                initial={{ scale: 0.8, opacity: 0.6 }}
-                animate={{
-                  scale: index === currentPhaseIndex ? 1 : 0.8,
-                  opacity: index === currentPhaseIndex ? 1 : 0.6,
-                }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                whileHover={{ 
-                  scale: index === currentPhaseIndex ? 1.02 : 0.85,
-                  transition: { duration: 0.15 }
-                }}
-                whileTap={{ 
-                  scale: index === currentPhaseIndex ? 0.98 : 0.8,
-                  transition: { duration: 0.1 }
-                }}
-                className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none
-                  ${index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'}`}
-                onClick={() => handlePhaseClick(index)}
-                style={{ scrollSnapAlign: 'center' }}
-              >
+            {coursePhases.map((phase, index) => {
+              const progress = getPhaseProgress(phase);
+              return (
                 <motion.div
-                  className="relative w-full h-full transition-all preserve-3d"
-                  animate={{ 
-                    rotateY: flippedPhase === phase.id ? 180 : 0 
-                  }}
-                  transition={{ 
-                    duration: 0.2,
-                    ease: "easeOut"
-                  }}
+                  key={phase.id}
+                  initial={{ scale: 0.8, opacity: 0.6 }}
+                  animate={{ scale: index === currentPhaseIndex ? 1 : 0.8, opacity: index === currentPhaseIndex ? 1 : 0.6 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  whileHover={{ scale: index === currentPhaseIndex ? 1.02 : 0.85, transition: { duration: 0.15 } }}
+                  whileTap={{ scale: index === currentPhaseIndex ? 0.98 : 0.8, transition: { duration: 0.1 } }}
+                  className={`relative min-w-[300px] md:min-w-[400px] h-[400px] md:h-[500px] rounded-xl overflow-hidden flex-shrink-0 cursor-pointer select-none ${
+                    index === currentPhaseIndex ? 'ring-2 ring-blue-500/50' : 'filter grayscale'
+                  }`}
+                  onClick={() => handlePhaseClick(index)}
+                  style={{ scrollSnapAlign: 'center' }}
                 >
-                  <div 
-                    className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
-                    style={{
-                      backgroundImage: `url(${phase.backgroundImage || '/placeholder-image.jpg'})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      opacity: 0.50
-                    }}
-                  />
+                  <motion.div
+                    className="relative w-full h-full transition-all preserve-3d"
+                    animate={{ rotateY: flippedPhase === phase.id ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                  >
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl"
+                      style={{
+                        backgroundImage: `url(${phase.backgroundImage || '/placeholder-image.jpg'})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        opacity: 0.50
+                      }}
+                    />
 
-                  <div className="absolute inset-0 backface-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
-                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-                    
-                    <div className="relative h-full p-6 flex flex-col">
-                      <div className="text-4xl mb-4 select-none">{phase.icon}</div>
-                      <h3 className="text-xl font-bold mb-2 select-none">{phase.title}</h3>
-                      <p className="text-sm text-gray-400 mb-4 select-none">{phase.description}</p>
-                      
-                      {index === currentPhaseIndex && (
+                    <div className="absolute inset-0 backface-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl" />
+                      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                      <div className="relative h-full p-6 flex flex-col">
+                        <div className="text-4xl mb-4 select-none">{phase.icon}</div>
+                        <h3 className="text-xl font-bold mb-2 select-none">{phase.title}</h3>
+                        <p className="text-sm text-gray-400 mb-4 select-none">{phase.description}</p>
+                        <div className="mt-4">
+                          <div className="flex justify-between text-xs mb-1 text-blue-300/70">
+                            <span>Progress</span>
+                            <span>{Math.round(progress)}%</span>
+                          </div>
+                          <div className="h-3 bg-gray-700/30 rounded-full overflow-hidden relative">
+                            <motion.div
+                              className="h-full bg-gradient-to-r from-blue-400 to-blue-600"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${progress}%` }}
+                              transition={{ duration: 1, ease: "easeOut" }}
+                            >
+                              <div className="absolute inset-0 bg-blue-400/20 animate-pulse" />
+                            </motion.div>
+                          </div>
+                        </div>
+                        {index === currentPhaseIndex && (
+                          <motion.button
+                            onClick={(e) => handlePhaseStart(phase.id, e)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none relative overflow-hidden"
+                          >
+                            {sparklePhase === phase.id ? (
+                              <AlertCircle className="w-5 h-5 text-blue-400 animate-spin" style={{ animationDuration: '0.5s' }} />
+                            ) : (
+                              <div className="relative">
+                                <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors duration-150" />
+                                <div className="absolute inset-0 bg-blue-400/20 rounded-full filter blur-sm transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              </div>
+                            )}
+                            Flip to see topics
+                          </motion.button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl overflow-y-auto">
+                      <div className="p-6 space-y-4">
+                        <h3 className="text-xl font-bold mb-4">{phase.title} Topics</h3>
+                        {phase.topics.map((topic) => (
+                          <motion.div
+                            key={topic.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="backdrop-blur-xl bg-white/10 rounded-xl p-4 border border-white/20"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="font-bold mb-1">{topic.title}</h4>
+                                <p className="text-sm text-gray-400">{topic.description}</p>
+                              </div>
+                              <GlowingButton
+                                onClick={(e) => handleTopicStart(phase.id, topic.id, e)}
+                                className="text-sm font-medium"
+                              >
+                                <Play className="w-4 h-4" />
+                                <span>View</span>
+                              </GlowingButton>
+                            </div>
+                          </motion.div>
+                        ))}
                         <motion.button
-                          onClick={(e) => handlePhaseStart(phase.id, e)}
+                          onClick={(e) => handleFlipBack(phase.id, e)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="mt-auto px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 group select-none relative overflow-hidden"
+                          className="w-full mt-4 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 relative overflow-hidden group"
                         >
-                          {sparklePhase === phase.id ? (
-                            <AlertCircle className="w-5 h-5 text-yellow-400 animate-spin" style={{ animationDuration: '0.5s' }} />
-                          ) : (
-                            <div className="relative">
-                              <Play className="w-5 h-5 group-hover:text-blue-400 transition-colors duration-150" />
-                              <div className="absolute inset-0 bg-blue-400/20 rounded-full filter blur-sm transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            </div>
-                          )}
-                          Flip to see topics
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <span className="relative z-10">Flip back</span>
                         </motion.button>
-                      )}
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl overflow-y-auto">
-                    <div className="p-6 space-y-4">
-                      <h3 className="text-xl font-bold mb-4">{phase.title} Topics</h3>
-                      {phase.topics.map((topic) => (
-                        <motion.div
-                          key={topic.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="backdrop-blur-xl bg-white/10 rounded-xl p-4 border border-white/20"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="font-bold mb-1">{topic.title}</h4>
-                              <p className="text-sm text-gray-400">{topic.description}</p>
-                            </div>
-                            <GlowingButton
-                              onClick={(e) => handleTopicStart(phase.id, topic.id, e)}
-                              className="text-sm font-medium"
-                            >
-                              <Play className="w-4 h-4" />
-                              <span>View</span>
-                            </GlowingButton>
-                          </div>
-                        </motion.div>
-                      ))}
-                      <motion.button
-                        onClick={(e) => handleFlipBack(phase.id, e)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="w-full mt-4 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg flex items-center justify-center gap-2 relative overflow-hidden group"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        <span className="relative z-10">Flip back</span>
-                      </motion.button>
-                    </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="flex justify-center gap-2 mt-4">
@@ -506,9 +539,7 @@ const CProgramming = () => {
                 key={index}
                 onClick={() => setCurrentPhaseIndex(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentPhaseIndex 
-                    ? 'w-8 bg-blue-500' 
-                    : 'bg-white/20 hover:bg-white/40'
+                  index === currentPhaseIndex ? 'w-8 bg-blue-500' : 'bg-white/20 hover:bg-white/40'
                 }`}
               />
             ))}
@@ -526,10 +557,7 @@ const CProgramming = () => {
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold">{selectedPhaseAndTopic.topic.title} Subtopics</h3>
-                <button 
-                  onClick={() => setSelectedTopic(null)}
-                  className="flex items-center gap-2"
-                >
+                <button onClick={() => setSelectedTopic(null)} className="flex items-center gap-2">
                   {expandedTopic === selectedPhaseAndTopic.topic.id ? (
                     <ChevronUp className="w-5 h-5" />
                   ) : (
@@ -546,36 +574,54 @@ const CProgramming = () => {
                     exit={{ height: 0, opacity: 0 }}
                     className="space-y-2"
                   >
-                    {selectedPhaseAndTopic.topic.subtopics?.map((subtopic) => (
-                      <motion.div
-                        key={subtopic.id}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        className="flex items-center justify-between p-3 bg-white/5 rounded-lg backdrop-blur-xl border border-white/10"
-                      >
-                        <div className="flex items-center gap-3">
-                          {userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id) ? (
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <div className="w-4 h-4 rounded-full border border-gray-500" />
-                          )}
-                          <span className="text-sm">{subtopic.title}</span>
-                        </div>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleSubtopicStart(selectedPhaseAndTopic.topic.title, subtopic.title)}
-                          className="px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-all duration-300 flex items-center gap-2"
-                          disabled={userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id)}
+                    {selectedPhaseAndTopic.topic.subtopics?.map((subtopic, index) => {
+                      const isLocked = isSubtopicLocked(selectedPhaseAndTopic.phase.id, selectedPhaseAndTopic.topic.id, index);
+                      const isCompleted = userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id);
+
+                      return (
+                        <motion.div
+                          key={subtopic.id}
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          className={`flex items-center justify-between p-3 rounded-lg backdrop-blur-xl border border-white/10 ${
+                            isLocked ? 'bg-gray-800/70 cursor-not-allowed' : 'bg-white/5'
+                          }`}
                         >
-                          <Play className="w-3 h-3" />
-                          {userProgress.completedSubtopics[selectedTopic?.topicId]?.includes(subtopic.id) 
-                            ? 'Completed' 
-                            : 'Start'
-                          }
-                        </motion.button>
-                      </motion.div>
-                    ))}
+                          <div className="flex items-center gap-3">
+                            {isCompleted ? (
+                              <CheckCircle className="w-4 h-4 text-green-400" />
+                            ) : isLocked ? (
+                              <Lock className="w-4 h-4 text-gray-500" />
+                            ) : (
+                              <div className="w-4 h-4 rounded-full border border-gray-500" />
+                            )}
+                            <span className={`text-sm ${isLocked ? 'text-gray-500' : 'text-white'}`}>
+                              {subtopic.title}
+                            </span>
+                          </div>
+                          <motion.button
+                            whileHover={{ scale: isLocked ? 1 : 1.05 }}
+                            whileTap={{ scale: isLocked ? 1 : 0.95 }}
+                            onClick={() => !isLocked && handleSubtopicStart(selectedPhaseAndTopic.topic.title, subtopic.title)}
+                            className={`px-3 py-1 text-sm rounded-lg transition-all duration-300 flex items-center gap-2 ${
+                              isLocked 
+                                ? 'bg-gray-600/50 text-gray-500 cursor-not-allowed' 
+                                : isCompleted 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : 'bg-blue-500/20 hover:bg-blue-500/30 text-white'
+                            }`}
+                            disabled={isLocked || isCompleted}
+                          >
+                            {isLocked ? (
+                              <Lock className="w-3 h-3" />
+                            ) : (
+                              <Play className="w-3 h-3" />
+                            )}
+                            {isCompleted ? 'Completed' : isLocked ? 'Locked' : 'Start'}
+                          </motion.button>
+                        </motion.div>
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
